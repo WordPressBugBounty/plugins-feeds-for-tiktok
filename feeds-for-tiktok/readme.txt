@@ -4,8 +4,8 @@ Contributors: smashballoon, craig-at-smash-balloon, am, smub
 Tags: TikTok, TikTok feed, TikTok videos, TikTok account, TikTok widget
 Support Website: https://smashballoon.com/tiktok-feeds/
 Requires at least: 5.2
-Tested up to: 6.6
-Stable tag: 1.0.3
+Tested up to: 6.7
+Stable tag: 1.0.4
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -119,6 +119,9 @@ Your TikTok feed will update at least once per day. This occurs in the backgroun
 TikTok Feeds has built in caching so your feed will not go down in the event the TikTok API is unavailable or if your connected TikTok account needs to be reconnected. A backup video feed will display until the issues are resolved.
 
 == Changelog ==
+= 1.0.4 =
+* Tweak: Added support for our new [Feed Analytics](https://smashballoon.com/?utm_campaign=tiktok-free-readme&utm_source=changelog&utm_medium=feedanalyticsannouncement) product. Get insights as to how your feeds are being used by site visitors.
+
 = 1.0.3 =
 * New: Integration with [WPCode](https://wordpress.org/plugins/insert-headers-and-footers/) to make managing JavaScript and CSS customizations simple.
 

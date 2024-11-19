@@ -68,14 +68,14 @@ class Support_Builder extends ServiceProvider
         } else {
             wp_enqueue_style('sb-customizer-style', SBTT_CUSTOMIZER_ASSETS . '/build/static/css/main.css', \false, \false);
         }
-        $support_data = array_merge($support_data, $this->custom_support_data());
+        $support_data = array_merge($support_data, $this->customSupportData());
         //Data comming from the Actual plugin
         wp_enqueue_script('sb-customizer-app', $support_js_file, array('wp-i18n', 'jquery'), \false, \true);
         wp_localize_script('sb-customizer-app', 'sb_customizer', $support_data);
         wp_enqueue_media();
         wp_set_script_translations('sb-customizer-app', 'feeds-for-tiktok', SBTT_PLUGIN_DIR . 'languages/');
     }
-    public function custom_support_data()
+    public function customSupportData()
     {
         return [];
     }

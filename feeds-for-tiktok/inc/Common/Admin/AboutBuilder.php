@@ -1,18 +1,14 @@
 <?php
 
-/**
- * About Builder
- *
- * @since 1.0
- * @package tiktok-feeds
- */
-
 namespace SmashBalloon\TikTokFeeds\Common\Admin;
 
 use Smashballoon\Customizer\V3\About_Builder;
 use SmashBalloon\TikTokFeeds\Common\Config\Proxy;
 use SmashBalloon\TikTokFeeds\Common\Utils;
 
+/**
+ * About Builder
+ */
 class AboutBuilder extends About_Builder
 {
 	/**
@@ -74,7 +70,7 @@ class AboutBuilder extends About_Builder
 	 *
 	 * @return array The custom about us data.
 	 */
-	public function custom_aboutus_data()
+	public function customAboutusData()
 	{
 		$aboutus_data = [
 			'nonce'              => wp_create_nonce('sbtt-admin'),
@@ -85,6 +81,7 @@ class AboutBuilder extends About_Builder
 			'aboutPageUrl'       => admin_url('admin.php?page=sbtt-about'),
 			'isSocialWallActive' => Utils::is_sb_plugin_active('social-wall'),
 			'socialWallLinks'    => Utils::get_social_wall_links(),
+			'adminNoticeContent' => apply_filters('sbtt_admin_notices_filter', 1),
 		];
 
 		return $aboutus_data;

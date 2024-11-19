@@ -8,6 +8,7 @@ use SmashBalloon\TikTokFeeds\Common\Admin\MenuService;
 use SmashBalloon\TikTokFeeds\Common\Admin\AboutBuilder;
 use SmashBalloon\TikTokFeeds\Common\Admin\SupportBuilder;
 use SmashBalloon\TikTokFeeds\Common\Customizer\FeedBuilder;
+use SmashBalloon\TikTokFeeds\Common\Integrations\FeedAnalytics;
 use SmashBalloon\TikTokFeeds\Common\Services\ActivationService;
 use SmashBalloon\TikTokFeeds\Common\Services\AjaxHandlerService;
 use SmashBalloon\TikTokFeeds\Common\Services\DBManagerService;
@@ -17,9 +18,11 @@ use SmashBalloon\TikTokFeeds\Common\Services\Upgrade\RoutineManagerService;
 use SmashBalloon\TikTokFeeds\Common\Services\PluginUpgraderService;
 use SmashBalloon\TikTokFeeds\Common\Services\PluginInstallerService;
 use SmashBalloon\TikTokFeeds\Common\Services\ActionHooksService;
+use SmashBalloon\TikTokFeeds\Common\Services\NotificationService;
 use SmashBalloon\TikTokFeeds\Common\Services\ShortcodeService;
 use SmashBalloon\TikTokFeeds\Common\Services\UninstallService;
 use SmashBalloon\TikTokFeeds\Common\Services\UsageTrackingService;
+use SmashBalloon\TikTokFeeds\Common\Services\NewUserService;
 use SmashBalloon\TikTokFeeds\Common\Settings\SettingsBuilder;
 
 class ServiceContainer extends ServiceProvider
@@ -49,6 +52,9 @@ class ServiceContainer extends ServiceProvider
 		ShortcodeService::class,
 		AjaxHandlerService::class,
 		UsageTrackingService::class,
+		NotificationService::class,
+		NewUserService::class,
+		FeedAnalytics::class,
 	];
 
 	/**

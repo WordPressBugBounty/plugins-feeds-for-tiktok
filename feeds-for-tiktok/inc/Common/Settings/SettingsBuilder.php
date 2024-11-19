@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Settings Builder class.
- *
- * @package tiktok-feeds
- */
-
 namespace SmashBalloon\TikTokFeeds\Common\Settings;
 
 use Smashballoon\Customizer\V3\Settings_Builder;
@@ -16,6 +10,9 @@ use SmashBalloon\TikTokFeeds\Common\AuthorizationStatusCheck;
 use SmashBalloon\TikTokFeeds\Common\Services\PluginUpgraderService;
 use SmashBalloon\TikTokFeeds\Common\Integrations\WPCode;
 
+/**
+ * Settings Builder class.
+ */
 class SettingsBuilder extends Settings_Builder
 {
 	/**
@@ -92,7 +89,7 @@ class SettingsBuilder extends Settings_Builder
 	 *
 	 * @return array The custom settings data.
 	 */
-	public function custom_settings_data()
+	public function customSettingsData()
 	{
 		$settings_data = [
 			'nonce'          => wp_create_nonce('sbtt-admin'),
@@ -115,7 +112,8 @@ class SettingsBuilder extends Settings_Builder
 				'pluginInstalled' => WPCode::is_plugin_installed(),
 				'pluginActive' => WPCode::is_plugin_active(),
 				'isProInstalled' => WPCode::is_pro_installed(),
-			)
+			),
+			'adminNoticeContent' => apply_filters('sbtt_admin_notices_filter', 1),
 		];
 
 		$newly_retrieved_source_connection_data = Utils::maybe_source_connection_data();

@@ -228,50 +228,21 @@ class PostsTable extends Table
 		global $wpdb;
 		$table_name = $wpdb->prefix . self::TABLE_NAME;
 
-		$defaults = array(
-			'number'     => 10,
-			'offset'     => 0,
-			'orderby'    => 'created_on',
-			'order'      => 'DESC',
-			'video_id'   => '',
-			'created_on' => '',
-		);
-
-		$args = wp_parse_args($args, $defaults);
-
-		$number     = absint($args['number']);
-		$offset     = absint($args['offset']);
-		$orderby    = sanitize_text_field($args['orderby']);
-		$order      = sanitize_text_field($args['order']);
-		$video_id   = sanitize_text_field($args['video_id']);
-		$created_on = sanitize_text_field($args['created_on']);
-
-		$limit = '';
-		if ($number > 0) {
-			$limit = "LIMIT $number";
+		if (! empty($args['id'])) {
+			$args['id'] = is_array($args['id']) ? $args['id'] : array($args['id']);
+			$ids = implode(',', array_map('absint', $args['id']));
+			$sql = "SELECT * FROM $table_name WHERE video_id IN ($ids)";
+		} else {
+			$sql = "SELECT * FROM $table_name";
 		}
 
-		$offset = '';
-		if ($offset > 0) {
-			$offset = "OFFSET $offset";
+		$results = $wpdb->get_results($sql, ARRAY_A);
+
+		if (! $results) {
+			return false;
 		}
 
-		$where = '';
-		if (! empty($video_id)) {
-			$where = $wpdb->prepare("WHERE video_id = %s", $video_id);
-		}
-
-		if (! empty($created_on)) {
-			$where = $wpdb->prepare("WHERE created_on = %s", $created_on);
-		}
-
-		$order = $wpdb->prepare('ORDER BY ' . $orderby . ' ' . $order);
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$query = "SELECT * FROM $table_name $where $order $limit $offset";
-
-		return $wpdb->get_results($query);
+		return $results;
 	}
 
 	/**

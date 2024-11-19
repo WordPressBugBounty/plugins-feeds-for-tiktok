@@ -1,18 +1,14 @@
 <?php
 
-/**
- * Support Builder
- *
- * @since 1.0
- * @package tiktok-feeds
- */
-
 namespace SmashBalloon\TikTokFeeds\Common\Admin;
 
 use Smashballoon\Customizer\V3\Support_Builder;
 use SmashBalloon\TikTokFeeds\Common\Config\Proxy;
 use SmashBalloon\TikTokFeeds\Common\Utils;
 
+/**
+ * Support Builder
+ */
 class SupportBuilder extends Support_Builder
 {
 	/**
@@ -74,18 +70,19 @@ class SupportBuilder extends Support_Builder
 	 *
 	 * @return array The custom support data.
 	 */
-	public function custom_support_data()
+	public function customSupportData()
 	{
 		$aboutus_data = [
 			'nonce'          => wp_create_nonce('sbtt-admin'),
 			'assetsURL'      => SBTT_COMMON_ASSETS,
 			'feedsList'      => Utils::get_feeds_list(),
-			'supportContent' => $this->get_support_content(),
-			'supportInfo'    => $this->get_support_info(),
+			'supportContent' => $this->getSupportContent(),
+			'supportInfo'    => $this->getSupportInfo(),
 			'isPro'          => Utils::sbtt_is_pro(),
 			'aboutPageUrl'   => admin_url('admin.php?page=sbtt-about'),
 			'isSocialWallActive' => Utils::is_sb_plugin_active('social-wall'),
 			'socialWallLinks'    => Utils::get_social_wall_links(),
+			'adminNoticeContent' => apply_filters('sbtt_admin_notices_filter', 1),
 		];
 
 		return $aboutus_data;
@@ -96,7 +93,7 @@ class SupportBuilder extends Support_Builder
 	 *
 	 * @return array The support content.
 	 */
-	public function get_support_content()
+	public function getSupportContent()
 	{
 		$utm_source = 'tiktok-feeds-pro';
 		return [
@@ -177,7 +174,7 @@ class SupportBuilder extends Support_Builder
 	 *
 	 * @return string The support info.
 	 */
-	public function get_support_info()
+	public function getSupportInfo()
 	{
 		$output = '';
 

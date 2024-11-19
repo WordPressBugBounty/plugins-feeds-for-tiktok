@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Feed Builder
- *
- * @package tiktok-feeds
- */
-
 namespace SmashBalloon\TikTokFeeds\Common\Customizer;
 
 use Smashballoon\Customizer\V3\Feed_Builder;
@@ -17,6 +11,9 @@ use SmashBalloon\TikTokFeeds\Common\Services\SettingsManagerService;
 use SmashBalloon\TikTokFeeds\Common\Utils;
 use SmashBalloon\TikTokFeeds\Common\AuthorizationStatusCheck;
 
+/**
+ * Feed Builder
+ */
 class FeedBuilder extends Feed_Builder
 {
 	/**
@@ -94,7 +91,7 @@ class FeedBuilder extends Feed_Builder
 	 *
 	 * @since 1.0
 	 */
-	public function custom_builder_data()
+	public function customBuilderData()
 	{
 		$builder_data = [
 			'nonce'          => wp_create_nonce('sbtt-admin'),
@@ -105,7 +102,7 @@ class FeedBuilder extends Feed_Builder
 			'connectionURLs' => sbtt_get_tiktok_connection_urls(),
 			'pluginSettings' => $this->global_settings->get_global_settings(),
 			'pluginStatus'   => $this->plugin_status->get_statuses(),
-			'feedTypes'      => $this->get_feedtypes_list(),
+			'feedTypes'      => $this->getFeedtypesList(),
 			'isPro'          => Utils::sbtt_is_pro(),
 			'isSocialWallActive' => Utils::is_sb_plugin_active('social-wall'),
 			'socialWallLinks'    => Utils::get_social_wall_links(),
@@ -114,6 +111,7 @@ class FeedBuilder extends Feed_Builder
 			'tieredFeatures' => Utils::get_tiered_features_list(),
 			'upsellContent' => Utils::get_upsell_modal_content(),
 			'upsellSidebarCards' => Utils::get_sidebar_upsell_cards(),
+			'adminNoticeContent' => apply_filters('sbtt_admin_notices_filter', 1),
 		];
 
 		$newly_retrieved_source_connection_data = Utils::maybe_source_connection_data();
@@ -128,7 +126,7 @@ class FeedBuilder extends Feed_Builder
 	 * Get Feed Info by ID
 	 * This populates the feed builder with the feed info
 	 */
-	public function customizer_feed_data()
+	public function customizerFeedData()
 	{
 		if (! isset($_GET['feed_id'])) {
 			return array();
@@ -172,7 +170,7 @@ class FeedBuilder extends Feed_Builder
 	 *
 	 * @since 1.0
 	 */
-	public function get_templates_list()
+	public function getTemplatesList()
 	{
 		return [
 			[
@@ -224,7 +222,7 @@ class FeedBuilder extends Feed_Builder
 	 *
 	 * @since 1.0
 	 */
-	public function get_feedtypes_list()
+	public function getFeedtypesList()
 	{
 		return [
 			[

@@ -71,7 +71,7 @@ class Settings_Builder extends ServiceProvider
         } else {
             wp_enqueue_style('sb-customizer-style', SBTT_CUSTOMIZER_ASSETS . '/build/static/css/main.css', \false, \false);
         }
-        $settings_data = array_merge($settings_data, $this->custom_settings_data());
+        $settings_data = array_merge($settings_data, $this->customSettingsData());
         //Data comming from the Actual plugin
         wp_enqueue_script('sb-customizer-app', $settings_js_file, array('wp-i18n', 'jquery'), \false, \true);
         wp_localize_script('sb-customizer-app', 'sb_customizer', $settings_data);
@@ -106,7 +106,7 @@ class Settings_Builder extends ServiceProvider
         }
         return $settings_page_data;
     }
-    public function custom_settings_data()
+    public function customSettingsData()
     {
         return [];
     }

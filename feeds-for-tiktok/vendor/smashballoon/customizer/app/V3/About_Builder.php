@@ -68,14 +68,14 @@ class About_Builder extends ServiceProvider
         } else {
             wp_enqueue_style('sb-customizer-style', SBTT_CUSTOMIZER_ASSETS . '/build/static/css/main.css', \false, \false);
         }
-        $aboutus_data = array_merge($aboutus_data, $this->custom_aboutus_data());
+        $aboutus_data = array_merge($aboutus_data, $this->customAboutusData());
         //Data comming from the Actual plugin
         wp_enqueue_script('sb-customizer-app', $aboutus_js_file, array('wp-i18n', 'jquery'), \false, \true);
         wp_localize_script('sb-customizer-app', 'sb_customizer', $aboutus_data);
         wp_enqueue_media();
         wp_set_script_translations('sb-customizer-app', 'feeds-for-tiktok', SBTT_PLUGIN_DIR . 'languages/');
     }
-    public function custom_aboutus_data()
+    public function customAboutusData()
     {
         return [];
     }

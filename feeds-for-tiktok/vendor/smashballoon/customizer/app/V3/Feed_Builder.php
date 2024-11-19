@@ -63,10 +63,10 @@ class Feed_Builder extends ServiceProvider
      */
     public function builder_enqueue_admin_scripts()
     {
-        $builder_data = ['ajaxHandler' => admin_url('admin-ajax.php'), 'adminPostURL' => admin_url('post.php'), 'widgetsPageURL' => admin_url('widgets.php'), 'builderUrl' => admin_url('admin.php?page=' . $this->builder_menu_slug), 'wordpressPageLists' => \Smashballoon\Customizer\V3\SB_Utils::get_wp_pages(), 'iconsList' => \Smashballoon\Customizer\V3\SB_Utils::get_icons(), 'reactScreen' => 'customizer', 'templatesList' => $this->get_templates_list()];
+        $builder_data = ['ajaxHandler' => admin_url('admin-ajax.php'), 'adminPostURL' => admin_url('post.php'), 'widgetsPageURL' => admin_url('widgets.php'), 'builderUrl' => admin_url('admin.php?page=' . $this->builder_menu_slug), 'wordpressPageLists' => \Smashballoon\Customizer\V3\SB_Utils::get_wp_pages(), 'iconsList' => \Smashballoon\Customizer\V3\SB_Utils::get_icons(), 'reactScreen' => 'customizer', 'templatesList' => $this->getTemplatesList()];
         //Only for Customizer
         if (isset($_GET['feed_id'])) {
-            $builder_data = array_merge($builder_data, ['isFeedEditor' => \true, 'feedEditor' => ['defaultTab' => 'sb-customize-tab'], 'customizerData' => $this->customizer_builder_data(), 'feedData' => $this->customizer_feed_data()]);
+            $builder_data = array_merge($builder_data, ['isFeedEditor' => \true, 'feedEditor' => ['defaultTab' => 'sb-customize-tab'], 'customizerData' => $this->customizer_builder_data(), 'feedData' => $this->customizerFeedData()]);
             $this->enqueue_date_i18n();
         }
         $customizer_js_file = SBTT_CUSTOMIZER_ASSETS . '/build/static/js/main.js';
@@ -75,14 +75,14 @@ class Feed_Builder extends ServiceProvider
         } else {
             wp_enqueue_style('sb-customizer-style', SBTT_CUSTOMIZER_ASSETS . '/build/static/css/main.css', \false, \false);
         }
-        $builder_data = array_merge($builder_data, $this->custom_builder_data());
+        $builder_data = array_merge($builder_data, $this->customBuilderData());
         //Data comming from the Actual plugin
         wp_enqueue_script('sb-customizer-app', $customizer_js_file, array('wp-i18n', 'jquery'), \false, \true);
         wp_localize_script('sb-customizer-app', 'sb_customizer', $builder_data);
         wp_enqueue_media();
         wp_set_script_translations('sb-customizer-app', 'feeds-for-tiktok', SBTT_PLUGIN_DIR . 'languages/');
     }
-    public function custom_builder_data()
+    public function customBuilderData()
     {
         return [];
     }
@@ -135,7 +135,7 @@ class Feed_Builder extends ServiceProvider
      *
      * @since 1.0
      */
-    public function customizer_feed_data()
+    public function customizerFeedData()
     {
         return ['feed_info' => [], 'settings' => [], 'posts' => []];
     }
@@ -168,7 +168,7 @@ class Feed_Builder extends ServiceProvider
      *
      * @since 1.0
      */
-    public function get_templates_list()
+    public function getTemplatesList()
     {
         return [];
     }
