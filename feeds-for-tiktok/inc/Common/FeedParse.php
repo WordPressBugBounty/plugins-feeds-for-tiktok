@@ -2,7 +2,7 @@
 
 namespace SmashBalloon\TikTokFeeds\Common;
 
-use SmashBalloon\TikTokFeeds\Settings\Settings;
+use SmashBalloon\TikTokFeeds\Common\Utils;
 
 class FeedParse
 {
@@ -288,5 +288,16 @@ class FeedParse
 		$iframe_url = 'https://www.tiktok.com/embed/v2/' . $post_id;
 
 		return $iframe_url;
+	}
+
+	/**
+	 * Get post mp4 video url.
+	 *
+	 * @param array $post Post data.
+	 * @return string The post video mp4 url
+	 */
+	public static function get_post_video_url($post)
+	{
+		return Utils::sbtt_is_pro() && !empty($post['video_url']) ? esc_url($post['video_url']) : '';
 	}
 }

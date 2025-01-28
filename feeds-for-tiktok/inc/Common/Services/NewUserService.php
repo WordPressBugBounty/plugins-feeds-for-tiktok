@@ -89,7 +89,6 @@ class NewUserService extends NotificationService
 		$option = $this->getOptionValue();
 		if (empty($option['update'])) {
 			$this->updateNotifications();
-			$option = $this->getOptionValue();
 		}
 
 		$events = !empty($option['events']) ? $this->verifyActiveNotifications($option['events']) : [];
@@ -110,12 +109,16 @@ class NewUserService extends NotificationService
 			return array();
 		}
 
-		if (!empty($notifications['review']) && $this->showReviewNotice($notifications['review'])) {
-			return array($notifications['review']);
-		}
+		foreach ($notifications as $notification) {
+			if (!empty($notification['id'])) {
+				if ($notification['id'] === 'review' && $this->showReviewNotice($notification)) {
+					return array($notification);
+				}
 
-		if (!empty($notifications['discount']) && $this->showDiscountNotice($notifications['discount'])) {
-			return array($notifications['discount']);
+				if ($notification['id'] === 'discount' && $this->showDiscountNotice($notification)) {
+					return array($notification);
+				}
+			}
 		}
 
 		return array();

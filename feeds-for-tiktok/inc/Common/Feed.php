@@ -343,46 +343,39 @@ class Feed
 
 		$feed_settings = $this->get_feed_settings();
 
-		$filtered_posts = array();
-
-		$include_words = isset($feed_settings['includeWords']) && ! empty($feed_settings['includeWords']) ? explode(',', $feed_settings['includeWords']) : false;
-		$exclude_words = isset($feed_settings['excludeWords']) && ! empty($feed_settings['excludeWords']) ? explode(',', $feed_settings['excludeWords']) : false;
+		$include_words = !empty($feed_settings['includeWords']) ? explode(',', $feed_settings['includeWords']) : false;
+		$exclude_words = !empty($feed_settings['excludeWords']) ? explode(',', $feed_settings['excludeWords']) : false;
 
 		// Filter by words.
-		if ($include_words || $exclude_words) {
-			foreach ($posts as $post) {
-				$include = true;
+		$filtered_posts = array_filter($posts, function ($post) use ($include_words, $exclude_words) {
+			$video_description = strtolower($post['video_description']);
 
-				if ($include_words) {
-					foreach ($include_words as $word) {
-						if (strpos(strtolower($post['video_description']), strtolower($word)) === false) {
-							$include = false;
-							break;
-						}
+			if (!empty($include_words) && is_array($include_words)) {
+				$include = false;
+				foreach ($include_words as $word) {
+					if (stripos($video_description, trim($word)) !== false) {
+						$include = true;
+						break;
 					}
 				}
-
-				if ($exclude_words) {
-					foreach ($exclude_words as $word) {
-						if (strpos(strtolower($post['video_description']), strtolower($word)) !== false) {
-							$include = false;
-							break;
-						}
-					}
-				}
-
-				if ($include) {
-					$filtered_posts[] = $post;
+				if (!$include) {
+					return false;
 				}
 			}
-		} else {
-			$filtered_posts = $posts;
-		}
+
+			if (!empty($exclude_words) && is_array($exclude_words)) {
+				foreach ($exclude_words as $word) {
+					if (stripos($video_description, trim($word)) !== false) {
+						return false;
+					}
+				}
+			}
+
+			return true;
+		});
 
 		// Sort the posts.
-		$sorted_posts = $this->sort_posts($filtered_posts);
-
-		return $sorted_posts;
+		return $this->sort_posts($filtered_posts);
 	}
 
 	/**
@@ -653,7 +646,7 @@ class Feed
 		$feed_settings = $this->get_feed_settings();
 		$max           = max(absint($feed_settings['numPostDesktop']), absint($feed_settings['numPostTablet']), absint($feed_settings['numPostMobile']));
 
-		$offset         = ( $page - 1 ) * $max;
+		$offset         = ($page - 1) * $max;
 		$set_page_posts = is_array($posts) ? array_slice($posts, $offset, $max) : [];
 
 		return $set_page_posts;
@@ -711,6 +704,8 @@ class Feed
 			return;
 		}
 
+		$posts_table = new PostsTable();
+
 		// Update or insert the posts into the database.
 		foreach ($posts as $post) {
 			$video_id   = isset($post['id']) ? sanitize_text_field($post['id']) : '';
@@ -731,18 +726,13 @@ class Feed
 				'last_requested' => date('Y-m-d H:i:s'),
 			);
 
-			$posts_table = new PostsTable();
 			$posts_table->update_or_insert($single_post);
 		}
 
-		wp_schedule_single_event(
-			time(),
-			'sbtt_resize_post_images',
-			array(
-				'posts' => $posts,
-				'feed_id' => $this->feed_cache->get_feed_id(),
-			)
-		);
+		// Save posts and feed ID to resize the images.
+		$resize_data = get_option('sbtt_resize_images_data', array());
+		$resize_data[] = array('posts' => $posts, 'feed_id' => $this->feed_cache->get_feed_id());
+		update_option('sbtt_resize_images_data', $resize_data);
 
 		// Update the cache.
 		$this->feed_cache->update_or_insert('posts', \json_encode($posts));
@@ -781,7 +771,7 @@ class Feed
 				continue;
 			}
 
-			$single_source = str_replace(array( '"', '\\' ), '', $single_source);
+			$single_source = str_replace(array('"', '\\'), '', $single_source);
 			$single_source = sanitize_text_field($single_source);
 
 			// filter out the source from the sources list.
@@ -839,7 +829,7 @@ class Feed
 
 		$resized_image = false;
 
-		$webp_supported = wp_image_editor_supports(array( 'mime_type' => 'image/webp' ));
+		$webp_supported = wp_image_editor_supports(array('mime_type' => 'image/webp'));
 		$webp_supported = apply_filters('sbtt_webp_supported', $webp_supported);
 		$extension 	    = $webp_supported ? '.webp' : '.jpg';
 
@@ -918,7 +908,7 @@ class Feed
 
 		$resized_image = false;
 
-		$webp_supported = wp_image_editor_supports(array( 'mime_type' => 'image/webp' ));
+		$webp_supported = wp_image_editor_supports(array('mime_type' => 'image/webp'));
 		$webp_supported = apply_filters('sbtt_webp_supported', $webp_supported);
 		$extension 	    = $webp_supported ? '.webp' : '.jpg';
 

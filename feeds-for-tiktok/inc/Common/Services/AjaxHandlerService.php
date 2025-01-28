@@ -374,6 +374,7 @@ class AjaxHandlerService extends ServiceProvider
 		$global_settings['api_site_access_token'] = '';
 		$global_settings['api_site_error']        = '';
 		update_option('sbtt_global_settings', $global_settings);
+		delete_option('sbtt_resize_images_data');
 
 		wp_send_json_success();
 

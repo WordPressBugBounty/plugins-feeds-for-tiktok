@@ -84,7 +84,10 @@ class UninstallService
 			'sbtt_global_settings',
 			'sbtt_statuses',
 			'sbtt_db_version',
-			'sbtt_usage_tracking_config'
+			'sbtt_usage_tracking_config',
+			'sbtt_newuser_notifications',
+			'sbtt_notifications',
+			'sbtt_resize_images_data'
 		];
 
 		foreach ($options_to_delete as $option) {
@@ -102,7 +105,6 @@ class UninstallService
 		$cron_jobs = [
 			'sbtt_refresh_token_routine',
 			'sbtt_feed_update_routine',
-			'sbtt_resize_post_images',
 			'sbtt_usage_tracking_cron',
 		];
 

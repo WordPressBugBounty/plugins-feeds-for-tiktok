@@ -70,130 +70,130 @@ msgid "Error"
 msgstr "Fehler"
 
 #: inc/Common/Admin/MenuService.php:30
-#: inc/Common/Utils/Utils.php:795
+#: inc/Common/Utils/Utils.php:796
 #: vendor/smashballoon/customizer/app/V3/Feed_Builder.php:58
 #: vendor/smashballoon/customizer/app/V3/Feed_Builder.php:59
 #: vendor/smashballoon/customizer/sb-common/sb-customizer/build/static/js/main.js:2
 msgid "All Feeds"
 msgstr "Alle Feeds"
 
-#: inc/Common/Admin/MenuService.php:33
+#: inc/Common/Admin/MenuService.php:40
 msgid "TikTok Feeds"
 msgstr "TikTok Feeds"
 
-#: inc/Common/Admin/MenuService.php:63
+#: inc/Common/Admin/MenuService.php:70
 #: inc/Common/Customizer/Tabs/SettingsTab.php:28
-#: inc/Common/Utils/Utils.php:796
+#: inc/Common/Utils/Utils.php:797
 #: vendor/smashballoon/customizer/app/V3/Settings_Builder.php:59
 #: vendor/smashballoon/customizer/app/V3/Settings_Builder.php:60
 #: vendor/smashballoon/customizer/sb-common/sb-customizer/build/static/js/main.js:2
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: inc/Common/Admin/SupportBuilder.php:104
+#: inc/Common/Admin/SupportBuilder.php:101
 #: vendor/smashballoon/customizer/sb-common/sb-customizer/build/static/js/main.js:2
 msgid "Getting Started"
 msgstr "Erste Schritte"
 
-#: inc/Common/Admin/SupportBuilder.php:105
+#: inc/Common/Admin/SupportBuilder.php:102
 msgid "Some helpful resources to get you started"
 msgstr "Einige hilfreiche Ressourcen für den Anfang"
 
-#: inc/Common/Admin/SupportBuilder.php:109
+#: inc/Common/Admin/SupportBuilder.php:106
 msgid "Getting Started with TikTok Feeds"
 msgstr "Erste Schritte mit TikTok Feeds"
 
-#: inc/Common/Admin/SupportBuilder.php:113
+#: inc/Common/Admin/SupportBuilder.php:110
 msgid "How Do I Show a Feed from Another Account"
 msgstr "Wie kann ich einen Feed von einem anderen Konto anzeigen"
 
-#: inc/Common/Admin/SupportBuilder.php:117
+#: inc/Common/Admin/SupportBuilder.php:114
 msgid "How to Keep My Account Connected"
 msgstr "Wie bleibe ich mit meinem Konto verbunden"
 
-#: inc/Common/Admin/SupportBuilder.php:122
+#: inc/Common/Admin/SupportBuilder.php:119
 msgid "More Help Getting started"
 msgstr "Mehr Hilfe Erste Schritte"
 
-#: inc/Common/Admin/SupportBuilder.php:127
+#: inc/Common/Admin/SupportBuilder.php:124
 msgid "Docs & Troubleshooting"
 msgstr "Dokumentation & Problembehandlung"
 
-#: inc/Common/Admin/SupportBuilder.php:128
+#: inc/Common/Admin/SupportBuilder.php:125
 msgid "Run into an issue? Check out our help docs."
 msgstr "Bist du auf ein Problem gestoßen? Schau dir unsere Hilfe-Dokumente an."
 
-#: inc/Common/Admin/SupportBuilder.php:132
+#: inc/Common/Admin/SupportBuilder.php:129
 msgid "Error Message Reference"
 msgstr "Referenz der Fehlermeldung"
 
-#: inc/Common/Admin/SupportBuilder.php:136
+#: inc/Common/Admin/SupportBuilder.php:133
 msgid "My Feed is Not Displaying"
 msgstr "Mein Feed wird nicht angezeigt"
 
-#: inc/Common/Admin/SupportBuilder.php:140
+#: inc/Common/Admin/SupportBuilder.php:137
 msgid "My Feed is Not Updating"
 msgstr "Mein Feed wird nicht aktualisiert"
 
-#: inc/Common/Admin/SupportBuilder.php:145
+#: inc/Common/Admin/SupportBuilder.php:142
 msgid "View Documentation"
 msgstr "Dokumentation anzeigen"
 
-#: inc/Common/Admin/SupportBuilder.php:150
+#: inc/Common/Admin/SupportBuilder.php:147
 msgid "Additional Resources"
 msgstr "Zusätzliche Ressourcen"
 
-#: inc/Common/Admin/SupportBuilder.php:151
+#: inc/Common/Admin/SupportBuilder.php:148
 msgid "To help you get the most out of the plugin"
 msgstr "Damit du das Plugin optimal nutzen kannst"
 
-#: inc/Common/Admin/SupportBuilder.php:155
+#: inc/Common/Admin/SupportBuilder.php:152
 msgid "Video Filtering Guide?"
 msgstr "Leitfaden zum Filtern von Videos?"
 
-#: inc/Common/Admin/SupportBuilder.php:159
+#: inc/Common/Admin/SupportBuilder.php:156
 msgid "Can I Display Multiple Feeds on One Page?"
 msgstr "Kann ich mehrere Feeds auf einer Seite anzeigen?"
 
-#: inc/Common/Admin/SupportBuilder.php:163
+#: inc/Common/Admin/SupportBuilder.php:160
 msgid "How Do I Embed a Feed Directly In a Template?"
 msgstr "Wie kann ich einen Feed direkt in ein Template einbetten?"
 
-#: inc/Common/Admin/SupportBuilder.php:168
+#: inc/Common/Admin/SupportBuilder.php:165
 msgid "View Blog"
 msgstr "Blog anzeigen"
 
-#: inc/Common/Customizer/FeedBuilder.php:180
+#: inc/Common/Customizer/FeedBuilder.php:178
 msgid "Default"
 msgstr "Standard"
 
-#: inc/Common/Customizer/FeedBuilder.php:184
+#: inc/Common/Customizer/FeedBuilder.php:182
 msgid "Cards"
 msgstr "Karten"
 
-#: inc/Common/Customizer/FeedBuilder.php:189
+#: inc/Common/Customizer/FeedBuilder.php:187
 #: inc/Common/Customizer/Tabs/CustomizeTab.php:127
 msgid "List"
 msgstr "Liste"
 
-#: inc/Common/Customizer/FeedBuilder.php:194
+#: inc/Common/Customizer/FeedBuilder.php:192
 msgid "Latest Video"
 msgstr "Neustes Video"
 
-#: inc/Common/Customizer/FeedBuilder.php:199
+#: inc/Common/Customizer/FeedBuilder.php:197
 #: inc/Common/Customizer/Tabs/CustomizeTab.php:139
 msgid "Carousel"
 msgstr "Karussell"
 
-#: inc/Common/Customizer/FeedBuilder.php:204
+#: inc/Common/Customizer/FeedBuilder.php:202
 msgid "Showcase Carousel"
 msgstr "Schaufenster-Karussell"
 
-#: inc/Common/Customizer/FeedBuilder.php:232
+#: inc/Common/Customizer/FeedBuilder.php:230
 msgid "My Timeline"
 msgstr "Meine Zeitleiste"
 
-#: inc/Common/Customizer/FeedBuilder.php:233
+#: inc/Common/Customizer/FeedBuilder.php:231
 msgid "Create a feed from your own TikTok posts"
 msgstr "Erstelle einen Feed aus deinen eigenen Beiträgen auf TikTok"
 
@@ -606,12 +606,12 @@ msgid "Please go to %1$sTikTok Feeds%2$s settings page to create a feed."
 msgstr "Bitte gehe auf die Einstellungsseite %1$sTikTok Feeds%2$s, um einen Feed zu erstellen."
 
 #: inc/Common/Feed.php:128
-#: inc/Common/Feed.php:765
+#: inc/Common/Feed.php:755
 msgid "No sources available for this feed."
 msgstr "Für diesen Feed sind keine Quellen verfügbar."
 
 #: inc/Common/Feed.php:129
-#: inc/Common/Feed.php:766
+#: inc/Common/Feed.php:756
 msgid "Please go to %1$sTikTok Feeds%2$s settings page and add sources for this feed to use."
 msgstr "Bitte gehe auf die Seite %1$sTikTok Feeds%2$s und füge Quellen hinzu, die du für diesen Feed verwenden möchtest."
 
@@ -771,10 +771,12 @@ msgstr "Wir aktivieren die Einhaltung der DSGVO automatisch, wenn wir ein unters
 msgid "Automatic"
 msgstr "Automatisch"
 
+#: inc/Common/Services/NotificationService.php:535
 #: inc/Common/Settings/Tabs/FeedsTab.php:53
 msgid "Yes"
 msgstr "Ja"
 
+#: inc/Common/Services/NotificationService.php:537
 #: inc/Common/Settings/Tabs/FeedsTab.php:54
 msgid "No"
 msgstr "Nein"
@@ -843,126 +845,126 @@ msgstr "Ungültiges Access Token. Bitte verbinde die Quelle erneut."
 msgid "Please go to %1$sTikTok Feeds%2$s settings page to reconnect the source."
 msgstr "Bitte gehe auf die Einstellungsseite %1$sTikTok Feeds%2$s, um die Quelle wieder einzuschalten."
 
-#: inc/Common/Utils/Utils.php:654
+#: inc/Common/Utils/Utils.php:655
 msgid "Upgrade to TikTok Pro plans to add multiple feeds"
 msgstr "Upgrade auf TikTok Pro Pläne, um mehrere Feeds hinzuzufügen"
 
-#: inc/Common/Utils/Utils.php:655
+#: inc/Common/Utils/Utils.php:656
 msgid "Boost leads and conversions by displaying custom feeds all over your website to show fresh, relevant content."
 msgstr "Steigere Leads und Konversionen, indem du individuelle Feeds auf deiner gesamten Website anzeigst, um frische, relevante Inhalte anzuzeigen."
 
-#: inc/Common/Utils/Utils.php:659
+#: inc/Common/Utils/Utils.php:660
 msgid "Upgrade to TikTok Pro plans to add multiple sources"
 msgstr "Upgrade auf TikTok Pro Pläne, um mehrere Quellen hinzuzufügen"
 
-#: inc/Common/Utils/Utils.php:660
+#: inc/Common/Utils/Utils.php:661
 msgid "Do you have multiple TikTok accounts? Use them all in different feeds or combine them into one."
 msgstr "Hast du mehrere TikTok-Konten? Verwende sie alle in verschiedenen Feeds oder kombiniere sie in einem."
 
-#: inc/Common/Utils/Utils.php:664
+#: inc/Common/Utils/Utils.php:665
 msgid "Upgrade to TikTok Pro plans to update your feed more often"
 msgstr "Upgrade auf TikTok Pro Pläne, um deinen Feed öfter zu aktualisieren"
 
-#: inc/Common/Utils/Utils.php:665
+#: inc/Common/Utils/Utils.php:666
 msgid "Keep your feed content ultra-fresh with more frequent feed updates in the Pro version."
 msgstr "In der Pro-Version kannst du deine Feeds häufiger aktualisieren, um sie immer auf dem neuesten Stand zu halten."
 
-#: inc/Common/Utils/Utils.php:669
+#: inc/Common/Utils/Utils.php:670
 msgid "Upgrade to TikTok Pro to add load more functionality"
 msgstr "Upgrade auf TikTok Pro für noch mehr Funktionen"
 
-#: inc/Common/Utils/Utils.php:670
+#: inc/Common/Utils/Utils.php:671
 msgid "Add a Load More button to your feed to allow users to load more posts."
 msgstr "Füge einen Button \"Mehr laden\" zu deinem Feed hinzu, damit die Benutzer mehr Beiträge veröffentlichen können."
-
-#: inc/Common/Utils/Utils.php:674
-#: inc/Common/Utils/Utils.php:679
-#: inc/Common/Utils/Utils.php:684
-#: inc/Common/Utils/Utils.php:689
-msgid "Upgrade to TikTok Pro plans to get advanced layouts"
-msgstr "Upgrade auf TikTok Pro Pläne für erweiterte Layouts"
 
 #: inc/Common/Utils/Utils.php:675
 #: inc/Common/Utils/Utils.php:680
 #: inc/Common/Utils/Utils.php:685
 #: inc/Common/Utils/Utils.php:690
+msgid "Upgrade to TikTok Pro plans to get advanced layouts"
+msgstr "Upgrade auf TikTok Pro Pläne für erweiterte Layouts"
+
+#: inc/Common/Utils/Utils.php:676
+#: inc/Common/Utils/Utils.php:681
+#: inc/Common/Utils/Utils.php:686
+#: inc/Common/Utils/Utils.php:691
 msgid "Display your videos in a list or carousel to provide your content wherever it fits best on your site."
 msgstr "Zeige deine Videos in einer Liste oder einem Karussell an, um deine Inhalte dort bereitzustellen, wo sie am besten auf deine Website passen."
 
-#: inc/Common/Utils/Utils.php:694
-#: inc/Common/Utils/Utils.php:699
+#: inc/Common/Utils/Utils.php:695
+#: inc/Common/Utils/Utils.php:700
 msgid "Upgrade to TikTok Pro plans to get one-click templates!"
 msgstr "Upgrade auf TikTok Pro Pläne, um Templates mit nur einem Klick zu erhalten!"
 
-#: inc/Common/Utils/Utils.php:695
-#: inc/Common/Utils/Utils.php:700
+#: inc/Common/Utils/Utils.php:696
+#: inc/Common/Utils/Utils.php:701
 msgid "Choose from our expertly designed templates to make feed creation simple no matter the situation."
 msgstr "Wähle aus unseren von Experten entworfenen Templates, um die Erstellung von Feeds in jeder Situation zu vereinfachen."
 
-#: inc/Common/Utils/Utils.php:704
+#: inc/Common/Utils/Utils.php:705
 msgid "Upgrade to TikTok Pro plans to display stats & description."
 msgstr "Upgrade auf TikTok Pro Pläne, um Statistiken und Beschreibungen anzuzeigen."
 
-#: inc/Common/Utils/Utils.php:705
+#: inc/Common/Utils/Utils.php:706
 msgid "Provide rich content to boost visitor engagement and encourage them to follow your account."
 msgstr "Biete reichhaltige Inhalte an, um das Engagement der Besucher zu erhöhen und sie zu ermutigen, deinem Konto zu folgen."
 
-#: inc/Common/Utils/Utils.php:709
+#: inc/Common/Utils/Utils.php:710
 msgid "Upgrade to TikTok Pro plans for more video elements"
 msgstr "Upgrades auf TikTok Pro Pläne für mehr Video-Elemente"
 
-#: inc/Common/Utils/Utils.php:710
+#: inc/Common/Utils/Utils.php:711
 msgid "Show descriptions, view and like counts and author info to provide more rich content to engage your visitors."
 msgstr "Zeige Beschreibungen, Aufrufe, Likes und Autoreninformationen an, um deine Besucher zu begeistern."
 
-#: inc/Common/Utils/Utils.php:714
+#: inc/Common/Utils/Utils.php:715
 msgid "Upgrade to TikTok Pro plans for custom sorting"
 msgstr "Upgrade auf TikTok Pro Pläne für individuelle Sortierung"
 
-#: inc/Common/Utils/Utils.php:715
+#: inc/Common/Utils/Utils.php:716
 msgid "Sort videos randomly for a unique visitor experience or show off your most viewed or most liked videos first."
 msgstr "Sortiere die Videos nach dem Zufallsprinzip, um den Besuchern ein einzigartiges Erlebnis zu bieten, oder zeige die Videos mit den meisten Aufrufen oder den meisten Likes zuerst an."
 
-#: inc/Common/Utils/Utils.php:719
+#: inc/Common/Utils/Utils.php:720
 msgid "Upgrade to TikTok Pro plans to get word & hashtag filters"
 msgstr "Upgrade auf TikTok Pro Pläne für Wort- und Hashtag-Filter"
 
-#: inc/Common/Utils/Utils.php:720
+#: inc/Common/Utils/Utils.php:721
 msgid "Filter by words and hashtags found in the caption. Curate content to target specific kinds of visitors."
 msgstr "Filtere nach Wörtern und Hashtags, die in der Bildunterschrift vorkommen. Pflege Inhalte, um bestimmte Arten von Besuchern anzusprechen."
 
-#: inc/Common/Utils/Utils.php:724
+#: inc/Common/Utils/Utils.php:725
 msgid "Upgrade to TikTok Pro plans to sort by likes & views"
 msgstr "Upgrade auf TikTok Pro Pläne, um nach Likes & Aufrufen zu sortieren"
 
-#: inc/Common/Utils/Utils.php:725
+#: inc/Common/Utils/Utils.php:726
 msgid "Show off your best content first to boost conversions of site visitors to TikTok followers."
 msgstr "Zeige deine besten Inhalte als erstes, um die Umwandlung von Website-Besuchern in TikTok-Follower zu fördern."
 
-#: inc/Common/Utils/Utils.php:729
+#: inc/Common/Utils/Utils.php:730
 msgid "Upgrade to TikTok Pro plans to get card layouts!"
 msgstr "Upgrade auf TikTok Pro Pläne, um Kartenlayouts zu erhalten!"
 
-#: inc/Common/Utils/Utils.php:730
+#: inc/Common/Utils/Utils.php:731
 msgid "Display your videos in an attractive, modern card layout. Help your content standout to engage visitors."
 msgstr "Zeige deine Videos in einem attraktiven, modernen Kartenlayout an. So kannst du deine Inhalte hervorheben und die Besucher begeistern."
 
-#: inc/Common/Utils/Utils.php:767
+#: inc/Common/Utils/Utils.php:768
 msgid "Sort by likes or views"
 msgstr "Nach Likes oder Aufrufen sortieren"
 
-#: inc/Common/Utils/Utils.php:768
+#: inc/Common/Utils/Utils.php:769
 msgid "Show most liked or most viewed videos first with a TikTok Pro plan"
 msgstr "Zeige mit einem TikTok Pro-Abo die meistgelikten oder meistgesehenen Videos zuerst an"
 
-#: inc/Common/Utils/Utils.php:797
+#: inc/Common/Utils/Utils.php:798
 #: vendor/smashballoon/customizer/app/V3/About_Builder.php:59
 #: vendor/smashballoon/customizer/app/V3/About_Builder.php:60
 #: vendor/smashballoon/customizer/sb-common/sb-customizer/build/static/js/main.js:2
 msgid "About Us"
 msgstr "Über uns"
 
-#: inc/Common/Utils/Utils.php:798
+#: inc/Common/Utils/Utils.php:799
 #: vendor/smashballoon/customizer/app/V3/Support_Builder.php:59
 #: vendor/smashballoon/customizer/app/V3/Support_Builder.php:60
 #: vendor/smashballoon/customizer/sb-common/sb-customizer/build/static/js/main.js:2
@@ -1939,12 +1941,12 @@ msgstr ""
 msgid "Once Weekly"
 msgstr ""
 
-#: inc/Common/Customizer/FeedBuilder.php:209
+#: inc/Common/Customizer/FeedBuilder.php:207
 #: inc/Common/Customizer/Tabs/CustomizeTab.php:145
 msgid "Gallery"
 msgstr ""
 
-#: inc/Common/Customizer/FeedBuilder.php:214
+#: inc/Common/Customizer/FeedBuilder.php:212
 msgid "Widget"
 msgstr ""
 
@@ -1960,11 +1962,11 @@ msgstr ""
 msgid "WPCode Snippets"
 msgstr ""
 
-#: inc/Common/Utils/Utils.php:734
+#: inc/Common/Utils/Utils.php:735
 msgid "Upgrade to TikTok Pro plans to get inline playback"
 msgstr ""
 
-#: inc/Common/Utils/Utils.php:735
+#: inc/Common/Utils/Utils.php:736
 msgid "Play videos directly on the page without the lightbox. Provide a seamless experience for visitors."
 msgstr ""
 
@@ -1998,4 +2000,44 @@ msgstr ""
 
 #: vendor/smashballoon/customizer/sb-common/sb-customizer/build/static/js/main.js:2
 msgid "No snippets found"
+msgstr ""
+
+#: inc/Common/Services/NewUserService.php:177
+msgid "Access denied"
+msgstr ""
+
+#: inc/Common/Services/NewUserService.php:222
+msgid "Glad to hear you are enjoying it. Would you consider leaving a positive review?"
+msgstr ""
+
+#: inc/Common/Services/NewUserService.php:223
+msgid "It really helps to support the plugin and help others to discover it too!"
+msgstr ""
+
+#: inc/Common/Services/NewUserService.php:226
+msgid "Exclusive offer - 60% off!"
+msgstr ""
+
+#: inc/Common/Services/NewUserService.php:227
+msgid "We don’t run promotions very often, but for a limited time we’re offering 60% Off our Pro version to all users of our free TikTok Feeds."
+msgstr ""
+
+#: inc/Common/Services/NotificationService.php:534
+msgid "Are you enjoying the TikTok Feeds Plugin?"
+msgstr ""
+
+#: inc/Common/Services/NotificationService.php:785
+msgid "Previous message"
+msgstr ""
+
+#: inc/Common/Services/NotificationService.php:789
+msgid "Next message"
+msgstr ""
+
+#: inc/Common/Services/NotificationService.php:817
+msgid "Dismiss this message"
+msgstr ""
+
+#: inc/Common/Services/NotificationService.php:818
+msgid "Dismiss"
 msgstr ""

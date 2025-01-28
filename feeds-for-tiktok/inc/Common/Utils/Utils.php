@@ -7,6 +7,7 @@ use SmashBalloon\TikTokFeeds\Common\Relay\Relay;
 use SmashBalloon\TikTokFeeds\Common\Database\FeedsTable;
 use SmashBalloon\TikTokFeeds\Common\Database\SourcesTable;
 use SmashBalloon\TikTokFeeds\Common\AuthorizationStatusCheck;
+use SmashBalloon\TikTokFeeds\Common\Services\NotificationService;
 
 if (! defined('ABSPATH')) {
 	exit;
@@ -797,5 +798,19 @@ class Utils
 			'<a href="' . esc_url(admin_url('admin.php?page=sbtt-about')) . '">' . __('About Us', 'feeds-for-tiktok') . '</a>',
 			'<a href="' . esc_url(admin_url('admin.php?page=sbtt-support')) . '">' . __('Support', 'feeds-for-tiktok') . '</a>',
 		];
+	}
+
+	/**
+	 * Get the count of notifications
+	 *
+	 * @return int
+	 */
+	public static function get_notifications_count()
+	{
+		$notifications = new NotificationService();
+		$notifications = $notifications->getNotifications();
+		$notifications_count = !empty($notifications) ? count($notifications) : 0;
+
+		return $notifications_count;
 	}
 }

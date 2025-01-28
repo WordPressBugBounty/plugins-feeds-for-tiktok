@@ -169,7 +169,7 @@ body .sbtt_review_step1_notice .sbtt-btn-link:not(:last-child) {
 }
 #sbtt-notifications .dismiss {
   position: absolute;
-  top: 2px;
+  top: 12px;
   right: 6px;
   width: 30px;
   height: 32px;
@@ -191,7 +191,7 @@ body .sbtt_review_step1_notice .sbtt-btn-link:not(:last-child) {
 #sbtt-notifications .navigation {
   position: absolute;
   bottom: 24px;
-  right: 21px;
+  right: 40px;
   width: 72px;
   height: 30px;
 }
@@ -244,6 +244,24 @@ body .sbtt_review_step1_notice .sbtt-btn-link:not(:last-child) {
 
 #sbtt-notifications .navigation .disabled img {
   opacity: 0.4;
+}
+
+.sbtt-notice-alert {
+  display: inline-block;
+  position: absolute;
+  vertical-align: top;
+  box-sizing: border-box;
+  margin: 1px 0 0 4px;
+  padding: 0 5px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background-color: #d63638;
+  color: #fff;
+  font-size: 11px;
+  line-height: 1.6;
+  text-align: center;
+  z-index: 26;
 }
 
 @media screen and (max-width: 880px) {

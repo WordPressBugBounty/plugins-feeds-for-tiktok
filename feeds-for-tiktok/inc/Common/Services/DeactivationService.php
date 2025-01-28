@@ -34,7 +34,6 @@ class DeactivationService
 	{
 		wp_clear_scheduled_hook('sbtt_refresh_token_routine');
 		wp_clear_scheduled_hook('sbtt_feed_update_routine');
-		wp_clear_scheduled_hook('sbtt_resize_post_images');
 		wp_clear_scheduled_hook('sbtt_usage_tracking_cron');
 	}
 }

@@ -45,7 +45,7 @@ class FeedUpdateRoutine extends ServiceProvider
 			wp_schedule_event(time(), $this->cron_interval, 'sbtt_feed_update_routine');
 		}
 		add_action('sbtt_feed_update_routine', array( $this, 'init_feed_updates' ));
-		add_action('sbtt_resize_post_images', array( $this, 'resize_post_images'), 10, 2);
+		add_action('init', array( $this, 'sbtt_check_and_resize_images'));
 	}
 
 	/**
@@ -76,8 +76,6 @@ class FeedUpdateRoutine extends ServiceProvider
 				'last_cron_update' => time(),
 			)
 		);
-
-		return;
 	}
 
 	/**
@@ -90,11 +88,7 @@ class FeedUpdateRoutine extends ServiceProvider
 		$statuses                = $this->auth_check->get_statuses();
 		$time_with_minute_buffer = time() + 60;
 
-		if ($statuses['last_cron_update'] < $time_with_minute_buffer - $statuses['update_frequency']) {
-			return true;
-		}
-
-		return false;
+		return $statuses['last_cron_update'] < $time_with_minute_buffer - $statuses['update_frequency'];
 	}
 
 	/**
@@ -105,9 +99,7 @@ class FeedUpdateRoutine extends ServiceProvider
 	private function get_feeds_to_update()
 	{
 		$feed_cache_table = new FeedCacheTable();
-		$feeds_to_update  = $feed_cache_table->get_feeds_to_update();
-
-		return $feeds_to_update;
+		return $feed_cache_table->get_feeds_to_update();
 	}
 
 	/**
@@ -119,11 +111,11 @@ class FeedUpdateRoutine extends ServiceProvider
 	public function update_feeds($feeds_to_update)
 	{
 		if (empty($feeds_to_update)) {
-			return;
+			return false;
 		}
 
 		foreach ($feeds_to_update as $single_feed) {
-			$feed_id = isset($single_feed['feed_id']) && ! empty($single_feed['feed_id']) ? absint($single_feed['feed_id']) : 0;
+			$feed_id = ! empty($single_feed['feed_id']) ? absint($single_feed['feed_id']) : 0;
 
 			$feed_data = new FeedSettings($feed_id);
 			$feed_data = $feed_data->get_feed_data();
@@ -143,13 +135,15 @@ class FeedUpdateRoutine extends ServiceProvider
 	}
 
 	/**
-	 * Resizes the images of the posts based on the global settings and feed settings.
+	 * Checks and resizes images based on global settings.
 	 *
-	 * @param array $posts The array of posts to resize the images for.
-	 * @param int   $feed_id The ID of the feed.
+	 * This function retrieves global settings and checks if image optimization is enabled.
+	 * If enabled, it retrieves resize data from the options table and processes each post's images.
+	 * After resizing the images, it clears the resize data option.
+	 *
 	 * @return void
 	 */
-	public function resize_post_images($posts, $feed_id)
+	public function sbtt_check_and_resize_images()
 	{
 		$global_settings = new SettingsManagerService();
 		$global_settings = $global_settings->get_global_settings();
@@ -158,6 +152,41 @@ class FeedUpdateRoutine extends ServiceProvider
 			return;
 		}
 
+		$resize_data = get_option('sbtt_resize_images_data', array());
+
+		if (empty($resize_data)) {
+			return;
+		}
+
+		foreach ($resize_data as $data) {
+			if (empty($data['posts']) || empty($data['feed_id'])) {
+				continue;
+			}
+
+			$posts = $data['posts'];
+			$feed_id = $data['feed_id'];
+
+			$this->resize_post_images($posts, $feed_id);
+		}
+
+		// Clear the option after resizing.
+		delete_option('sbtt_resize_images_data');
+
+		/**
+		 * Apply a filter to allow other plugins to clear and update their cache.
+		 */
+		do_action('sbtt_cache_update_after_resize');
+	}
+
+	/**
+	 * Resizes the images of the posts based on the global settings and feed settings.
+	 *
+	 * @param array $posts The array of posts to resize the images for.
+	 * @param int   $feed_id The ID of the feed.
+	 * @return void
+	 */
+	public function resize_post_images($posts, $feed_id)
+	{
 		if (!is_array($posts) || empty($posts) || empty($feed_id)) {
 			return;
 		}
@@ -166,7 +195,7 @@ class FeedUpdateRoutine extends ServiceProvider
 		$feed_data = new FeedSettings($id);
 		$feed_settings = $feed_data->get_feed_settings();
 
-		if (! isset($feed_settings['sources']) || empty($feed_settings['sources'])) {
+		if (empty($feed_settings['sources'])) {
 			return;
 		}
 
