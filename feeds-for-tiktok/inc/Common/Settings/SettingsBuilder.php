@@ -91,9 +91,11 @@ class SettingsBuilder extends Settings_Builder
 	 */
 	public function customSettingsData()
 	{
+		$plugin_settings = $this->global_settings->get_global_settings();
+
 		$settings_data = [
 			'nonce'          => wp_create_nonce('sbtt-admin'),
-			'pluginSettings' => $this->global_settings->get_global_settings(),
+			'pluginSettings' => $plugin_settings,
 			'currentTab'     => 'sb-general-tab',
 			'assetsURL'      => SBTT_COMMON_ASSETS,
 			'sourcesList'    => Utils::get_sources_list(),
@@ -114,6 +116,9 @@ class SettingsBuilder extends Settings_Builder
 				'isProInstalled' => WPCode::is_pro_installed(),
 			),
 			'adminNoticeContent' => apply_filters('sbtt_admin_notices_filter', 1),
+			'upgradeProLink'	=> get_upgrade_pro_plugin_link($plugin_settings['license_key'] ?? null),
+			'isLicenseUpgraded'   => get_option('sbtt_islicence_upgraded'),
+			'licenseUpgradedInfo' => get_option('sbtt_upgraded_info')
 		];
 
 		$newly_retrieved_source_connection_data = Utils::maybe_source_connection_data();

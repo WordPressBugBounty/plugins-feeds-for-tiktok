@@ -7,10 +7,11 @@ namespace Smashballoon\Customizer\V3;
  *
  * @since 1.0
  */
-if (!defined('ABSPATH')) {
+if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
+/** @internal */
 abstract class SB_Sidebar_Tab
 {
     /**
@@ -23,7 +24,7 @@ abstract class SB_Sidebar_Tab
      */
     function get_tab()
     {
-        $tab = array_merge($this->tab_info(), ['sections' => $this->tab_sections()]);
+        $tab = \array_merge($this->tab_info(), ['sections' => $this->tab_sections()]);
         return $tab;
     }
     /**
@@ -33,7 +34,7 @@ abstract class SB_Sidebar_Tab
      *
      * @return array
      */
-    abstract protected function tab_info();
+    protected abstract function tab_info();
     /**
      * Get the Sidebar Tab Sections
      *
@@ -41,5 +42,5 @@ abstract class SB_Sidebar_Tab
      *
      * @return array
      */
-    abstract protected function tab_sections();
+    protected abstract function tab_sections();
 }

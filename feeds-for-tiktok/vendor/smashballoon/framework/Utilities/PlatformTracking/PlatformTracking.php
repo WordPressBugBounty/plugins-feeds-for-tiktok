@@ -8,6 +8,7 @@ use Smashballoon\Framework\Utilities\PlatformTracking\Platforms\GoDadddy;
 use Smashballoon\Framework\Utilities\PlatformTracking\Platforms\Kinsta;
 use Smashballoon\Framework\Utilities\PlatformTracking\Platforms\SiteGround;
 use Smashballoon\Framework\Utilities\PlatformTracking\Platforms\WPEngine;
+/** @internal */
 class PlatformTracking
 {
     /**
@@ -44,6 +45,6 @@ class PlatformTracking
      */
     public static function get_platform()
     {
-        return apply_filters('sb_hosting_platform', 'unknown');
+        return \apply_filters('sb_hosting_platform', 'unknown');
     }
 }

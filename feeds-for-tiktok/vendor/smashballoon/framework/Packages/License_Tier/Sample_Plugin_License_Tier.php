@@ -8,6 +8,7 @@
 namespace Smashballoon\Customizer;
 
 use Smashballoon\Framework\Packages\License_Tier\License_Tier;
+/** @internal */
 class Sample_Plugin_License_Tier extends License_Tier
 {
     /**

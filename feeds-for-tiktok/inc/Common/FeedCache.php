@@ -122,7 +122,7 @@ class FeedCache
 	 */
 	public function retrieve_and_set_feed_cache()
 	{
-		$expired         = true;
+		$expired = true;
 		$existing_caches = $this->get_existing_cache();
 
 		if ($existing_caches === false) {
@@ -134,13 +134,8 @@ class FeedCache
 			switch ($cache['cache_key']) {
 				case 'posts':
 					$this->posts = $cache['cache_value'];
-
-					if (strtotime($cache['last_updated']) > time() - $this->cache_time) {
-						$expired = false;
-					}
-
-					if (empty($cache['cache_value'])) {
-						$expired = true;
+					if (!empty($cache['cache_value'])) {
+						$expired = strtotime($cache['last_updated']) <= time() - $this->cache_time;
 					}
 					break;
 
@@ -150,10 +145,6 @@ class FeedCache
 
 				case 'header':
 					$this->header = $cache['cache_value'];
-
-					if (empty($cache['cache_value'])) {
-						$expired = true;
-					}
 					break;
 
 				case 'errors' . $this->suffix:
@@ -174,11 +165,7 @@ class FeedCache
 			}
 		}
 
-		$this->is_expired = $expired;
-
-		if ($this->cache_time < 1) {
-			$this->is_expired = true;
-		}
+		$this->is_expired = ($this->cache_time > 0) ? $expired : true;
 	}
 
 	/**
@@ -190,14 +177,15 @@ class FeedCache
 	 */
 	public function is_expired($cache_type = 'posts')
 	{
-		if ($cache_type !== 'posts') {
-			$cache = $this->get($cache_type);
-
-			return ( empty($cache) || $this->is_expired );
-		}
-
+		// Handle pagination case first.
 		if ($this->page > 1 && empty($this->posts_page)) {
 			return true;
+		}
+
+		// For non-posts types, also check if cache is empty.
+		if ($cache_type !== 'posts') {
+			$cache = $this->get($cache_type);
+			return empty($cache) || $this->is_expired;
 		}
 
 		return $this->is_expired;
@@ -210,11 +198,10 @@ class FeedCache
 	 */
 	public function is_expired_with_no_errors()
 	{
-		if ($this->is_expired() === true && empty($this->errors)) {
-			return true;
-		}
+		$is_expired = $this->is_expired();
+		$has_no_errors = empty($this->errors) || $this->errors === '[]';
 
-		return false;
+		return $is_expired && $has_no_errors;
 	}
 
 	/**
@@ -490,9 +477,13 @@ class FeedCache
 	 */
 	private function maybe_customizer_suffix()
 	{
-		$additional_suffix = '';
+		// First check if _CUSTOMIZER is already in the feed_id.
+		if (strpos($this->feed_id, '_CUSTOMIZER') !== false) {
+			return '';
+		}
 
-		if (! empty($_POST['previewSettings']) || ( isset($_GET['page']) && $_GET['page'] === 'sbtt' )) {
+		$additional_suffix = '';
+		if (!empty($_POST['previewSettings']) || (isset($_GET['page']) && $_GET['page'] === 'sbtt')) {
 			$additional_suffix = '_CUSTOMIZER';
 		}
 

@@ -85,7 +85,7 @@ class FeedUpdateRoutine extends ServiceProvider
 	 */
 	private function should_do_updates()
 	{
-		$statuses                = $this->auth_check->get_statuses();
+		$statuses = $this->auth_check->get_statuses();
 		$time_with_minute_buffer = time() + 60;
 
 		return $statuses['last_cron_update'] < $time_with_minute_buffer - $statuses['update_frequency'];
@@ -126,7 +126,7 @@ class FeedUpdateRoutine extends ServiceProvider
 
 			$feed_settings = json_decode($feed_data['settings'], true);
 
-			$feed = new Feed($feed_settings, $feed_id, new FeedCache($feed_id, 0));
+			$feed = new Feed($feed_settings, $feed_id, new FeedCache($feed_id));
 			$feed->init();
 			$feed->get_set_cache();
 		}

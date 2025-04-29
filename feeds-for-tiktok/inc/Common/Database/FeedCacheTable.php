@@ -320,11 +320,11 @@ class FeedCacheTable extends Table
 		global $wpdb;
 		$table_name = $wpdb->prefix . self::TABLE_NAME;
 
-		$sql = "SELECT DISTINCT feed_id FROM $table_name 
-			WHERE cron_update = 'yes' 
+		$sql = "SELECT DISTINCT feed_id FROM $table_name
+			WHERE cron_update = 'yes'
 			AND feed_id NOT LIKE '%_CUSTOMIZER'
 			AND feed_id NOT LIKE '%_CUSTOMIZER_MODMODE'
-			AND last_updated > DATE_SUB(NOW(), INTERVAL 1 MONTH)
+			AND last_updated < NOW() - INTERVAL 3 HOUR
 			ORDER BY last_updated ASC";
 
 		$results = $wpdb->get_results($sql, ARRAY_A);

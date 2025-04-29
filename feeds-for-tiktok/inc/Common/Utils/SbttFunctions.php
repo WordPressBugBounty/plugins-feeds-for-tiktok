@@ -455,3 +455,19 @@ function sbtt_get_error_message_and_directions($message)
 
 	return $message;
 }
+
+
+/**
+ * Get Upgrade Plugin link
+ *
+ * @return string
+ */
+function get_upgrade_pro_plugin_link($license_key = null)
+{
+	return empty($license_key)
+	? 'https://smashballoon.com/pricing/tiktok-feed/'
+	:  sprintf(
+		'https://smashballoon.com/pricing/tiktok-feed/?license_key=%s&upgrade=true&utm_campaign=tiktok-pro&utm_source=settings&utm_medium=license&utm_content=upgrade',
+		$license_key
+	);
+}

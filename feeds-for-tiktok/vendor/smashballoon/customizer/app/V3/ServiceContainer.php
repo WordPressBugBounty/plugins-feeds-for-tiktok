@@ -3,6 +3,7 @@
 namespace Smashballoon\Customizer\V3;
 
 use Smashballoon\Stubs\Services\ServiceProvider;
+/** @internal */
 class ServiceContainer extends ServiceProvider
 {
     /**

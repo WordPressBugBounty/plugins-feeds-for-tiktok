@@ -143,6 +143,7 @@ class PluginUpgraderService extends ServiceProvider
 			'home_url'    => $home_url,
 			'version'     => '1.0',
 			'key'         => $license,
+			'is_pro_upgrade' => true
 		);
 		$url  = add_query_arg($args, self::CHECK_URL);
 
@@ -228,13 +229,21 @@ class PluginUpgraderService extends ServiceProvider
 				self::UPGRADE_URL
 			);
 			wp_send_json_success(
-				array(
+				[
+					'success' => true,
 					'url' => $url,
-				)
+					'same_version' => version_compare(SBTTVER, $check_key_response['current_version'], '='),
+					'remote_version' => $check_key_response['current_version']
+				]
 			);
 		}
 
-		wp_send_json_error(array( 'message' => esc_html__('Could not connect.', 'feeds-for-tiktok') ));
+		wp_send_json_error(
+			[
+				'success' => false,
+				'message' => esc_html__('Could not connect.', 'feeds-for-tiktok')
+			]
+		);
 	}
 
 	/**
@@ -276,11 +285,13 @@ class PluginUpgraderService extends ServiceProvider
 			)
 		);
 
-		// Verify pro not installed.
-		$active = activate_plugin(self::SLUG, $url, false, true);
-		if (! is_wp_error($active)) {
-			deactivate_plugins(plugin_basename(SBTT_PLUGIN_DIR));
-			wp_send_json_success(esc_html__('Plugin installed & activated.', 'feeds-for-tiktok'));
+		if (defined('SBTT_LITE')) {
+			// Verify pro not installed.
+			$active = activate_plugin(self::SLUG, $url, false, true);
+			if (! is_wp_error($active)) {
+				deactivate_plugins(plugin_basename(SBTT_PLUGIN_DIR));
+				wp_send_json_success(esc_html__('Plugin installed & activated.', 'feeds-for-tiktok'));
+			}
 		}
 
 		$creds = request_filesystem_credentials($url, '', false, false, null);
@@ -305,7 +316,9 @@ class PluginUpgraderService extends ServiceProvider
 		remove_action('upgrader_process_complete', array( 'Language_Pack_Upgrader', 'async_upgrade' ), 20);
 
 		// Create the plugin upgrader with our custom skin.
-		$installer = new PluginSilentUpgrader(new InstallSkin());
+		$installer = new PluginSilentUpgrader(
+			new InstallSkin()
+		);
 
 		// Error check.
 		if (! method_exists($installer, 'install') || empty($post_url)) {
@@ -325,13 +338,23 @@ class PluginUpgraderService extends ServiceProvider
 		}
 
 		if (! empty($file)) {
-			$installer->install( $file ); // phpcs:ignore
+			$installer->install(
+				$file,
+				[
+					'overwrite_package' => true,
+					'clear_working' => true,
+					'clear_destination' => true
+				]
+			);
+
+			delete_option('sbtt_islicence_upgraded');
+			delete_option('sbtt_upgraded_info');
+
 			// Check license key.
 			// Flush the cache and return the newly installed plugin basename.
 			wp_cache_flush();
 
 			$plugin_basename = $installer->plugin_info();
-
 			if ($plugin_basename) {
 				deactivate_plugins(plugin_basename(SBTT_PLUGIN_BASENAME), true);
 
@@ -423,5 +446,60 @@ class PluginUpgraderService extends ServiceProvider
 		}
 
 		return $message;
+	}
+
+	/**
+	 * Check if License is Upgraded
+	 *
+	 * @param mixed $current_license_data .
+	 * @param mixed $license .
+	 *
+	 * @return mixed
+	 */
+	public static function check_license_upgraded($current_license_data, $license)
+	{
+		$home_url = home_url();
+
+		$args = [
+			'plugin_name' => self::NAME,
+			'plugin_slug' => 'pro',
+			'plugin_path' => plugin_basename(__FILE__),
+			'plugin_url'  => trailingslashit(WP_PLUGIN_URL) . 'pro',
+			'home_url'    => $home_url,
+			'version'     => '1.0',
+			'key'         => $license,
+			'is_pro_upgrade' => true
+		];
+
+		$url  = add_query_arg($args, self::CHECK_URL);
+
+		$response =  wp_safe_remote_get(
+			$url,
+			[
+				'timeout' => '50',
+			]
+		);
+
+		delete_option('sbtt_islicence_upgraded');
+		delete_option('sbtt_upgraded_info');
+
+		if (!is_wp_error($response)) {
+			$body 					= wp_remote_retrieve_body($response);
+			$check_key_response 	= json_decode($body, true);
+			$license_data 			= $check_key_response['license_data'];
+
+			if (
+				isset(
+					$current_license_data['item_name'],
+					$current_license_data['item_id'],
+					$license_data['item_name'],
+					$license_data['item_id']
+				)
+				&& strtolower($current_license_data['item_name']) !== strtolower($license_data['item_name'])
+			) {
+				update_option('sbtt_islicence_upgraded', true);
+				update_option('sbtt_upgraded_info', $license_data);
+			}
+		}
 	}
 }

@@ -2,6 +2,7 @@
 
 namespace Smashballoon\Customizer\V3\Config;
 
+/** @internal */
 class Proxy
 {
     public $parent_menu_slug = '';

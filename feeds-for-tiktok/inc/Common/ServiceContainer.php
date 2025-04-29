@@ -6,6 +6,7 @@ use SmashBalloon\TikTokFeeds\Common\Container;
 use Smashballoon\Stubs\Services\ServiceProvider;
 use SmashBalloon\TikTokFeeds\Common\Admin\MenuService;
 use SmashBalloon\TikTokFeeds\Common\Admin\AboutBuilder;
+use SmashBalloon\TikTokFeeds\Common\Admin\Blocks;
 use SmashBalloon\TikTokFeeds\Common\Admin\SupportBuilder;
 use SmashBalloon\TikTokFeeds\Common\Customizer\FeedBuilder;
 use SmashBalloon\TikTokFeeds\Common\Integrations\FeedAnalytics;
@@ -55,6 +56,7 @@ class ServiceContainer extends ServiceProvider
 		NotificationService::class,
 		NewUserService::class,
 		FeedAnalytics::class,
+		Blocks::class,
 	];
 
 	/**

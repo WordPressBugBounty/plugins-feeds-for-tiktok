@@ -8,12 +8,13 @@
 namespace Smashballoon\Framework\Packages\Notification\Notices;
 
 use Smashballoon\Framework\Packages\Notification\Notices\NoticeFields;
-if (!defined('ABSPATH')) {
+if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly.
 }
 /**
  * Abstract Notice class.
+ * @internal
  */
 abstract class Notice
 {
@@ -150,8 +151,8 @@ abstract class Notice
      */
     public function __construct($args)
     {
-        $this->screen = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
-        $args = wp_parse_args($args, ['type' => 'error', 'message' => '', 'title' => '', 'icon' => '', 'image' => '', 'class' => '', 'id' => '', 'dismissible' => \false, 'dismiss' => '', 'buttons' => [], 'buttons_wrap_start' => '', 'buttons_wrap_end' => '', 'wrap_schema' => '<div {id} {class}>{icon}{title}{message}{buttons}</div>', 'nav' => \false, 'navigation' => '', 'wrap_class' => '', 'wrap_id' => '', 'data' => '', 'styles' => '']);
+        $this->screen = isset($_GET['page']) ? \sanitize_text_field(\wp_unslash($_GET['page'])) : '';
+        $args = \wp_parse_args($args, ['type' => 'error', 'message' => '', 'title' => '', 'icon' => '', 'image' => '', 'class' => '', 'id' => '', 'dismissible' => \false, 'dismiss' => '', 'buttons' => [], 'buttons_wrap_start' => '', 'buttons_wrap_end' => '', 'wrap_schema' => '<div {id} {class}>{icon}{title}{message}{buttons}</div>', 'nav' => \false, 'navigation' => '', 'wrap_class' => '', 'wrap_id' => '', 'data' => '', 'styles' => '']);
         $this->type = $args['type'];
         $this->message = $args['message'];
         $this->title = $args['title'];
@@ -178,7 +179,7 @@ abstract class Notice
      *
      * @return void
      */
-    abstract public function display();
+    public abstract function display();
     /**
      * Replace fields in notice.
      *
@@ -191,9 +192,9 @@ abstract class Notice
     {
         if (!empty($fields)) {
             foreach ($fields as $key => $value) {
-                $notice = str_replace('{' . $key . '}', $value, $notice);
+                $notice = \str_replace('{' . $key . '}', $value, $notice);
             }
-            $notice = wp_kses($notice, NoticeFields::$allowed_tags);
+            $notice = \wp_kses($notice, NoticeFields::$allowed_tags);
         }
         return $notice;
     }
