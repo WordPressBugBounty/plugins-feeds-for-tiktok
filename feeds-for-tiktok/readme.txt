@@ -4,7 +4,7 @@ Contributors: smashballoon, craig-at-smash-balloon, am, smub
 Tags: TikTok, TikTok feed, TikTok videos, TikTok account, TikTok widget
 Support Website: https://smashballoon.com/tiktok-feeds/
 Requires at least: 5.2
-Tested up to: 6.8
+Tested up to: 6.9
 Stable tag: 1.1.1
 Requires PHP: 7.4
 License: GPLv2 or later
