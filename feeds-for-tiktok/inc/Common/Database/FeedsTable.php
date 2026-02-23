@@ -104,13 +104,27 @@ class FeedsTable extends Table
 
 		$data = wp_parse_args($data, $this->defaults());
 
+		// Remove 'id' from data as it's AUTO_INCREMENT and should not be explicitly set during insert
+		if (isset($data['id'])) {
+			unset($data['id']);
+		}
+
 		if (! empty($data['settings'])) {
 			$data['settings'] = sbtt_json_encode($data['settings']);
+			// Check if JSON encoding failed
+			if ($data['settings'] === false) {
+				error_log('SBTT Feed Insert Error: JSON encoding failed for settings');
+				return false;
+			}
 		}
 
 		$result = $wpdb->insert($table_name, $data, $this->get_columns_format());
 
 		if (! $result) {
+			// Log the database error for debugging
+			if (!empty($wpdb->last_error)) {
+				error_log('SBTT Feed Insert Error: ' . $wpdb->last_error);
+			}
 			return false;
 		}
 
@@ -202,6 +216,11 @@ class FeedsTable extends Table
 
 		if (! empty($data['settings'])) {
 			$data['settings'] = sbtt_json_encode($data['settings']);
+			// Check if JSON encoding failed
+			if ($data['settings'] === false) {
+				error_log('SBTT Feed Update Error: JSON encoding failed for settings');
+				return false;
+			}
 		}
 
 		$format       = $this->get_columns_format();
@@ -219,7 +238,11 @@ class FeedsTable extends Table
 
 		$result = $wpdb->update($table_name, $data, $where, $format, $where_format);
 
-		if (! $result) {
+		if ($result === false) {
+			// Log the database error for debugging
+			if (!empty($wpdb->last_error)) {
+				error_log('SBTT Feed Update Error: ' . $wpdb->last_error);
+			}
 			return false;
 		}
 

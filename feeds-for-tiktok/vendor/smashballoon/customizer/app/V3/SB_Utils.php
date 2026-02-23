@@ -8,11 +8,10 @@ namespace Smashballoon\Customizer\V3;
  *
  * @since 1.0
  */
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-/** @internal */
 class SB_Utils
 {
     /**
@@ -26,10 +25,10 @@ class SB_Utils
     {
         $icons = [];
         $icons_dir = SBTT_COMMON_ASSETS_DIR . '/sb-customizer/assets/icons';
-        $icons_list = \glob($icons_dir . "/*");
+        $icons_list = glob($icons_dir . "/*");
         foreach ($icons_list as $icon) {
-            $icon_name = \str_replace('.svg', '', \basename($icon));
-            $icons[$icon_name] = \file_get_contents($icon);
+            $icon_name = str_replace('.svg', '', basename($icon));
+            $icons[$icon_name] = file_get_contents($icon);
         }
         return $icons;
     }
@@ -42,11 +41,11 @@ class SB_Utils
      */
     public static function get_wp_pages()
     {
-        $pagesList = \get_pages();
+        $pagesList = get_pages();
         $pagesResult = array();
-        if (\is_array($pagesList)) {
+        if (is_array($pagesList)) {
             foreach ($pagesList as $page) {
-                \array_push($pagesResult, array('id' => $page->ID, 'title' => $page->post_title));
+                array_push($pagesResult, array('id' => $page->ID, 'title' => $page->post_title));
             }
         }
         return $pagesResult;

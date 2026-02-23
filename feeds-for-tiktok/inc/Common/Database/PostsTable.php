@@ -217,6 +217,39 @@ class PostsTable extends Table
 	}
 
 	/**
+	 * Validate multiple video_ids exist in database (single query)
+	 *
+	 * @param array $video_ids Array of video IDs to validate
+	 * @return array Array of valid video_ids that exist in database
+	 */
+	public function validate_video_ids($video_ids)
+	{
+		global $wpdb;
+		$table_name = $wpdb->prefix . self::TABLE_NAME;
+
+		if (empty($video_ids) || !is_array($video_ids)) {
+			return array();
+		}
+
+		// Sanitize and prepare placeholders
+		$sanitized_ids = array_map('sanitize_text_field', $video_ids);
+		$sanitized_ids = array_filter($sanitized_ids, function ($id) {
+			return !empty($id) && preg_match('/^[a-zA-Z0-9_-]+$/', $id);
+		});
+
+		if (empty($sanitized_ids)) {
+			return array();
+		}
+
+		$placeholders = implode(',', array_fill(0, count($sanitized_ids), '%s'));
+		$query = "SELECT video_id FROM $table_name WHERE video_id IN ($placeholders)";
+
+		$results = $wpdb->get_col($wpdb->prepare($query, ...$sanitized_ids));
+
+		return $results ? $results : array();
+	}
+
+	/**
 	 * Get posts from the database.
 	 *
 	 * @param array $args Arguments to pass to the query.

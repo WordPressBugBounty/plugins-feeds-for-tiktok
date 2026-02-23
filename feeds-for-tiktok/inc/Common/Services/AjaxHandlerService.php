@@ -37,6 +37,7 @@ class AjaxHandlerService extends ServiceProvider
 		add_action('wp_ajax_sbtt_import_feed_settings', array( $this, 'import_feed_settings' ));
 		add_action('wp_ajax_sbtt_clear_all_caches', array( $this, 'clear_all_caches' ));
 		add_action('wp_ajax_sbtt_reset_posts_images', array($this, 'reset_posts_images'));
+		add_action('wp_ajax_sbtt_process_oauth_tokens', array($this, 'process_oauth_tokens'));
 	}
 
 	/**
@@ -412,8 +413,65 @@ class AjaxHandlerService extends ServiceProvider
 		$posts_table = new PostsTable();
 		$posts_table->reset_images_done();
 
+		delete_transient('sbtt_heic_capability');
+
 		wp_send_json_success();
 
 		wp_die();
+	}
+
+	/**
+	 * Ajax handler to process OAuth tokens from URL fragment.
+	 *
+	 * Receives tokens sent via JavaScript after being captured from URL fragment.
+	 * This approach avoids URL length limits since fragments are not sent to server.
+	 *
+	 * @return void
+	 */
+	public function process_oauth_tokens()
+	{
+		check_ajax_referer('sbtt-admin', 'nonce');
+
+		if (! current_user_can('manage_options')) {
+			wp_send_json_error(['message' => 'Unauthorized']);
+		}
+
+		// Verify OAuth nonce from connect site.
+		$oauth_nonce = isset($_POST['sbtt_con']) ? sanitize_key($_POST['sbtt_con']) : '';
+		if (! wp_verify_nonce($oauth_nonce, 'sbtt_con')) {
+			wp_send_json_error(['message' => 'Invalid OAuth nonce']);
+		}
+
+		// Extract tokens from POST data.
+		$access_token  = isset($_POST['sbtt_access_token']) ? sanitize_text_field(wp_unslash($_POST['sbtt_access_token'])) : '';
+		$refresh_token = isset($_POST['sbtt_refresh_token']) ? sanitize_text_field(wp_unslash($_POST['sbtt_refresh_token'])) : '';
+
+		if (empty($access_token) || empty($refresh_token)) {
+			wp_send_json_error(['message' => 'Missing tokens']);
+		}
+
+		// Build OAuth data array to pass directly to retrieve_user_info().
+		$oauth_data = array(
+			'access_token'       => $access_token,
+			'refresh_token'      => $refresh_token,
+			'openid'             => isset($_POST['sbtt_openid']) ? sanitize_text_field(wp_unslash($_POST['sbtt_openid'])) : '',
+			'expires_in'         => isset($_POST['sbtt_expires_in']) ? absint($_POST['sbtt_expires_in']) : 0,
+			'refresh_expires_in' => isset($_POST['sbtt_refresh_expires_in']) ? absint($_POST['sbtt_refresh_expires_in']) : 0,
+			'scope'              => isset($_POST['sbtt_scope']) ? sanitize_text_field(wp_unslash($_POST['sbtt_scope'])) : '',
+		);
+
+		// Process user info with OAuth data.
+		$source = Utils::retrieve_user_info($oauth_data);
+
+		if ($source && ! isset($source['error'])) {
+			// Store source data in transient for retrieval after page reload.
+			// This enables the feed creation flow to continue after OAuth redirect.
+			// TTL of 5 minutes allows for slow connections and speed bump confirmation.
+			set_transient('sbtt_new_source_data_' . get_current_user_id(), $source, 5 * MINUTE_IN_SECONDS);
+			wp_send_json_success(['source' => $source]);
+		} else {
+			$error_message = isset($source['error']) ? $source['error'] : 'Failed to process connection';
+			wp_send_json_error(['message' => $error_message]);
+		}
 	}
 }

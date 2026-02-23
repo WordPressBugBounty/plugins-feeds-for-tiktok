@@ -2,7 +2,6 @@
 
 namespace Smashballoon\Customizer\V3;
 
-/** @internal */
 class Container
 {
     public static $container;

@@ -6,8 +6,13 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'TikTokFeeds\\Vendor\\Smashballoon\\Framework\\' => array($vendorDir . '/smashballoon/framework'),
+    'TikTokFeeds\\Vendor\\Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
+    'TikTokFeeds\\Vendor\\PhpDocReader\\' => array($vendorDir . '/php-di/phpdoc-reader/src/PhpDocReader'),
+    'TikTokFeeds\\Vendor\\Laravel\\SerializableClosure\\' => array($vendorDir . '/laravel/serializable-closure/src'),
+    'TikTokFeeds\\Vendor\\Invoker\\' => array($vendorDir . '/php-di/invoker/src'),
+    'TikTokFeeds\\Vendor\\DI\\' => array($vendorDir . '/smashballoon/framework/Packages/php-di/src'),
     'Smashballoon\\Stubs\\' => array($vendorDir . '/smashballoon/stubs/src'),
-    'Smashballoon\\Framework\\' => array($vendorDir . '/smashballoon/framework'),
     'Smashballoon\\Customizer\\V3\\' => array($vendorDir . '/smashballoon/customizer/app/V3'),
     'SmashBalloon\\TikTokFeeds\\' => array($baseDir . '/inc'),
 );

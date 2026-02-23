@@ -60,3 +60,15 @@ class SmashBalloon_TikTokFeeds
 }
 
 new SmashBalloon_TikTokFeeds();
+
+// Initialize the deactivation feedback survey.
+if (class_exists('\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Feedback\FeedbackManager')) {
+	$sbtt_plugin_slug = defined('SBTT_PRO') ? 'sb-tiktok-feeds-pro' : 'sb-tiktok-feeds';
+	\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Feedback\FeedbackManager::init([
+		'plugin_slug'    => $sbtt_plugin_slug,
+		'plugin_name'    => 'Smash Balloon TikTok Feeds',
+		'plugin_version' => SBTTVER,
+		'plugin_file'    => SBTT_PLUGIN_FILE,
+		'support_url'    => 'https://smashballoon.com/support/',
+	]);
+}

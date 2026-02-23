@@ -1,14 +1,13 @@
 <?php
 
-namespace Smashballoon\Framework\Utilities\PlatformTracking;
+namespace TikTokFeeds\Vendor\Smashballoon\Framework\Utilities\PlatformTracking;
 
-use Smashballoon\Framework\Utilities\PlatformTracking\Platforms\Bluehost;
-use Smashballoon\Framework\Utilities\PlatformTracking\Platforms\Flywheel;
-use Smashballoon\Framework\Utilities\PlatformTracking\Platforms\GoDadddy;
-use Smashballoon\Framework\Utilities\PlatformTracking\Platforms\Kinsta;
-use Smashballoon\Framework\Utilities\PlatformTracking\Platforms\SiteGround;
-use Smashballoon\Framework\Utilities\PlatformTracking\Platforms\WPEngine;
-/** @internal */
+use TikTokFeeds\Vendor\Smashballoon\Framework\Utilities\PlatformTracking\Platforms\Bluehost;
+use TikTokFeeds\Vendor\Smashballoon\Framework\Utilities\PlatformTracking\Platforms\Flywheel;
+use TikTokFeeds\Vendor\Smashballoon\Framework\Utilities\PlatformTracking\Platforms\GoDadddy;
+use TikTokFeeds\Vendor\Smashballoon\Framework\Utilities\PlatformTracking\Platforms\Kinsta;
+use TikTokFeeds\Vendor\Smashballoon\Framework\Utilities\PlatformTracking\Platforms\SiteGround;
+use TikTokFeeds\Vendor\Smashballoon\Framework\Utilities\PlatformTracking\Platforms\WPEngine;
 class PlatformTracking
 {
     /**
@@ -45,6 +44,6 @@ class PlatformTracking
      */
     public static function get_platform()
     {
-        return \apply_filters('sb_hosting_platform', 'unknown');
+        return apply_filters('sb_hosting_platform', 'unknown');
     }
 }

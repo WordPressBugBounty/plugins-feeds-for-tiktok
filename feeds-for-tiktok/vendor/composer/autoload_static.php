@@ -8,32 +8,61 @@ class ComposerStaticInit197d09a687b60803f921b448e0f1c3ee
 {
     public static $files = array (
         'sb_ttf_b1eb330aa001ae4915f07005b4e993c2' => __DIR__ . '/..' . '/smashballoon/framework/Utilities/functions.php',
+        'sb_ttf_a5f44a166aafa87e1c96130802135926' => __DIR__ . '/..' . '/smashballoon/framework/Packages/php-di/src/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
-        'S' => 
+        'T' =>
+        array (
+            'TikTokFeeds\\Vendor\\Smashballoon\\Framework\\' => 42,
+            'TikTokFeeds\\Vendor\\Psr\\Container\\' => 33,
+            'TikTokFeeds\\Vendor\\PhpDocReader\\' => 32,
+            'TikTokFeeds\\Vendor\\Laravel\\SerializableClosure\\' => 47,
+            'TikTokFeeds\\Vendor\\Invoker\\' => 27,
+            'TikTokFeeds\\Vendor\\DI\\' => 22,
+        ),
+        'S' =>
         array (
             'Smashballoon\\Stubs\\' => 19,
-            'Smashballoon\\Framework\\' => 23,
             'Smashballoon\\Customizer\\V3\\' => 27,
             'SmashBalloon\\TikTokFeeds\\' => 25,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Smashballoon\\Stubs\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/smashballoon/stubs/src',
-        ),
-        'Smashballoon\\Framework\\' => 
+        'TikTokFeeds\\Vendor\\Smashballoon\\Framework\\' =>
         array (
             0 => __DIR__ . '/..' . '/smashballoon/framework',
         ),
-        'Smashballoon\\Customizer\\V3\\' => 
+        'TikTokFeeds\\Vendor\\Psr\\Container\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/psr/container/src',
+        ),
+        'TikTokFeeds\\Vendor\\PhpDocReader\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/php-di/phpdoc-reader/src/PhpDocReader',
+        ),
+        'TikTokFeeds\\Vendor\\Laravel\\SerializableClosure\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/laravel/serializable-closure/src',
+        ),
+        'TikTokFeeds\\Vendor\\Invoker\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/php-di/invoker/src',
+        ),
+        'TikTokFeeds\\Vendor\\DI\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/smashballoon/framework/Packages/php-di/src',
+        ),
+        'Smashballoon\\Stubs\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/smashballoon/stubs/src',
+        ),
+        'Smashballoon\\Customizer\\V3\\' =>
         array (
             0 => __DIR__ . '/..' . '/smashballoon/customizer/app/V3',
         ),
-        'SmashBalloon\\TikTokFeeds\\' => 
+        'SmashBalloon\\TikTokFeeds\\' =>
         array (
             0 => __DIR__ . '/../..' . '/inc',
         ),

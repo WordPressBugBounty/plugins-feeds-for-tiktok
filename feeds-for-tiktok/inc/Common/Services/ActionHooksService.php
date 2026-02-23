@@ -14,6 +14,7 @@ class ActionHooksService extends ServiceProvider
 	{
 		add_action('init', array($this, 'load_textdomain' ));
 		add_action('admin_enqueue_scripts', array($this, 'dequeue_styles'), 11);
+		add_action('admin_enqueue_scripts', array($this, 'enqueue_oauth_fragment_handler'));
 
 		add_action('sbtt_enqueue_scripts', array( $this, 'register_scripts' ));
 		add_action('wp_enqueue_scripts', array( $this, 'register_scripts' ));
@@ -120,5 +121,55 @@ class ActionHooksService extends ServiceProvider
 		}
 
 		wpcode_register_library_username('smashballoon', 'Smash Balloon');
+	}
+
+	/**
+	 * Enqueue the OAuth fragment handler script and related assets.
+	 *
+	 * This script captures OAuth tokens from URL fragments and sends them via AJAX.
+	 * Also includes toast notification system for success/error feedback.
+	 * Only loads on plugin admin pages where OAuth redirect can occur.
+	 *
+	 * @return void
+	 */
+	public function enqueue_oauth_fragment_handler()
+	{
+		$current_screen = get_current_screen();
+
+		if (! $current_screen || ! isset($current_screen->id)) {
+			return;
+		}
+
+		// Only load on plugin pages where OAuth redirect can occur.
+		if (strpos($current_screen->id, 'sbtt') === false) {
+			return;
+		}
+
+		// Enqueue OAuth notification and loading styles.
+		wp_enqueue_style(
+			'sbtt-oauth',
+			SBTT_PLUGIN_URL . 'assets/css/sbtt-oauth.css',
+			array(),
+			SBTTVER
+		);
+
+		// Enqueue OAuth fragment handler (includes toast notification module).
+		wp_enqueue_script(
+			'sbtt-oauth-fragment',
+			SBTT_PLUGIN_URL . 'assets/js/oauth-fragment-handler.js',
+			array(),
+			SBTTVER,
+			false  // Load in head so it runs early.
+		);
+
+		wp_localize_script('sbtt-oauth-fragment', 'sbtt_oauth', array(
+			'ajaxurl' => admin_url('admin-ajax.php'),
+			'nonce'   => wp_create_nonce('sbtt-admin'),
+			'strings' => array(
+				'success'       => __('TikTok account connected successfully!', 'feeds-for-tiktok'),
+				'error_prefix'  => __('Failed to connect TikTok account: ', 'feeds-for-tiktok'),
+				'error_generic' => __('Failed to connect TikTok account. Please try again.', 'feeds-for-tiktok'),
+			),
+		));
 	}
 }

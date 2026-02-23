@@ -500,7 +500,7 @@ class Feed
 		$args = [
 			'access_token' => $source['access_token'],
 			'open_id'      => $source['open_id'],
-			'username'     => $source['info']['username'],
+			'username'     => isset($source['info']['username']) ? $source['info']['username'] : '',
 		];
 
 		$relay    = new Relay();
@@ -593,7 +593,7 @@ class Feed
 		$args = [
 			'access_token' => $source['access_token'],
 			'open_id'      => $source['open_id'],
-			'username'     => $source['info']['username'],
+			'username'     => isset($source['info']['username']) ? $source['info']['username'] : '',
 		];
 
 		if (!empty($cursor)) {
@@ -829,6 +829,20 @@ class Feed
 
 		$resized_image = false;
 
+		// Skip HEIC images if server cannot process them.
+		$url_path = wp_parse_url($cover_image_url, PHP_URL_PATH);
+		$cover_ext = strtolower(pathinfo($url_path ?: '', PATHINFO_EXTENSION));
+		if (in_array($cover_ext, array('heic', 'heif'), true) && ! Utils::can_process_heic()) {
+			$post['image_processing_attempted'] = true;
+			$json_data = sbtt_sanitize_data($post);
+			$posts_table = new PostsTable();
+			$posts_table->update(
+				array('json_data' => $json_data, 'images_done' => -1),
+				array('video_id' => $video_id)
+			);
+			return $post;
+		}
+
 		$webp_supported = wp_image_editor_supports(array('mime_type' => 'image/webp'));
 		$webp_supported = apply_filters('sbtt_webp_supported', $webp_supported);
 		$extension 	    = $webp_supported ? '.webp' : '.jpg';
@@ -838,7 +852,20 @@ class Feed
 			$image_editor = wp_get_image_editor($cover_image_url);
 
 			if (is_wp_error($image_editor)) {
-				continue;
+				// Image editor failed - mark for client-side conversion
+				$post['image_processing_attempted'] = true;
+				$json_data = sbtt_sanitize_data($post);
+
+				$posts_table = new PostsTable();
+				$posts_table->update(
+					array(
+						'json_data' => $json_data,
+						'images_done' => -1
+					),
+					array('video_id' => $video_id)
+				);
+
+				break;
 			}
 
 			$image_editor->resize($dimensions['width'], $dimensions['height'], null);
@@ -848,6 +875,7 @@ class Feed
 		if ($resized_image) {
 			$cover_image_url = $this->upload_url . '/' . $video_id . '-full' . $extension;
 			$post['local_cover_image_url'] = $cover_image_url;
+			$post['image_processing_attempted'] = true;
 			$json_data  = sbtt_sanitize_data($post);
 
 			$posts_table = new PostsTable();
@@ -864,6 +892,7 @@ class Feed
 
 		return $post;
 	}
+
 
 	/**
 	 * Resize avatar image for header.

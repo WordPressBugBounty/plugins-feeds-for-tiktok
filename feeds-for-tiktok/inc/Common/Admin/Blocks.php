@@ -2,7 +2,7 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Admin;
 
-use Smashballoon\Framework\Packages\Blocks\RecommendedBlocks;
+use TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Blocks\RecommendedBlocks;
 use Smashballoon\Stubs\Services\ServiceProvider;
 
 class Blocks extends ServiceProvider

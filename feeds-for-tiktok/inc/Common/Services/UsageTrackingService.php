@@ -2,8 +2,8 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Services;
 
-use Smashballoon\Framework\Utilities\PlatformTracking\PlatformTracking;
-use Smashballoon\Framework\Utilities\UsageTracking;
+use TikTokFeeds\Vendor\Smashballoon\Framework\Utilities\PlatformTracking\PlatformTracking;
+use TikTokFeeds\Vendor\Smashballoon\Framework\Utilities\UsageTracking;
 use Smashballoon\Stubs\Services\ServiceProvider;
 use SmashBalloon\TikTokFeeds\Common\FeedSettings;
 use SmashBalloon\TikTokFeeds\Common\Utils;

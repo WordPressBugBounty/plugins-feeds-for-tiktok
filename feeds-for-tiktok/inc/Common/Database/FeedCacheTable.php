@@ -335,4 +335,102 @@ class FeedCacheTable extends Table
 
 		return $results;
 	}
+
+	/**
+	 * Update feed caches with converted image URLs for specific video IDs.
+	 *
+	 * Optimized to only process caches that actually contain the video IDs,
+	 * significantly reducing unnecessary JSON decode/encode operations.
+	 *
+	 * @param array $video_updates Array of ['video_id' => 'local_url'] pairs.
+	 * @return int Number of caches updated.
+	 */
+	public function update_converted_images_in_cache($video_updates)
+	{
+		if (empty($video_updates)) {
+			return 0;
+		}
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . self::TABLE_NAME;
+
+		// Pre-filter caches by checking if they contain any of the video IDs
+		// This dramatically reduces the number of JSON decodes needed
+		$video_ids = array_keys($video_updates);
+		$placeholders = array();
+		$query_values = array();
+
+		foreach ($video_ids as $video_id) {
+			// Escape for LIKE clause and add JSON structure match
+			$escaped_id = $wpdb->esc_like($video_id);
+			// Safe: Only adding literal %s placeholder (no user input in SQL structure)
+			$placeholders[] = "cache_value LIKE %s";
+			// Match JSON: "id":"video_id" (with quotes, as stored in JSON)
+			$query_values[] = '%"id":"' . $escaped_id . '"%';
+		}
+
+		// Build WHERE clause with placeholders (safe: contains only literal "cache_value LIKE %s" strings)
+		$where_clause = implode(' OR ', $placeholders);
+		$sql = "SELECT id, feed_id, cache_key, cache_value
+			FROM $table_name
+			WHERE cache_key = 'posts'
+			AND (" . $where_clause . ")";
+
+		// Use prepare to safely substitute user input into %s placeholders
+		$caches = $wpdb->get_results($wpdb->prepare($sql, $query_values), ARRAY_A);
+
+		if (! $caches) {
+			return 0;
+		}
+
+		$updated_count = 0;
+
+		// Process only the caches that potentially contain our video IDs
+		foreach ($caches as $cache) {
+			$cache_updated = false;
+			$posts = json_decode($cache['cache_value'], true);
+
+			// Skip cache if JSON decode failed or returned invalid data
+			if (! is_array($posts)) {
+				continue;
+			}
+
+			// Update posts that match our video IDs
+			foreach ($posts as &$post) {
+				$video_id = isset($post['id']) ? $post['id'] : '';
+
+				if (isset($video_updates[$video_id])) {
+					$post['local_cover_image_url'] = $video_updates[$video_id];
+					$cache_updated = true;
+				}
+			}
+
+			// Only update if we actually changed something
+			if ($cache_updated) {
+				$updated_cache_value = wp_json_encode($posts);
+
+				// Skip update if JSON encoding failed (corrupted data)
+				if ($updated_cache_value === false) {
+					continue;
+				}
+
+				$wpdb->update(
+					$table_name,
+					array(
+						'cache_value'  => $updated_cache_value,
+						'last_updated' => date('Y-m-d H:i:s'),
+					),
+					array(
+						'id' => $cache['id'],
+					),
+					array('%s', '%s'),
+					array('%d')
+				);
+
+				$updated_count++;
+			}
+		}
+
+		return $updated_count;
+	}
 }

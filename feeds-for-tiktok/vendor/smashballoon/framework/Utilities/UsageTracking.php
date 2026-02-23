@@ -1,9 +1,8 @@
 <?php
 
-namespace Smashballoon\Framework\Utilities;
+namespace TikTokFeeds\Vendor\Smashballoon\Framework\Utilities;
 
-use Smashballoon\Framework\Utilities\PlatformTracking\PlatformTracking;
-/** @internal */
+use TikTokFeeds\Vendor\Smashballoon\Framework\Utilities\PlatformTracking\PlatformTracking;
 class UsageTracking
 {
     const LIB_VERSION = '1.0.0';
@@ -61,7 +60,7 @@ class UsageTracking
         if (empty($plugin_name)) {
             return \false;
         }
-        $last_send_transient = \get_transient(\sprintf(self::TRANSIENT_KEY, $plugin_name));
+        $last_send_transient = get_transient(sprintf(self::TRANSIENT_KEY, $plugin_name));
         // Return if the last send was less than a week ago
         if (\false !== $last_send_transient) {
             return \true;
@@ -70,12 +69,12 @@ class UsageTracking
             $data['hosting_platform'] = PlatformTracking::get_platform();
         }
         // Filter usage tracking data
-        $data = \apply_filters('sb_usage_tracking_data', $data, $plugin_slug);
-        if (!\is_array($data) || empty($data)) {
+        $data = apply_filters('sb_usage_tracking_data', $data, $plugin_slug);
+        if (!is_array($data) || empty($data)) {
             return \false;
         }
         if (self::post_data($data)) {
-            \set_transient(self::get_transient_name($plugin_name), \time(), self::TRANSIENT_EXPIRATION);
+            set_transient(self::get_transient_name($plugin_name), time(), self::TRANSIENT_EXPIRATION);
             return \true;
         }
         return \false;
@@ -89,11 +88,11 @@ class UsageTracking
      */
     private static function post_data($data)
     {
-        $response = \wp_remote_post(self::API_BASE_URL . 'checkin/', ['body' => \json_encode($data), 'timeout' => 5, 'blocking' => \true, 'sslverify' => \false, 'headers' => ['Content-Type' => 'application/json; charset=utf-8', 'user-agent' => 'SB/' . self::LIB_VERSION . '; ' . \get_bloginfo('url')]]);
-        if (\is_wp_error($response)) {
+        $response = wp_remote_post(self::API_BASE_URL . 'checkin/', ['body' => json_encode($data), 'timeout' => 5, 'blocking' => \true, 'sslverify' => \false, 'headers' => ['Content-Type' => 'application/json; charset=utf-8', 'user-agent' => 'SB/' . self::LIB_VERSION . '; ' . get_bloginfo('url')]]);
+        if (is_wp_error($response)) {
             return \false;
         }
-        $response_code = \wp_remote_retrieve_response_code($response);
+        $response_code = wp_remote_retrieve_response_code($response);
         if (200 !== $response_code) {
             return \false;
         }
@@ -108,7 +107,7 @@ class UsageTracking
      */
     private static function get_transient_name($plugin_name)
     {
-        return \sprintf(self::TRANSIENT_KEY, $plugin_name);
+        return sprintf(self::TRANSIENT_KEY, $plugin_name);
     }
     /**
      * Get plugin name from slug.

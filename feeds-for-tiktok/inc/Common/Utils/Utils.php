@@ -64,83 +64,132 @@ class Utils
 	 * data is returned from the account connection processed it's used
 	 * to generate the list of possible sources to chose from.
 	 *
-	 * @return array|bool
+	 * @return array|false Source data on success, false on failure.
 	 *
 	 * @since 1.0
 	 */
 	public static function maybe_source_connection_data()
 	{
-		$nonce = ! empty($_REQUEST['sbtt_con']) ? sanitize_key($_REQUEST['sbtt_con']) : '';
-		if (! wp_verify_nonce($nonce, 'sbtt_con')) {
+		// Check for fragment-based OAuth success (version 3).
+		// After AJAX processes the tokens, it stores source data in a transient
+		// and redirects with sbtt_oauth_success=1.
+		if ( isset( $_GET['sbtt_oauth_success'] ) && $_GET['sbtt_oauth_success'] === '1' ) {
+			$user_id = get_current_user_id();
+			$source  = get_transient( 'sbtt_new_source_data_' . $user_id );
+			if ( $source ) {
+				delete_transient( 'sbtt_new_source_data_' . $user_id );
+				return $source;
+			}
+			// Transient missing (expired/cache issue) - don't fall through to legacy logic
+			// as it expects tokens in $_REQUEST which aren't present in fragment-based flow.
 			return false;
 		}
 
-		$access_token  = isset($_REQUEST['sbtt_access_token']) ? sanitize_text_field(wp_unslash($_REQUEST['sbtt_access_token'])) : false;
-		$refresh_token = isset($_REQUEST['sbtt_refresh_token']) ? sanitize_text_field(wp_unslash($_REQUEST['sbtt_refresh_token'])) : false;
-
-		if ($access_token && $refresh_token) {
-			$user_info = self::retrieve_user_info();
-
-			return $user_info;
+		// Original logic for query-string based approach (version 1/2).
+		$nonce = ! empty( $_REQUEST['sbtt_con'] ) ? sanitize_key( $_REQUEST['sbtt_con'] ) : '';
+		if ( ! wp_verify_nonce( $nonce, 'sbtt_con' ) ) {
+			return false;
 		}
-		return false;
+
+		if ( empty( $_REQUEST['sbtt_access_token'] ) || empty( $_REQUEST['sbtt_refresh_token'] ) ) {
+			return false;
+		}
+
+		$result = self::retrieve_user_info();
+
+		// Return false on error for backward compatibility with callers checking truthiness.
+		return ( is_array( $result ) && isset( $result['error'] ) ) ? false : $result;
 	}
 
 	/**
 	 * Retrieve the User Info for the new source connection from the User Info API.
 	 *
-	 * @return array|bool
+	 * @param array $oauth_data Optional. OAuth data array with keys: access_token, refresh_token,
+	 *                          openid, expires_in, refresh_expires_in, scope. If not provided,
+	 *                          falls back to $_REQUEST for backward compatibility.
+	 * @return array|false Source data array on success, array with 'error' key on API failure,
+	 *                     or false if access_token is missing.
 	 */
-	public static function retrieve_user_info()
+	public static function retrieve_user_info( $oauth_data = array() )
 	{
-		$access_token    = ! empty($_REQUEST['sbtt_access_token']) ? sanitize_text_field(wp_unslash($_REQUEST['sbtt_access_token'])) : '';
-		$refresh_token   = ! empty($_REQUEST['sbtt_refresh_token']) ? sanitize_text_field(wp_unslash($_REQUEST['sbtt_refresh_token'])) : '';
-		$open_id         = ! empty($_REQUEST['sbtt_openid']) ? sanitize_text_field(wp_unslash($_REQUEST['sbtt_openid'])) : '';
-		$expires         = ! empty($_REQUEST['sbtt_expires_in']) ? absint($_REQUEST['sbtt_expires_in']) : '';
-		$refresh_expires = ! empty($_REQUEST['sbtt_refresh_expires_in']) ? absint($_REQUEST['sbtt_refresh_expires_in']) : '';
-		$scope           = ! empty($_REQUEST['sbtt_scope']) ? sanitize_text_field(wp_unslash($_REQUEST['sbtt_scope'])) : '';
+		$oauth_data = self::extract_oauth_data( $oauth_data );
 
-		if (empty($access_token)) {
+		if ( empty( $oauth_data['access_token'] ) ) {
 			return false;
 		}
 
-		$sources = array(
-			'access_token'    => $access_token,
-			'refresh_token'   => $refresh_token,
-			'open_id'         => $open_id,
-			'expires'         => date('Y-m-d H:i:s', time() + $expires),
-			'refresh_expires' => date('Y-m-d H:i:s', time() + $refresh_expires),
-			'scope'           => $scope,
-			'last_updated'    => date('Y-m-d H:i:s'),
+		// Fetch user info from API before building source data.
+		$relay    = new Relay();
+		$response = $relay->call(
+			'user/info',
+			array(
+				'access_token' => $oauth_data['access_token'],
+				'open_id'      => $oauth_data['openid'],
+			)
 		);
 
-		$args = [
-			'access_token' => $access_token,
-			'open_id'      => $open_id,
-		];
-
-		$relay    = new Relay();
-		$response = $relay->call('user/info', $args);
-
-		if (isset($response['success']) && $response['success'] === false) {
-			return false;
+		if ( isset( $response['success'] ) && false === $response['success'] ) {
+			$error_message = isset( $response['data']['error'] ) ? $response['data']['error'] : __( 'Failed to retrieve user info from TikTok.', 'feeds-for-tiktok' );
+			return array( 'error' => $error_message );
 		}
 
-		if (isset($response['data']['user_data'])) {
+		// Build source data only after successful API call.
+		$sources      = array(
+			'access_token'    => $oauth_data['access_token'],
+			'refresh_token'   => $oauth_data['refresh_token'],
+			'open_id'         => $oauth_data['openid'],
+			'expires'         => date( 'Y-m-d H:i:s', time() + $oauth_data['expires_in'] ),
+			'refresh_expires' => date( 'Y-m-d H:i:s', time() + $oauth_data['refresh_expires_in'] ),
+			'scope'           => $oauth_data['scope'],
+			'last_updated'    => date( 'Y-m-d H:i:s' ),
+		);
+
+		if ( isset( $response['data']['user_data'] ) ) {
 			$user_data               = $response['data']['user_data'];
-			$sources['display_name'] = ! empty($user_data['display_name']) ? sanitize_text_field(wp_unslash($user_data['display_name'])) : '';
-			$sources['info']         = sbtt_sanitize_data($user_data);
+			$sources['display_name'] = ! empty( $user_data['display_name'] ) ? sanitize_text_field( wp_unslash( $user_data['display_name'] ) ) : '';
+			$sources['info']         = sbtt_sanitize_data( $user_data );
 		}
 
 		// Update or insert the source.
 		$source_table = new SourcesTable();
-		$source_table->update_or_insert($sources);
+		$source_table->update_or_insert( $sources );
 
-		if (! empty($sources['info'])) {
-			$sources['info'] = sbtt_json_encode($sources['info']);
+		if ( ! empty( $sources['info'] ) ) {
+			$sources['info'] = sbtt_json_encode( $sources['info'] );
 		}
 
 		return $sources;
+	}
+
+	/**
+	 * Extract and sanitize OAuth data from array or $_REQUEST.
+	 *
+	 * @param array $oauth_data Optional. Pre-sanitized OAuth data array.
+	 * @return array Sanitized OAuth data with consistent keys.
+	 */
+	private static function extract_oauth_data( $oauth_data = array() )
+	{
+		if ( ! empty( $oauth_data ) ) {
+			// Sanitize even when passed directly - defense in depth.
+			return array(
+				'access_token'       => ! empty( $oauth_data['access_token'] ) ? sanitize_text_field( $oauth_data['access_token'] ) : '',
+				'refresh_token'      => ! empty( $oauth_data['refresh_token'] ) ? sanitize_text_field( $oauth_data['refresh_token'] ) : '',
+				'openid'             => ! empty( $oauth_data['openid'] ) ? sanitize_text_field( $oauth_data['openid'] ) : '',
+				'expires_in'         => ! empty( $oauth_data['expires_in'] ) ? absint( $oauth_data['expires_in'] ) : 0,
+				'refresh_expires_in' => ! empty( $oauth_data['refresh_expires_in'] ) ? absint( $oauth_data['refresh_expires_in'] ) : 0,
+				'scope'              => ! empty( $oauth_data['scope'] ) ? sanitize_text_field( $oauth_data['scope'] ) : '',
+			);
+		}
+
+		// Fallback to $_REQUEST for backward compatibility (traditional OAuth redirect flow).
+		return array(
+			'access_token'       => ! empty( $_REQUEST['sbtt_access_token'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sbtt_access_token'] ) ) : '',
+			'refresh_token'      => ! empty( $_REQUEST['sbtt_refresh_token'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sbtt_refresh_token'] ) ) : '',
+			'openid'             => ! empty( $_REQUEST['sbtt_openid'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sbtt_openid'] ) ) : '',
+			'expires_in'         => ! empty( $_REQUEST['sbtt_expires_in'] ) ? absint( $_REQUEST['sbtt_expires_in'] ) : 0,
+			'refresh_expires_in' => ! empty( $_REQUEST['sbtt_refresh_expires_in'] ) ? absint( $_REQUEST['sbtt_refresh_expires_in'] ) : 0,
+			'scope'              => ! empty( $_REQUEST['sbtt_scope'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sbtt_scope'] ) ) : '',
+		);
 	}
 
 	/**
@@ -798,6 +847,65 @@ class Utils
 			'<a href="' . esc_url(admin_url('admin.php?page=sbtt-about')) . '">' . __('About Us', 'feeds-for-tiktok') . '</a>',
 			'<a href="' . esc_url(admin_url('admin.php?page=sbtt-support')) . '">' . __('Support', 'feeds-for-tiktok') . '</a>',
 		];
+	}
+
+	/**
+	 * Check if the server can process HEIC/HEIF images.
+	 *
+	 * Performs a local-only check (no network calls) by verifying that
+	 * ImageMagick has HEIC/HEIF delegates and is in the active
+	 * wp_image_editors chain. Result is cached for 12 hours.
+	 *
+	 * @return bool
+	 */
+	public static function can_process_heic()
+	{
+		$override = apply_filters('sbtt_heic_supported', null);
+		if ($override !== null) {
+			return (bool) $override;
+		}
+
+		$cached = get_transient('sbtt_heic_capability');
+		if ($cached !== false) {
+			return $cached === 'yes';
+		}
+
+		$supported = false;
+
+		// Check if ImageMagick has HEIC/HEIF delegates.
+		if (class_exists('Imagick')) {
+			try {
+				$formats = \Imagick::queryFormats('HEIC');
+				if (!empty($formats)) {
+					$supported = true;
+				}
+				if (!$supported) {
+					$formats = \Imagick::queryFormats('HEIF');
+					$supported = !empty($formats);
+				}
+			} catch (\Exception $e) {
+				$supported = false;
+			}
+		}
+
+		// Verify ImageMagick is in the active wp_image_editors chain
+		// (a host/plugin may force GD-only via the wp_image_editors filter).
+		if ($supported) {
+			$editors = apply_filters('wp_image_editors', array('WP_Image_Editor_Imagick', 'WP_Image_Editor_GD'));
+			$has_imagick = false;
+			foreach ($editors as $editor) {
+				if (strpos($editor, 'Imagick') !== false) {
+					$has_imagick = true;
+					break;
+				}
+			}
+			if (!$has_imagick) {
+				$supported = false;
+			}
+		}
+
+		set_transient('sbtt_heic_capability', $supported ? 'yes' : 'no', 12 * HOUR_IN_SECONDS);
+		return $supported;
 	}
 
 	/**

@@ -75,9 +75,9 @@ function sbtt_feed_settings_defaults()
 
 		// Header.
 		'showHeader'                  => true,
-		'headerContent'               => [ 'avatar', 'name', 'username', 'description', 'stats', 'button' ],
+		'headerContent'               => ['avatar', 'name', 'username', 'description', 'stats', 'button'],
 		'headerPadding'               => [],
-		'headerMargin'                => [ 'bottom' => 50 ],
+		'headerMargin'                => ['bottom' => 50],
 		// Profile Picture.
 		'headerAvatar'                => $is_pro ? 'medium' : 'small',
 		'headerAvatarPadding'         => [],
@@ -124,7 +124,7 @@ function sbtt_feed_settings_defaults()
 		],
 		'headerStatsDescriptionColor' => '#141B38',
 		'headerStatsPadding'          => [],
-		'headerStatsMargin'           => [ 'top' => 16 ],
+		'headerStatsMargin'           => ['top' => 16],
 		// Button.
 		'headerButtonContent'         => __('Follow on TikTok', 'feeds-for-tiktok'),
 		'headerButtonFont'            => [
@@ -154,7 +154,7 @@ function sbtt_feed_settings_defaults()
 			'bottom' => 20,
 		],
 
-		'postElements'                => [ 'thumbnail', 'playIcon', 'views', 'likes', 'caption' ],
+		'postElements'                => ['thumbnail', 'playIcon', 'views', 'likes', 'caption'],
 		'captionFont'                 => [
 			'weight' => 400,
 			'size'   => 13,
@@ -212,7 +212,7 @@ function sbtt_get_tiktok_connection_urls($is_settings = false)
 {
 	$urls            = array();
 	$nonce           = wp_create_nonce('sbtt_con');
-	$admin_url_state = ( $is_settings ) ? admin_url('admin.php?page=sbtt-settings') : admin_url('admin.php?page=sbtt');
+	$admin_url_state = ($is_settings) ? admin_url('admin.php?page=sbtt-settings') : admin_url('admin.php?page=sbtt');
 	$sw_flag         = ! empty($_GET['sw-feed']) ? true : false;
 
 	// If the admin_url isn't returned correctly then use a fallback.
@@ -222,11 +222,21 @@ function sbtt_get_tiktok_connection_urls($is_settings = false)
 		$admin_url_state = esc_url('http://' . $host . $request_uri);
 	}
 
-	$urls['page']     = SBTT_CONNECT_URL;
-	$urls['stateURL'] = $admin_url_state;
-	$urls['sbtt_con'] = $nonce;
-	$urls['sw_feed']  = $sw_flag;
-	$urls['sbtt_connect_ver'] = sbtt_is_ssl() ? 2 : 1;
+	// Get current user email for Lindris onboarding, with admin email as fallback.
+	$current_user   = wp_get_current_user();
+	$wordpress_user = ! empty($current_user->user_email) ? $current_user->user_email : get_option('admin_email', '');
+
+	// Determine license type (pro or free).
+	$is_pro = defined('SBTT_PRO') && SBTT_PRO === true;
+
+	$urls['page']           = SBTT_CONNECT_URL;
+	$urls['stateURL']       = $admin_url_state;
+	$urls['sbtt_con']       = $nonce;
+	$urls['sw_feed']        = $sw_flag;
+	// Version 3: Fragment-based token passing via JavaScript + AJAX.
+	$urls['sbtt_connect_ver'] = 3;
+	$urls['wordpress_user']   = $wordpress_user;
+	$urls['v']                = $is_pro ? 'pro' : 'free';
 
 	return $urls;
 }
@@ -465,9 +475,9 @@ function sbtt_get_error_message_and_directions($message)
 function get_upgrade_pro_plugin_link($license_key = null)
 {
 	return empty($license_key)
-	? 'https://smashballoon.com/pricing/tiktok-feed/'
-	:  sprintf(
-		'https://smashballoon.com/pricing/tiktok-feed/?license_key=%s&upgrade=true&utm_campaign=tiktok-pro&utm_source=settings&utm_medium=license&utm_content=upgrade',
-		$license_key
-	);
+		? 'https://smashballoon.com/pricing/tiktok-feed/'
+		:  sprintf(
+			'https://smashballoon.com/pricing/tiktok-feed/?license_key=%s&upgrade=true&utm_campaign=tiktok-pro&utm_source=settings&utm_medium=license&utm_content=upgrade',
+			$license_key
+		);
 }

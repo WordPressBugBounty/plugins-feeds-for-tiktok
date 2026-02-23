@@ -8,6 +8,8 @@ use SmashBalloon\TikTokFeeds\Common\AuthorizationStatusCheck;
 use SmashBalloon\TikTokFeeds\Common\FeedSettings;
 use SmashBalloon\TikTokFeeds\Common\Feed;
 use SmashBalloon\TikTokFeeds\Common\FeedCache;
+use SmashBalloon\TikTokFeeds\Common\Utils;
+use SmashBalloon\TikTokFeeds\Common\Database\PostsTable;
 use SmashBalloon\TikTokFeeds\Common\Services\SettingsManagerService;
 
 class FeedUpdateRoutine extends ServiceProvider
@@ -158,6 +160,9 @@ class FeedUpdateRoutine extends ServiceProvider
 			return;
 		}
 
+		// Only check HEIC capability for pro (free version has normal images, no HEIC).
+		$can_process_heic = Utils::sbtt_is_pro() ? Utils::can_process_heic() : true;
+
 		foreach ($resize_data as $data) {
 			if (empty($data['posts']) || empty($data['feed_id'])) {
 				continue;
@@ -166,7 +171,31 @@ class FeedUpdateRoutine extends ServiceProvider
 			$posts = $data['posts'];
 			$feed_id = $data['feed_id'];
 
-			$this->resize_post_images($posts, $feed_id);
+			if (! $can_process_heic) {
+				$heic_posts = array();
+				$non_heic_posts = array();
+
+				foreach ($posts as $key => $post) {
+					$cover_url = isset($post['cover_image_url']) ? $post['cover_image_url'] : '';
+					if ($this->is_heic_url($cover_url)) {
+						$heic_posts[$key] = $post;
+					} else {
+						$non_heic_posts[$key] = $post;
+					}
+				}
+
+				// Batch-mark HEIC posts for client-side conversion (no network).
+				if (! empty($heic_posts)) {
+					$this->batch_mark_heic_posts($heic_posts, $feed_id);
+				}
+
+				// Only process non-HEIC posts through image editor.
+				if (! empty($non_heic_posts)) {
+					$this->resize_post_images($non_heic_posts, $feed_id);
+				}
+			} else {
+				$this->resize_post_images($posts, $feed_id);
+			}
 		}
 
 		// Clear the option after resizing.
@@ -210,5 +239,74 @@ class FeedUpdateRoutine extends ServiceProvider
 
 		// Update the cache with resized images.
 		$feed->update_posts_cache_from_resize($resized_posts);
+	}
+
+	/**
+	 * Check if a URL points to a HEIC/HEIF image.
+	 *
+	 * @param string $url The URL to check.
+	 * @return bool
+	 */
+	private function is_heic_url($url)
+	{
+		if (empty($url)) {
+			return false;
+		}
+
+		$path = wp_parse_url($url, PHP_URL_PATH);
+		if (empty($path)) {
+			return false;
+		}
+
+		$ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+		return in_array($ext, array('heic', 'heif'), true);
+	}
+
+	/**
+	 * Batch-mark HEIC posts for client-side conversion without network calls.
+	 *
+	 * Sets image_processing_attempted = true and images_done = -1 so the
+	 * client-side heic-converter.js handles them.
+	 *
+	 * @param array $heic_posts Array of HEIC posts.
+	 * @param int   $feed_id The feed ID.
+	 * @return void
+	 */
+	private function batch_mark_heic_posts($heic_posts, $feed_id)
+	{
+		$posts_table = new PostsTable();
+
+		foreach ($heic_posts as $key => $post) {
+			$video_id = isset($post['id']) ? sanitize_text_field($post['id']) : '';
+			if (empty($video_id)) {
+				continue;
+			}
+
+			$post['image_processing_attempted'] = true;
+			$json_data = sbtt_sanitize_data($post);
+
+			$posts_table->update(
+				array(
+					'json_data'   => $json_data,
+					'images_done' => -1,
+				),
+				array('video_id' => $video_id)
+			);
+
+			$heic_posts[$key] = $post;
+		}
+
+		// Update feed cache so the front-end gets the updated posts.
+		$id = strpos($feed_id, '_CUSTOMIZER') !== false ? str_replace('_CUSTOMIZER', '', $feed_id) : $feed_id;
+		$feed_data = new FeedSettings($id);
+		$feed_settings = $feed_data->get_feed_settings();
+
+		if (empty($feed_settings['sources'])) {
+			return;
+		}
+
+		$feed = new Feed($feed_settings, $id, new FeedCache($feed_id, 2 * DAY_IN_SECONDS));
+		$feed->init();
+		$feed->update_posts_cache_from_resize($heic_posts);
 	}
 }
