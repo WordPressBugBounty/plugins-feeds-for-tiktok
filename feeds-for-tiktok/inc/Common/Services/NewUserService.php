@@ -2,6 +2,14 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Services;
 
+// phpcs:disable WordPress.Security.NonceVerification.Recommended
+// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use SmashBalloon\TikTokFeeds\Common\Utils;
 
 class NewUserService extends NotificationService

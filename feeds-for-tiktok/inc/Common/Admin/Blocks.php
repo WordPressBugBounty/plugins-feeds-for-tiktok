@@ -2,6 +2,10 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Admin;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Blocks\RecommendedBlocks;
 use Smashballoon\Stubs\Services\ServiceProvider;
 

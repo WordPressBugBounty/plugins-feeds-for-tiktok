@@ -2,6 +2,10 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Services;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use Smashballoon\Stubs\Services\ServiceProvider;
 use SmashBalloon\TikTokFeeds\Common\Utils;
 
@@ -58,7 +62,7 @@ class NotificationService extends ServiceProvider
 	 */
 	public function hasAccess()
 	{
-		if (!current_user_can('manage_options')) {
+		if (!sbtt_current_user_can()) {
 			return false;
 		}
 

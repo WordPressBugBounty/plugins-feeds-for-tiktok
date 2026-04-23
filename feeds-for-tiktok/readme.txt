@@ -5,7 +5,7 @@ Tags: TikTok, TikTok feed, TikTok videos, TikTok account, TikTok widget
 Support Website: https://smashballoon.com/tiktok-feeds/
 Requires at least: 5.2
 Tested up to: 6.9
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -15,6 +15,8 @@ The best way to display TikTok videos on your WordPress website. Display clean, 
 == Description ==
 
 Feeds for TikTok is a WordPress plugin that allows you to seamlessly integrate your TikTok account's videos into your WordPress website. With Feeds for TikTok, you can easily connect your TikTok account to the TikTok API and display your latest videos in a customizable grid on your site.
+
+https://vimeo.com/1174863183
 
 == Features ==
 
@@ -119,6 +121,10 @@ Your TikTok feed will update at least once per day. This occurs in the backgroun
 TikTok Feeds has built in caching so your feed will not go down in the event the TikTok API is unavailable or if your connected TikTok account needs to be reconnected. A backup video feed will display until the issues are resolved.
 
 == Changelog ==
+= 1.5.1 =
+* New: Automatic detection and integration with 8 GDPR consent plugins: WPConsent, Real Cookie Banner, Cookie Notice, CookieYes/WebToffee, Cookiebot, Complianz, Borlabs Cookie, and Moove.
+* Tweak: Managing TikTok feeds in WP admin now uses a dedicated `manage_tiktok_feed_options` capability. Administrators keep access by default; grant this capability to other roles if needed.
+
 = 1.5.0 =
 * New: Integrated deactivation feedback to help us improve the plugin.
 * Fix: Source connection now correctly handles OAuth fragment parameters, resolving issues where the connection flow could fail.

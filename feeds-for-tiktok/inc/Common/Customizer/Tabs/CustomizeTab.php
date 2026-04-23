@@ -72,6 +72,7 @@ class CustomizeTab extends SB_Sidebar_Tab
 				'heading'     => __('Load More Button', 'feeds-for-tiktok'),
 				'description' => Utils::sbtt_is_pro() ? '' :
 						sprintf(
+							/* translators: 1: Opening anchor tag, 2: Closing anchor tag */
 							__('Upgrade to Pro to Load posts asynchronously with Load more button. %1$sLearn More%2$s', 'feeds-for-tiktok'),
 							'<a>',
 							'</a>'

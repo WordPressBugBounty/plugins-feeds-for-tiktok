@@ -2,6 +2,14 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Admin;
 
+// phpcs:disable WordPress.Security.NonceVerification.Recommended
+// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use Smashballoon\Stubs\Services\ServiceProvider;
 use SmashBalloon\TikTokFeeds\Common\Utils;
 
@@ -38,7 +46,7 @@ class MenuService extends ServiceProvider
 		add_menu_page(
 			$menu_title,
 			__('TikTok Feeds', 'feeds-for-tiktok') . $notice_bubble,
-			'manage_options',
+			sbtt_get_cap(),
 			SBTT_MENU_SLUG,
 			'',
 			'data:image/svg+xml;base64,' . $svg

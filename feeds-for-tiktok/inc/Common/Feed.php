@@ -117,7 +117,9 @@ class Feed
 
 		if (empty($feed_settings)) {
 			$this->add_error(
+				/* translators: %d: Feed ID number */
 				sprintf(__('No feed with the ID %d found.', 'feeds-for-tiktok'), $this->get_feed_id()),
+				/* translators: 1: Opening anchor tag, 2: Closing anchor tag */
 				sprintf(__('Please go to %1$sTikTok Feeds%2$s settings page to create a feed.', 'feeds-for-tiktok'), '<a href="' . esc_url(admin_url('admin.php?page=sbtt')) . '" target="_blank" rel="noopener noreferrer">', '</a>')
 			);
 			return;
@@ -125,7 +127,8 @@ class Feed
 
 		if (! isset($feed_settings['sources']) || empty($feed_settings['sources'])) {
 			$this->add_error(
-				sprintf(__('No sources available for this feed.', 'feeds-for-tiktok'), $this->get_feed_id()),
+				__('No sources available for this feed.', 'feeds-for-tiktok'),
+				/* translators: 1: Opening anchor tag, 2: Closing anchor tag */
 				sprintf(__('Please go to %1$sTikTok Feeds%2$s settings page and add sources for this feed to use.', 'feeds-for-tiktok'), '<a href="' . esc_url(admin_url('admin.php?page=sbtt')) . '" target="_blank" rel="noopener noreferrer">', '</a>')
 			);
 			return;
@@ -709,7 +712,7 @@ class Feed
 		// Update or insert the posts into the database.
 		foreach ($posts as $post) {
 			$video_id   = isset($post['id']) ? sanitize_text_field($post['id']) : '';
-			$time_stamp = isset($post['create_time']) ? date('Y-m-d H:i:s', $post['create_time']) : date('Y-m-d H:i:s');
+			$time_stamp = isset($post['create_time']) ? gmdate('Y-m-d H:i:s', $post['create_time']) : gmdate('Y-m-d H:i:s');
 			$open_id    = isset($post['open_id']) ? sanitize_text_field($post['open_id']) : '';
 			$views      = isset($post['view_count']) ? absint($post['view_count']) : 0;
 			$likes      = isset($post['like_count']) ? absint($post['like_count']) : 0;
@@ -722,8 +725,8 @@ class Feed
 				'views'          => $views,
 				'likes'          => $likes,
 				'time_stamp'     => $time_stamp,
-				'created_on'     => date('Y-m-d H:i:s'),
-				'last_requested' => date('Y-m-d H:i:s'),
+				'created_on'     => gmdate('Y-m-d H:i:s'),
+				'last_requested' => gmdate('Y-m-d H:i:s'),
 			);
 
 			$posts_table->update_or_insert($single_post);
@@ -752,7 +755,8 @@ class Feed
 
 		if (! $sources) {
 			$this->add_error(
-				sprintf(__('No sources available for this feed.', 'feeds-for-tiktok'), $this->get_feed_id()),
+				__('No sources available for this feed.', 'feeds-for-tiktok'),
+				/* translators: 1: Opening anchor tag, 2: Closing anchor tag */
 				sprintf(__('Please go to %1$sTikTok Feeds%2$s settings page and add sources for this feed to use.', 'feeds-for-tiktok'), '<a href="' . esc_url(admin_url('admin.php?page=sbtt')) . '" target="_blank" rel="noopener noreferrer">', '</a>')
 			);
 			$this->feed_cache->update_or_insert('errors', json_encode($this->get_errors()));

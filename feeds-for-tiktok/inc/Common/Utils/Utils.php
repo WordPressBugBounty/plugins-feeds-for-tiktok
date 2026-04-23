@@ -50,6 +50,7 @@ class Utils
 		$sb_plugins = [
 			'social-wall' => 'social-wall/social-wall.php',
 			'instagram-feed' => 'instagram-feed/instagram-feed.php',
+			'wpconsent' => 'wpconsent-cookies-banner-privacy-suite/wpconsent.php'
 		];
 
 		if (isset($sb_plugins[$plugin])) {
@@ -138,10 +139,10 @@ class Utils
 			'access_token'    => $oauth_data['access_token'],
 			'refresh_token'   => $oauth_data['refresh_token'],
 			'open_id'         => $oauth_data['openid'],
-			'expires'         => date( 'Y-m-d H:i:s', time() + $oauth_data['expires_in'] ),
-			'refresh_expires' => date( 'Y-m-d H:i:s', time() + $oauth_data['refresh_expires_in'] ),
+			'expires'         => gmdate( 'Y-m-d H:i:s', time() + $oauth_data['expires_in'] ),
+			'refresh_expires' => gmdate( 'Y-m-d H:i:s', time() + $oauth_data['refresh_expires_in'] ),
 			'scope'           => $oauth_data['scope'],
-			'last_updated'    => date( 'Y-m-d H:i:s' ),
+			'last_updated'    => gmdate( 'Y-m-d H:i:s' ),
 		);
 
 		if ( isset( $response['data']['user_data'] ) ) {
@@ -182,6 +183,7 @@ class Utils
 		}
 
 		// Fallback to $_REQUEST for backward compatibility (traditional OAuth redirect flow).
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		return array(
 			'access_token'       => ! empty( $_REQUEST['sbtt_access_token'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sbtt_access_token'] ) ) : '',
 			'refresh_token'      => ! empty( $_REQUEST['sbtt_refresh_token'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sbtt_refresh_token'] ) ) : '',
@@ -190,6 +192,7 @@ class Utils
 			'refresh_expires_in' => ! empty( $_REQUEST['sbtt_refresh_expires_in'] ) ? absint( $_REQUEST['sbtt_refresh_expires_in'] ) : 0,
 			'scope'              => ! empty( $_REQUEST['sbtt_scope'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sbtt_scope'] ) ) : '',
 		);
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -891,7 +894,7 @@ class Utils
 		// Verify ImageMagick is in the active wp_image_editors chain
 		// (a host/plugin may force GD-only via the wp_image_editors filter).
 		if ($supported) {
-			$editors = apply_filters('wp_image_editors', array('WP_Image_Editor_Imagick', 'WP_Image_Editor_GD'));
+			$editors = apply_filters('wp_image_editors', array('WP_Image_Editor_Imagick', 'WP_Image_Editor_GD')); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			$has_imagick = false;
 			foreach ($editors as $editor) {
 				if (strpos($editor, 'Imagick') !== false) {

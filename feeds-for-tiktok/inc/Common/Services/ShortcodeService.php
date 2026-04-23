@@ -37,7 +37,9 @@ class ShortcodeService extends ServiceProvider
 			return $this->render_error(
 				[
 					[
+						/* translators: %d: Feed ID number */
 						'message'    => wp_sprintf(__('No feed with the ID %d found.', 'feeds-for-tiktok'), $feed_id),
+						/* translators: 1: Opening anchor tag, 2: Closing anchor tag */
 						'directions' => wp_sprintf(__('Please go to %1$sTikTok Feeds%2$s settings page to create a feed.', 'feeds-for-tiktok'), '<a href="' . esc_url(admin_url('admin.php?page=sbtt')) . '" target="_blank" rel="noopener noreferrer">', '</a>'),
 					],
 				]
@@ -87,7 +89,7 @@ class ShortcodeService extends ServiceProvider
 	 */
 	public function render_error($errors)
 	{
-		if (! current_user_can('manage_options')) {
+		if (! sbtt_current_user_can()) {
 			return '';
 		}
 

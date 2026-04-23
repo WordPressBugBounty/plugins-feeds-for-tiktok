@@ -8,6 +8,14 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Services;
 
+// phpcs:disable WordPress.Security.NonceVerification.Recommended
+// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use Smashballoon\Stubs\Services\ServiceProvider;
 use SmashBalloon\TikTokFeeds\Common\Feed;
 use SmashBalloon\TikTokFeeds\Common\FeedCache;
@@ -47,7 +55,7 @@ class AjaxHandlerService extends ServiceProvider
 	{
 		check_ajax_referer('sbtt-admin', 'nonce');
 
-		if (! current_user_can('manage_options')) {
+		if (! sbtt_current_user_can()) {
 			wp_send_json_error();
 		}
 
@@ -77,7 +85,7 @@ class AjaxHandlerService extends ServiceProvider
 			'feed_title'    => $feed_title,
 			'settings'      => $settings,
 			'feed_style'    => $styles,
-			'last_modified' => date('Y-m-d H:i:s'),
+			'last_modified' => gmdate('Y-m-d H:i:s'),
 		);
 
 		// Update or insert the feed.
@@ -114,7 +122,7 @@ class AjaxHandlerService extends ServiceProvider
 	{
 		check_ajax_referer('sbtt-admin', 'nonce');
 
-		if (! current_user_can('manage_options')) {
+		if (! sbtt_current_user_can()) {
 			wp_send_json_error();
 		}
 
@@ -139,7 +147,7 @@ class AjaxHandlerService extends ServiceProvider
 	{
 		check_ajax_referer('sbtt-admin', 'nonce');
 
-		if (! current_user_can('manage_options')) {
+		if (! sbtt_current_user_can()) {
 			wp_send_json_error();
 		}
 
@@ -165,7 +173,7 @@ class AjaxHandlerService extends ServiceProvider
 	{
 		check_ajax_referer('sbtt-admin', 'nonce');
 
-		if (! current_user_can('manage_options')) {
+		if (! sbtt_current_user_can()) {
 			wp_send_json_error();
 		}
 
@@ -217,7 +225,7 @@ class AjaxHandlerService extends ServiceProvider
 	{
 		check_ajax_referer('sbtt-admin', 'nonce');
 
-		if (! current_user_can('manage_options')) {
+		if (! sbtt_current_user_can()) {
 			wp_send_json_error();
 		}
 
@@ -256,7 +264,7 @@ class AjaxHandlerService extends ServiceProvider
 	{
 		check_ajax_referer('sbtt-admin', 'nonce');
 
-		if (! current_user_can('manage_options')) {
+		if (! sbtt_current_user_can()) {
 			wp_send_json_error();
 		}
 
@@ -293,7 +301,7 @@ class AjaxHandlerService extends ServiceProvider
 			'feed_title'    => $feed_title,
 			'settings'      => $settings,
 			'feed_style'    => $feed_style,
-			'last_modified' => date('Y-m-d H:i:s'),
+			'last_modified' => gmdate('Y-m-d H:i:s'),
 		);
 
 		// Update or insert the feed.
@@ -321,7 +329,7 @@ class AjaxHandlerService extends ServiceProvider
 	{
 		check_ajax_referer('sbtt-admin', 'nonce');
 
-		if (! current_user_can('manage_options')) {
+		if (! sbtt_current_user_can()) {
 			wp_send_json_error();
 		}
 
@@ -334,9 +342,11 @@ class AjaxHandlerService extends ServiceProvider
 
 		// Clear transients.
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_sbtt_%'");
 
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_timeout_sbtt_%'");
 
 		// Clear cache of major caching plugins.
@@ -368,6 +378,7 @@ class AjaxHandlerService extends ServiceProvider
 		}
 
 		if (has_action('litespeed_purge_all')) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			do_action('litespeed_purge_all');
 		}
 
@@ -391,7 +402,7 @@ class AjaxHandlerService extends ServiceProvider
 	{
 		check_ajax_referer('sbtt-admin', 'nonce');
 
-		if (! current_user_can('manage_options')) {
+		if (! sbtt_current_user_can()) {
 			wp_send_json_error();
 		}
 
@@ -405,7 +416,7 @@ class AjaxHandlerService extends ServiceProvider
 			$files = glob($upload_dir . '/*');
 			foreach ($files as $file) {
 				if (is_file($file)) {
-					unlink($file);
+					unlink($file); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 				}
 			}
 		}
@@ -432,7 +443,7 @@ class AjaxHandlerService extends ServiceProvider
 	{
 		check_ajax_referer('sbtt-admin', 'nonce');
 
-		if (! current_user_can('manage_options')) {
+		if (! sbtt_current_user_can()) {
 			wp_send_json_error(['message' => 'Unauthorized']);
 		}
 

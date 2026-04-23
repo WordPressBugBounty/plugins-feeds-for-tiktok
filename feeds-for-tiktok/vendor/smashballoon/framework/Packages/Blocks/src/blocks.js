@@ -1,0 +1,96 @@
+import { __ } from '@wordpress/i18n';
+import { InstagramIcon, FacebookIcon, YoutubeIcon, TwitterIcon, ReviewIcon, TikTokIcon } from './icons.js';
+
+export const recommendedBlocks = [
+    {
+        name: 'instagram-feed',
+        title: __('Instagram Feed', 'smashballoon'),
+        description: __('Display your Instagram feeds.', 'smashballoon'),
+        pluginPath: 'instagram-feed/instagram-feed.php',
+        proPluginPath: 'instagram-feed-pro/instagram-feed.php',
+        pluginDescription: __("To display an Instagram feed, our Instagram plugin is required. <br/> It provides a clean and beautiful way to add your Instagram posts to your website. Grab your visitors' attention and keep them engaged with your site longer.", 'smashballoon'),
+        logo: <InstagramIcon />,
+        keywords: [
+            __('Instagram', 'smashballoon'),
+            __('Photos', 'smashballoon'),
+            __('Social Media', 'smashballoon'),
+        ],
+        pluginPage: 'admin.php?page=sbi-feed-builder',
+    },
+    {
+        name: 'facebook-feed',
+        title: __('Custom Facebook Feed', 'smashballoon'),
+        description: __('Display your Facebook feeds.', 'smashballoon'),
+        pluginPath: 'custom-facebook-feed/custom-facebook-feed.php',
+        proPluginPath: 'custom-facebook-feed-pro/custom-facebook-feed.php',
+        pluginDescription: __("To display a Facebook feed, our Facebook plugin is required. <br/> It provides a clean and beautiful way to add your Facebook posts to your website. Grab your visitors' attention and keep them engaged with your site longer.", 'smashballoon'),
+        logo: <FacebookIcon />,
+        keywords: [
+            __('Facebook', 'smashballoon'),
+            __('Posts', 'smashballoon'),
+            __('Social Media', 'smashballoon'),
+        ],
+        pluginPage: 'admin.php?page=cff-feed-builder',
+    },
+    {
+        name: 'youtube-feed',
+        title: __('Feeds for YouTube', 'smashballoon'),
+        description: __('Display your YouTube feeds.', 'smashballoon'),
+        pluginPath: 'feeds-for-youtube/youtube-feed.php',
+        proPluginPath: 'youtube-feed-pro/youtube-feed.php',
+        pluginDescription: __("To display a YouTube feed, our YouTube plugin is required. <br/> It provides a simple yet powerful way to display videos from YouTube on your website, Increasing engagement with your channel while keeping visitors on your website.", 'smashballoon'),
+        logo: <YoutubeIcon />,
+        keywords: [
+            __('YouTube', 'smashballoon'),
+            __('Videos', 'smashballoon'),
+            __('Social Media', 'smashballoon'),
+        ],
+        pluginPage: 'admin.php?page=sby-feed-builder',
+    },
+    {
+        name: 'twitter-feed',
+        title: __('Custom Twitter Feeds', 'smashballoon'),
+        description: __('Display your Twitter feeds.', 'smashballoon'),
+        pluginPath: 'custom-twitter-feeds/custom-twitter-feed.php',
+        proPluginPath: 'custom-twitter-feeds-pro/custom-twitter-feed.php',
+        pluginDescription: __("Custom Twitter Feeds is a highly customizable way to display tweets from your Twitter account. Promote your latest content and update your site content automatically.", 'smashballoon'),
+        logo: <TwitterIcon />,
+        keywords: [
+            __('Twitter', 'smashballoon'),
+            __('Tweets', 'smashballoon'),
+            __('Social Media', 'smashballoon'),
+        ],
+        pluginPage: 'admin.php?page=ctf-feed-builder',
+    },
+    {
+        name: 'reviews-feed',
+        title: __('Reviews Feed', 'smashballoon'),
+        description: __('Display your Reviews feeds.', 'smashballoon'),
+        pluginPath: 'reviews-feed/sb-reviews.php',
+        proPluginPath: 'reviews-feed-pro/sb-reviews-pro.php',
+        pluginDescription: __("To display a Reviews feed, our Reviews plugin is required. <br/> Increase conversions and build positive brand trust through Google and Yelp reviews from your customers. Provide social proof needed to turn visitors into customers.", 'smashballoon'),
+        logo: <ReviewIcon />,
+        keywords: [
+            __('Reviews', 'smashballoon'),
+            __('Google', 'smashballoon'),
+            __('Yelp', 'smashballoon'),
+            __('Social Media', 'smashballoon'),
+        ],
+        pluginPage: 'admin.php?page=sbr',
+    },
+    {
+        name: 'tiktok-feeds',
+        title: __('Feeds for TikTok', 'smashballoon'),
+        description: __('Display your TikTok feeds.', 'smashballoon'),
+        pluginPath: 'feeds-for-tiktok/feeds-for-tiktok.php',
+        proPluginPath: 'tiktok-feeds-pro/tiktok-feeds-pro.php',
+        pluginDescription: __("To display a TikTok feed, our TikTok plugin is required. It allows you to seamlessly integrate your TikTok account’s videos into your WordPress website.", 'smashballoon'),
+        logo: <TikTokIcon />,
+        keywords: [
+            __('TikTok', 'smashballoon'),
+            __('Videos', 'smashballoon'),
+            __('Social Media', 'smashballoon'),
+        ],
+        pluginPage: 'admin.php?page=sbtt',
+    }
+];

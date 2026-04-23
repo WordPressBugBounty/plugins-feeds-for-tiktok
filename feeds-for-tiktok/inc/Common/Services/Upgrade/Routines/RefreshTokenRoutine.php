@@ -2,6 +2,10 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Services\Upgrade\Routines;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use Smashballoon\Stubs\Services\ServiceProvider;
 use SmashBalloon\TikTokFeeds\Common\Relay\Relay;
 use SmashBalloon\TikTokFeeds\Common\Database\SourcesTable;
@@ -95,8 +99,8 @@ class RefreshTokenRoutine extends ServiceProvider
 	{
 		$source['access_token']    = isset($data['access_token']) ? sanitize_text_field(wp_unslash($data['access_token'])) : '';
 		$source['refresh_token']   = isset($data['refresh_token']) ? sanitize_text_field(wp_unslash($data['refresh_token'])) : '';
-		$source['expires']         = isset($data['expires_in']) ? date('Y-m-d H:i:s', time() + $data['expires_in']) : '';
-		$source['refresh_expires'] = isset($data['refresh_expires_in']) ? date('Y-m-d H:i:s', time() + $data['refresh_expires_in']) : '';
+		$source['expires']         = isset($data['expires_in']) ? gmdate('Y-m-d H:i:s', time() + $data['expires_in']) : '';
+		$source['refresh_expires'] = isset($data['refresh_expires_in']) ? gmdate('Y-m-d H:i:s', time() + $data['refresh_expires_in']) : '';
 		$source['open_id']         = isset($data['open_id']) ? sanitize_text_field(wp_unslash($data['open_id'])) : '';
 		$source['scope']           = isset($data['scope']) ? sanitize_text_field(wp_unslash($data['scope'])) : '';
 

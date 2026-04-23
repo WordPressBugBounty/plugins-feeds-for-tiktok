@@ -2,8 +2,15 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Services;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use Smashballoon\Stubs\Services\ServiceProvider;
 use SmashBalloon\TikTokFeeds\Common\Utils;
+use SmashBalloon\TikTokFeeds\Common\Container;
+use SmashBalloon\TikTokFeeds\Common\Services\SettingsManagerService;
+use SmashBalloon\TikTokFeeds\Common\Integrations\GDPR\GDPRIntegrations;
 
 class ActionHooksService extends ServiceProvider
 {
@@ -15,7 +22,6 @@ class ActionHooksService extends ServiceProvider
 		add_action('init', array($this, 'load_textdomain' ));
 		add_action('admin_enqueue_scripts', array($this, 'dequeue_styles'), 11);
 		add_action('admin_enqueue_scripts', array($this, 'enqueue_oauth_fragment_handler'));
-
 		add_action('sbtt_enqueue_scripts', array( $this, 'register_scripts' ));
 		add_action('wp_enqueue_scripts', array( $this, 'register_scripts' ));
 		add_action('wp_enqueue_scripts', array( $this, 'set_script_translations' ), 11);
@@ -30,6 +36,7 @@ class ActionHooksService extends ServiceProvider
 	 */
 	public function load_textdomain()
 	{
+		// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
 		load_plugin_textdomain('feeds-for-tiktok', false, dirname(SBTT_PLUGIN_BASENAME) . '/languages');
 	}
 
@@ -85,6 +92,8 @@ class ActionHooksService extends ServiceProvider
 
 		wp_register_script('sbtt-tiktok-feed', $feed_js_file, array( 'wp-i18n', 'jquery' ), SBTTVER, true);
 
+		$global_settings = Container::get_instance()->get(SettingsManagerService::class)->get_global_settings();
+
 		$data = array(
 			'ajaxHandler' => admin_url('admin-ajax.php'),
 			'nonce'       => wp_create_nonce('sbtt-frontend'),
@@ -92,6 +101,16 @@ class ActionHooksService extends ServiceProvider
 		);
 
 		wp_localize_script('sbtt-tiktok-feed', 'sbtt_feed_options', $data);
+
+		// Pass GDPR options for the React frontend.
+		$gdpr_data = array(
+			'gdprActive'         => GDPRIntegrations::doing_gdpr($global_settings),
+			'activePlugin'       => GDPRIntegrations::get_active_plugin_slug(),
+			'placeholder'        => SBTT_PLUGIN_URL . 'assets/images/sbtt-gdpr-placeholder.svg',
+			'avatarPlaceholder'  => SBTT_PLUGIN_URL . 'assets/images/sbtt-gdpr-avatar-placeholder.svg',
+		);
+
+		wp_localize_script('sbtt-tiktok-feed', 'sbtt_gdpr_options', $gdpr_data);
 
 		if ($enqueue) {
 			wp_enqueue_script('sbtt-tiktok-feed');

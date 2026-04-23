@@ -7,6 +7,29 @@ if (! defined('ABSPATH')) {
 	exit;
 }
 
+/**
+ * Check if the current user has the required capability to manage TikTok feeds.
+ *
+ * @return bool
+ */
+function sbtt_current_user_can()
+{
+	$cap = current_user_can('manage_tiktok_feed_options') ? 'manage_tiktok_feed_options' : 'manage_options';
+	$cap = apply_filters('sbtt_settings_pages_capability', $cap);
+	return current_user_can($cap);
+}
+
+/**
+ * Get the capability string for menu registration and similar usage.
+ *
+ * @return string
+ */
+function sbtt_get_cap()
+{
+	$cap = current_user_can('manage_tiktok_feed_options') ? 'manage_tiktok_feed_options' : 'manage_options';
+	return apply_filters('sbtt_settings_pages_capability', $cap);
+}
+
 
 /**
  * Encodes a PHP value into a JSON string.
@@ -213,6 +236,7 @@ function sbtt_get_tiktok_connection_urls($is_settings = false)
 	$urls            = array();
 	$nonce           = wp_create_nonce('sbtt_con');
 	$admin_url_state = ($is_settings) ? admin_url('admin.php?page=sbtt-settings') : admin_url('admin.php?page=sbtt');
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$sw_flag         = ! empty($_GET['sw-feed']) ? true : false;
 
 	// If the admin_url isn't returned correctly then use a fallback.
@@ -249,7 +273,9 @@ function sbtt_get_tiktok_connection_urls($is_settings = false)
 function sbtt_is_ssl()
 {
 	// cloudflare.
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 	if (! empty($_SERVER['HTTP_CF_VISITOR'])) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		$cfo = json_decode($_SERVER['HTTP_CF_VISITOR']);
 		if (isset($cfo->scheme) && 'https' === $cfo->scheme) {
 			return true;
@@ -257,6 +283,7 @@ function sbtt_is_ssl()
 	}
 
 	// other proxy.
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 	if (! empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && 'https' === $_SERVER['HTTP_X_FORWARDED_PROTO']) {
 		return true;
 	}
@@ -322,7 +349,7 @@ function sbtt_get_site_n_server_info()
 	$output .= 'Home URL:' . sbtt_get_whitespace(17) . home_url() . "</br>";
 	$output .= 'WordPress Version:' . sbtt_get_whitespace(8) . get_bloginfo('version') . "</br>";
 	$output .= 'PHP Version:' . sbtt_get_whitespace(14) . PHP_VERSION . "</br>";
-	$output .= 'Web Server Info:' . sbtt_get_whitespace(10) . esc_html(sanitize_text_field($_SERVER['SERVER_SOFTWARE'])) . "</br>";
+	$output .= 'Web Server Info:' . sbtt_get_whitespace(10) . esc_html(sanitize_text_field($_SERVER['SERVER_SOFTWARE'])) . "</br>"; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 	$output .= 'PHP allow_url_fopen:' . sbtt_get_whitespace(6) . $allow_url_fopen . "</br>";
 	$output .= 'PHP cURL:' . sbtt_get_whitespace(17) . $php_curl . "</br>";
 	$output .= 'JSON:' . sbtt_get_whitespace(21) . $php_json_decode . "</br>";
@@ -451,10 +478,12 @@ function sbtt_get_error_message_and_directions($message)
 	$error_messages = [
 		'The payload is invalid.' => [
 			'message' => __('Invalid Access Token. Please reconnect the source.', 'feeds-for-tiktok'),
+			/* translators: 1: Opening anchor tag, 2: Closing anchor tag */
 			'directions' => wp_sprintf(__('Please go to %1$sTikTok Feeds%2$s settings page to reconnect the source.', 'feeds-for-tiktok'), '<a href="' . esc_url(admin_url('admin.php?page=sbtt-settings')) . '" target="_blank" rel="noopener noreferrer">', '</a>'),
 		],
 		'access_token_invalid' => [
 			'message' => __('Invalid Access Token. Please reconnect the source.', 'feeds-for-tiktok'),
+			/* translators: 1: Opening anchor tag, 2: Closing anchor tag */
 			'directions' => wp_sprintf(__('Please go to %1$sTikTok Feeds%2$s settings page to reconnect the source.', 'feeds-for-tiktok'), '<a href="' . esc_url(admin_url('admin.php?page=sbtt-settings')) . '" target="_blank" rel="noopener noreferrer">', '</a>'),
 		]
 	];
@@ -472,6 +501,7 @@ function sbtt_get_error_message_and_directions($message)
  *
  * @return string
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 function get_upgrade_pro_plugin_link($license_key = null)
 {
 	return empty($license_key)

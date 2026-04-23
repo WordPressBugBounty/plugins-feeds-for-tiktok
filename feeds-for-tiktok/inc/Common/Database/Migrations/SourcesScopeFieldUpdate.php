@@ -8,6 +8,10 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Database\Migrations;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
+
 use SmashBalloon\TikTokFeeds\Common\Database\Migrations\Migration;
 
 /**

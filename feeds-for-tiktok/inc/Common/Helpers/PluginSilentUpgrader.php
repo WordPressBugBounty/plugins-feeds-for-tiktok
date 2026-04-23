@@ -2,6 +2,8 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Helpers;
 
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+
 use WP_Error;
 use WP_Upgrader;
 use WP_Filesystem_Base;
@@ -363,7 +365,7 @@ class PluginSilentUpgrader extends \Plugin_Upgrader
 
 		// Once extracted, delete the package if required.
 		if ($delete_package) {
-			unlink($package);
+			unlink($package); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 		}
 
 		if (is_wp_error($result)) {

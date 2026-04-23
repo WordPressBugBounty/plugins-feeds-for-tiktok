@@ -62,6 +62,7 @@ class AdvancedTab extends SB_SettingsPage_Tab
 				'type'      => 'switcher',
 				'heading'   => __('Usage Tracking', 'feeds-for-tiktok'),
 				'info'      => sprintf(
+					/* translators: 1: Opening anchor tag, 2: Closing anchor tag */
 					__('This helps us prevent plugin and theme conflicts by sending a report in the background once per week about your settings and relevant site stats. It does not send sensitive information like access tokens, email addresses, or user info. This will not affect your site performace as well. %1$sLearn More%2$s', 'feeds-for-tiktok'),
 					'<a href="https://smashballoon.com/doc/usage-tracking-tiktok-feeds/" target="_blank" rel="noopener">',
 					'</a>'

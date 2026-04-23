@@ -54,6 +54,8 @@ class UninstallService
 			return;
 		}
 
+		self::remove_capabilities();
+
 		self::delete_db_tables();
 
 		self::delete_options();
@@ -61,6 +63,19 @@ class UninstallService
 		self::delete_cron_jobs();
 
 		self::delete_upload_folder();
+	}
+
+	/**
+	 * Remove custom capability from all roles.
+	 *
+	 * @return void
+	 */
+	public static function remove_capabilities()
+	{
+		global $wp_roles;
+		foreach ($wp_roles->roles as $role_name => $role_info) {
+			$wp_roles->remove_cap($role_name, 'manage_tiktok_feed_options');
+		}
 	}
 
 	/**
@@ -127,7 +142,7 @@ class UninstallService
 			$files = glob($upload_dir . '/*');
 			foreach ($files as $file) {
 				if (is_file($file)) {
-					unlink($file);
+					unlink($file); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 				}
 			}
 

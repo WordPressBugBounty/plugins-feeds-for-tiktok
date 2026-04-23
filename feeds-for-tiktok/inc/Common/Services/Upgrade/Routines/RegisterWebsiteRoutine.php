@@ -49,6 +49,7 @@ class RegisterWebsiteRoutine extends ServiceProvider
 	 */
 	protected function force_run()
 	{
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if (isset($_GET['sbtt_force_register']) && $_GET['sbtt_force_register'] === 'true') {
 			return true;
 		}

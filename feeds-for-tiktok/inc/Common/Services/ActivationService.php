@@ -2,6 +2,10 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Services;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use SmashBalloon\TikTokFeeds\Common\Container;
 
 /**
@@ -18,6 +22,7 @@ class ActivationService
 	{
 		register_activation_hook(SBTT_PLUGIN_FILE, [ $this, 'activate' ]);
 		add_action('activated_plugin', [ $this, 'onPluginActivation' ]);
+		add_action('admin_init', [ $this, 'addCapabilities' ]);
 	}
 
 	/**
@@ -30,6 +35,21 @@ class ActivationService
 		Container::get_instance()->get('DBManager')->create_or_update_db_tables();
 		$this->createUploadFolder();
 		$this->addFirstInstall();
+		$this->addCapabilities();
+	}
+
+	/**
+	 * Add custom capability to the administrator role.
+	 *
+	 * @return void
+	 */
+	public function addCapabilities()
+	{
+		global $wp_roles;
+		$admin_role = $wp_roles->get_role('administrator');
+		if ($admin_role && !$admin_role->has_cap('manage_tiktok_feed_options')) {
+			$wp_roles->add_cap('administrator', 'manage_tiktok_feed_options');
+		}
 	}
 
 	/**

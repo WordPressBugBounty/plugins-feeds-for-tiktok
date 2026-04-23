@@ -2,6 +2,10 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Integrations;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use SmashBalloon\TikTokFeeds\Common\Database\FeedsTable;
 use SmashBalloon\TikTokFeeds\Common\Database\SourcesTable;
 

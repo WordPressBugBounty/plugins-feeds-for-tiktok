@@ -8,6 +8,10 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Services;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use Smashballoon\Stubs\Services\ServiceProvider;
 use SmashBalloon\TikTokFeeds\Common\Utils;
 
@@ -38,12 +42,13 @@ class SettingsManagerService extends ServiceProvider
 	{
 		check_ajax_referer('sbtt-admin', 'nonce');
 
-		if (! current_user_can('manage_options')) {
+		if (! sbtt_current_user_can()) {
 			wp_send_json_error();
 		}
 
 		unset($_POST['action'], $_POST['nonce']);
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$settings = isset($_POST['settings']) ? sbtt_sanitize_data($_POST['settings']) : [];
 
 		$this->update_global_settings($settings);
@@ -94,6 +99,7 @@ class SettingsManagerService extends ServiceProvider
 			'usagetracking'       => Utils::sbtt_is_pro() ? true : false,
 			'admin_error_notices' => true,
 			'feed_issue_reports'  => true,
+			'gdpr'                => 'auto',
 		];
 	}
 }

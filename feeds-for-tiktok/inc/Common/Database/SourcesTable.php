@@ -8,6 +8,12 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Database;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
+// phpcs:disable PluginCheck.Security.DirectDB.UnescapedDBParameter
+
 use SmashBalloon\TikTokFeeds\Common\Database\Migrations\SourcesScopeFieldUpdate;
 
 class SourcesTable extends Table
@@ -38,7 +44,7 @@ class SourcesTable extends Table
 			'expires'         => 0,
 			'refresh_expires' => 0,
 			'scope'           => '',
-			'last_updated'    => date('Y-m-d H:i:s'),
+			'last_updated'    => gmdate('Y-m-d H:i:s'),
 			'author'          => get_current_user_id(),
 		];
 	}
@@ -214,7 +220,7 @@ class SourcesTable extends Table
 			$info = sbtt_sanitize_data($data['info']);
 			$data['info'] = sbtt_json_encode($info);
 		}
-		$data['last_updated'] = date('Y-m-d H:i:s');
+		$data['last_updated'] = gmdate('Y-m-d H:i:s');
 
 		// filter the format to match the data keys to prevent mismatched types.
 		$filtered_format = array_filter(

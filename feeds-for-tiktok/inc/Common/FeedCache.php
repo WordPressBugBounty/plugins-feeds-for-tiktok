@@ -2,6 +2,10 @@
 
 namespace SmashBalloon\TikTokFeeds\Common;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use SmashBalloon\TikTokFeeds\Common\Database\FeedCacheTable;
 
 class FeedCache
@@ -327,7 +331,7 @@ class FeedCache
 		$data = array(
 			'cache_key'    => $cache_key,
 			'cache_value'  => $cache_value,
-			'last_updated' => date('Y-m-d H:i:s'),
+			'last_updated' => gmdate('Y-m-d H:i:s'),
 			'cron_update'  => $cron_update === true ? 'yes' : '',
 			'feed_id'      => $this->feed_id,
 		);
@@ -354,7 +358,7 @@ class FeedCache
 		$cache_table->update(
 			array(
 				'cache_value'  => '',
-				'last_updated' => date('Y-m-d H:i:s'),
+				'last_updated' => gmdate('Y-m-d H:i:s'),
 			),
 			array(
 				'feed_id'   => $feed_id,
@@ -365,7 +369,7 @@ class FeedCache
 		$cache_table->update(
 			array(
 				'cache_value'  => '',
-				'last_updated' => date('Y-m-d H:i:s'),
+				'last_updated' => gmdate('Y-m-d H:i:s'),
 			),
 			array(
 				'feed_id'   => $feed_id . '_CUSTOMIZER',
@@ -376,7 +380,7 @@ class FeedCache
 		$cache_table->update(
 			array(
 				'cache_value'  => '',
-				'last_updated' => date('Y-m-d H:i:s'),
+				'last_updated' => gmdate('Y-m-d H:i:s'),
 			),
 			array(
 				'feed_id'   => $feed_id . '_CUSTOMIZER_MODMODE',
@@ -483,6 +487,7 @@ class FeedCache
 		}
 
 		$additional_suffix = '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 		if (!empty($_POST['previewSettings']) || (isset($_GET['page']) && $_GET['page'] === 'sbtt')) {
 			$additional_suffix = '_CUSTOMIZER';
 		}

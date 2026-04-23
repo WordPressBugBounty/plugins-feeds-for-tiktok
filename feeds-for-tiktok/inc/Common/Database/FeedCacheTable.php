@@ -8,6 +8,12 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Database;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
+// phpcs:disable PluginCheck.Security.DirectDB.UnescapedDBParameter
+
 class FeedCacheTable extends Table
 {
 	/**
@@ -36,7 +42,7 @@ class FeedCacheTable extends Table
 			'cache_key'    => '',
 			'cache_value'  => '',
 			'cron_update'  => 'yes',
-			'last_updated' => date('Y-m-d H:i:s'),
+			'last_updated' => gmdate('Y-m-d H:i:s'),
 		];
 	}
 
@@ -219,7 +225,7 @@ class FeedCacheTable extends Table
 			// only update last updated and cache value.
 			$data = array(
 				'cache_value'  => $cache_value,
-				'last_updated' => date('Y-m-d H:i:s'),
+				'last_updated' => gmdate('Y-m-d H:i:s'),
 			);
 
 			$this->update(
@@ -265,7 +271,7 @@ class FeedCacheTable extends Table
 			$data = array(
 				'cache_value'  => $cache_value,
 				'cache_key'    => $backup_cache_key,
-				'last_updated' => date('Y-m-d H:i:s'),
+				'last_updated' => gmdate('Y-m-d H:i:s'),
 				'cron_update'  => '',
 				'feed_id'      => $feed_id,
 			);
@@ -275,7 +281,7 @@ class FeedCacheTable extends Table
 			// only update last updated and cache value.
 			$data = array(
 				'cache_value'  => $cache_value,
-				'last_updated' => date('Y-m-d H:i:s'),
+				'last_updated' => gmdate('Y-m-d H:i:s'),
 			);
 
 			$this->update(
@@ -299,7 +305,7 @@ class FeedCacheTable extends Table
 		$table_name = $wpdb->prefix . self::TABLE_NAME;
 
 		$result = $wpdb->query(
-			"UPDATE $table_name SET cache_value = '', last_updated = '" . date('Y-m-d H:i:s') . "'
+			"UPDATE $table_name SET cache_value = '', last_updated = '" . gmdate('Y-m-d H:i:s') . "'
 			WHERE cache_key NOT IN ('posts_backup', 'header_backup')"
 		);
 
@@ -324,7 +330,7 @@ class FeedCacheTable extends Table
 			WHERE cron_update = 'yes'
 			AND feed_id NOT LIKE '%_CUSTOMIZER'
 			AND feed_id NOT LIKE '%_CUSTOMIZER_MODMODE'
-			AND last_updated < NOW() - INTERVAL 3 HOUR
+			AND last_updated < UTC_TIMESTAMP() - INTERVAL 3 HOUR
 			ORDER BY last_updated ASC";
 
 		$results = $wpdb->get_results($sql, ARRAY_A);
@@ -418,7 +424,7 @@ class FeedCacheTable extends Table
 					$table_name,
 					array(
 						'cache_value'  => $updated_cache_value,
-						'last_updated' => date('Y-m-d H:i:s'),
+						'last_updated' => gmdate('Y-m-d H:i:s'),
 					),
 					array(
 						'id' => $cache['id'],

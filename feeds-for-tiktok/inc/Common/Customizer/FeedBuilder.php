@@ -128,10 +128,12 @@ class FeedBuilder extends Feed_Builder
 	 */
 	public function customizerFeedData()
 	{
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if (! isset($_GET['feed_id'])) {
 			return array();
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$feed_id = absint($_GET['feed_id']);
 
 		$feed_data = new FeedSettings($feed_id);

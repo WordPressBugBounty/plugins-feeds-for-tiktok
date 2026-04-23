@@ -41,18 +41,8 @@ class FeedsTab extends SB_SettingsPage_Tab
 			],
 			'gdpr_section'    => [
 				'id'        => 'gdpr',
-				'type'      => 'select',
+				'type'      => 'gdpr',
 				'heading'   => __('GDPR', 'feeds-for-tiktok'),
-				'info'      => sprintf(
-					__('We will automatically enable GDPR compliance if we detect a supported privacy consent plugin. %1$sLearn more%2$s.', 'feeds-for-tiktok'),
-					'<a href="https://smashballoon.com/gdpr-compliant/?tiktok&utm_campaign=tiktok-free&utm_source=settings&utm_medium=gdpr-link" target="_blank" rel="noopener">',
-					'</a>'
-				),
-				'options'   => [
-					'auto' => __('Automatic', 'feeds-for-tiktok'),
-					'yes'  => __('Yes', 'feeds-for-tiktok'),
-					'no'   => __('No', 'feeds-for-tiktok'),
-				],
 				'separator' => true,
 			],
 		];

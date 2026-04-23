@@ -8,6 +8,10 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Services;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use SmashBalloon\TikTokFeeds\Common\Container;
 
 /**

@@ -2,6 +2,10 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Services;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use SmashBalloon\TikTokFeeds\Common\Helpers\PluginSilentUpgrader;
 use SmashBalloon\TikTokFeeds\Common\Helpers\InstallSkin;
 use Smashballoon\Stubs\Services\ServiceProvider;
@@ -45,7 +49,7 @@ class PluginInstallerService extends ServiceProvider
 
 		check_ajax_referer('sbtt-admin', 'nonce');
 
-		if (! current_user_can('manage_options')) {
+		if (! sbtt_current_user_can()) {
 			wp_send_json_error();
 		}
 
@@ -126,7 +130,7 @@ class PluginInstallerService extends ServiceProvider
 	{
 		check_ajax_referer('sbtt-admin', 'nonce');
 
-		if (! current_user_can('manage_options')) {
+		if (! sbtt_current_user_can()) {
 			wp_send_json_error();
 		}
 
@@ -157,7 +161,7 @@ class PluginInstallerService extends ServiceProvider
 	{
 		check_ajax_referer('sbtt-admin', 'nonce');
 
-		if (! current_user_can('manage_options')) {
+		if (! sbtt_current_user_can()) {
 			wp_send_json_error();
 		}
 

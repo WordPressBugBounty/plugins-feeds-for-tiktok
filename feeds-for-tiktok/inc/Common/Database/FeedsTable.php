@@ -8,6 +8,13 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Database;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
+// phpcs:disable PluginCheck.Security.DirectDB.UnescapedDBParameter
+// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
+
 class FeedsTable extends Table
 {
 	/**
@@ -38,7 +45,7 @@ class FeedsTable extends Table
 			'feed_style'    => '',
 			'author'        => get_current_user_id(),
 			'status'        => 'publish',
-			'last_modified' => date('Y-m-d H:i:s'),
+			'last_modified' => gmdate('Y-m-d H:i:s'),
 		];
 	}
 

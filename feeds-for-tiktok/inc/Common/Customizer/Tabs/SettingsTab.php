@@ -55,6 +55,7 @@ class SettingsTab extends SB_Sidebar_Tab
 				'icon'        => 'filter',
 				'description' => Utils::sbtt_is_pro() ? '' :
 				sprintf(
+					/* translators: 1: Opening anchor tag, 2: Closing anchor tag */
 					__('Upgrade to Pro to apply filters to your TikTok Feeds. %1$sLearn More%2$s', 'feeds-for-tiktok'),
 					'<a>',
 					'</a>'

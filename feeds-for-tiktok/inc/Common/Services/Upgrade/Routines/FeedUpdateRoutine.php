@@ -2,6 +2,10 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Services\Upgrade\Routines;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use Smashballoon\Stubs\Services\ServiceProvider;
 use SmashBalloon\TikTokFeeds\Common\Database\FeedCacheTable;
 use SmashBalloon\TikTokFeeds\Common\AuthorizationStatusCheck;

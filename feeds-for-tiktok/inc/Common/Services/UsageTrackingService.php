@@ -61,7 +61,7 @@ class UsageTrackingService extends ServiceProvider
 		$data['php_version']    = $php_version;
 		$data['mi_version']     = SBTTVER;
 		$data['wp_version']     = $wp_version;
-		$data['server']         = isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : '';
+		$data['server']         = isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$data['multisite']      = is_multisite();
 		$data['url']            = home_url();
 		$data['themename']      = $theme_data->Name;
@@ -72,7 +72,7 @@ class UsageTrackingService extends ServiceProvider
 		$data['usagetracking']  = get_option('sbtt_usage_tracking_config', false);
 		$num_users              = function_exists('count_users') ? count_users() : 'Not Set';
 		$data['usercount']      = is_array($num_users) ? $num_users['total_users'] : 1;
-		$data['timezoneoffset'] = date('P');
+		$data['timezoneoffset'] = gmdate('P');
 
 		$settings_to_send = array();
 		$raw_settings     = get_option('sbtt_settings', array());
@@ -138,10 +138,10 @@ class UsageTrackingService extends ServiceProvider
 	{
 		if (! wp_next_scheduled('sbtt_usage_tracking_cron')) {
 			$tracking           = array();
-			$tracking['day']    = rand(0, 6);
-			$tracking['hour']   = rand(0, 23);
-			$tracking['minute'] = rand(0, 59);
-			$tracking['second'] = rand(0, 59);
+			$tracking['day']    = wp_rand(0, 6);
+			$tracking['hour']   = wp_rand(0, 23);
+			$tracking['minute'] = wp_rand(0, 59);
+			$tracking['second'] = wp_rand(0, 59);
 			$tracking['offset'] = ( $tracking['day'] * DAY_IN_SECONDS ) +
 								  ( $tracking['hour'] * HOUR_IN_SECONDS ) +
 								  ( $tracking['minute'] * MINUTE_IN_SECONDS ) +

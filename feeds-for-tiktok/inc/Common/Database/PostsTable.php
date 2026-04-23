@@ -8,6 +8,12 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Database;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
+// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
+// phpcs:disable PluginCheck.Security.DirectDB.UnescapedDBParameter
+
 class PostsTable extends Table
 {
 	/**
@@ -34,13 +40,13 @@ class PostsTable extends Table
 		return [
 			'video_id'       => '',
 			'open_id'        => '',
-			'created_on'     => date('Y-m-d H:i:s'),
-			'time_stamp'     => date('Y-m-d H:i:s'),
+			'created_on'     => gmdate('Y-m-d H:i:s'),
+			'time_stamp'     => gmdate('Y-m-d H:i:s'),
 			'json_data'      => '',
 			'views'          => '',
 			'likes'          => '',
 			'images_done'    => 0,
-			'last_requested' => date('Y-m-d H:i:s'),
+			'last_requested' => gmdate('Y-m-d H:i:s'),
 		];
 	}
 
@@ -141,7 +147,7 @@ class PostsTable extends Table
 		if (! empty($data['json_data'])) {
 			$data['json_data'] = sbtt_json_encode($data['json_data']);
 		}
-		$data['last_requested'] = date('Y-m-d H:i:s');
+		$data['last_requested'] = gmdate('Y-m-d H:i:s');
 
 		$format         = $this->get_columns_format();
 		$filtered_format = array_filter(
