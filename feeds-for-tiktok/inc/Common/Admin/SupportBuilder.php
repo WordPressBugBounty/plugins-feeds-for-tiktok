@@ -95,7 +95,7 @@ class SupportBuilder extends Support_Builder
 	 */
 	public function getSupportContent()
 	{
-		$utm_source = 'tiktok-feeds-pro';
+		$utm_campaign = defined('SBTT_PRO') ? 'tiktok-pro' : 'tiktok-free';
 		return [
 			[
 				'heading'     => __('Getting Started', 'feeds-for-tiktok'),
@@ -104,20 +104,20 @@ class SupportBuilder extends Support_Builder
 				'content'     => [
 					[
 						'text' => __('Getting Started with TikTok Feeds', 'feeds-for-tiktok'),
-						'link' => 'https://smashballoon.com/doc/installing-the-tiktok-feeds-pro-wordpress-plugin/?tiktok&utm_campaign=' . $utm_source . '&utm_source=support&utm_medium=getting-started&utm_content=GettingStarted',
+						'link' => 'https://smashballoon.com/doc/installing-the-tiktok-feeds-pro-wordpress-plugin/?tiktok&utm_campaign=' . $utm_campaign . '&utm_source=support&utm_medium=getting-started&utm_content=getting-started',
 					],
 					[
 						'text' => __('How Do I Show a Feed from Another Account', 'feeds-for-tiktok'),
-						'link' => 'https://smashballoon.com/doc/show-a-feed-from-another-tiktok-account/?tiktok&utm_campaign=' . $utm_source . '&utm_source=support&utm_medium=another-account&utm_content=ShowFromAnother',
+						'link' => 'https://smashballoon.com/doc/show-a-feed-from-another-tiktok-account/?tiktok&utm_campaign=' . $utm_campaign . '&utm_source=support&utm_medium=another-account&utm_content=show-from-another',
 					],
 					[
 						'text' => __('How to Keep My Account Connected', 'feeds-for-tiktok'),
-						'link' => 'https://smashballoon.com/doc/how-to-keep-my-account-connected/?tiktok&utm_campaign=' . $utm_source . '&utm_source=support&utm_medium=keep-connected&utm_content=KeepAccountConnected',
+						'link' => 'https://smashballoon.com/doc/how-to-keep-my-account-connected/?tiktok&utm_campaign=' . $utm_campaign . '&utm_source=support&utm_medium=keep-connected&utm_content=keep-account-connected',
 					],
 				],
 				'button'      => [
 					'text' => __('More Help Getting started', 'feeds-for-tiktok'),
-					'link' => 'https://smashballoon.com/docs/getting-started/?tiktok&utm_campaign=' . $utm_source . '&utm_source=support&utm_medium=docs&utm_content=Getting Started',
+					'link' => 'https://smashballoon.com/docs/getting-started/?tiktok&utm_campaign=' . $utm_campaign . '&utm_source=support&utm_medium=docs&utm_content=getting-started',
 				],
 			],
 			[
@@ -127,20 +127,20 @@ class SupportBuilder extends Support_Builder
 				'content'     => [
 					[
 						'text' => __('Error Message Reference', 'feeds-for-tiktok'),
-						'link' => 'https://smashballoon.com/doc/tiktok-feeds-error-message-reference/?tiktok&utm_campaign=' . $utm_source . '&utm_source=support&utm_medium=error-reference&utm_content=ErrorReference',
+						'link' => 'https://smashballoon.com/doc/tiktok-feeds-error-message-reference/?tiktok&utm_campaign=' . $utm_campaign . '&utm_source=support&utm_medium=error-reference&utm_content=error-reference',
 					],
 					[
 						'text' => __('My Feed is Not Displaying', 'feeds-for-tiktok'),
-						'link' => 'https://smashballoon.com/doc/my-tiktok-feed-is-not-displaying/?tiktok&utm_campaign=' . $utm_source . '&utm_source=support&utm_medium=not-displaying&utm_content=FeedNotDisplaying',
+						'link' => 'https://smashballoon.com/doc/my-tiktok-feed-is-not-displaying/?tiktok&utm_campaign=' . $utm_campaign . '&utm_source=support&utm_medium=not-displaying&utm_content=feed-not-displaying',
 					],
 					[
 						'text' => __('My Feed is Not Updating', 'feeds-for-tiktok'),
-						'link' => 'https://smashballoon.com/doc/my-feed-is-not-updating/?tiktok&utm_campaign=' . $utm_source . '&utm_source=support&utm_medium=not-updating&utm_content=NotUpdating',
+						'link' => 'https://smashballoon.com/doc/my-feed-is-not-updating/?tiktok&utm_campaign=' . $utm_campaign . '&utm_source=support&utm_medium=not-updating&utm_content=not-updating',
 					],
 				],
 				'button'      => [
 					'text' => __('View Documentation', 'feeds-for-tiktok'),
-					'link' => 'https://smashballoon.com/docs/?tiktok&utm_campaign=' . $utm_source . '&utm_source=support&utm_medium=docs&utm_content=View Documentation',
+					'link' => 'https://smashballoon.com/docs/?tiktok&utm_campaign=' . $utm_campaign . '&utm_source=support&utm_medium=docs&utm_content=view-documentation',
 				],
 			],
 			[
@@ -150,20 +150,20 @@ class SupportBuilder extends Support_Builder
 				'content'     => [
 					[
 						'text' => __('Video Filtering Guide?', 'feeds-for-tiktok'),
-						'link' => 'https://smashballoon.com/doc/how-do-i-filter-the-videos-in-my-tiktok-feed/?tiktok&utm_campaign=' . $utm_source . '&utm_source=support&utm_medium=filter-feed&utm_content=VideoFilteringGuide',
+						'link' => 'https://smashballoon.com/doc/how-do-i-filter-the-videos-in-my-tiktok-feed/?tiktok&utm_campaign=' . $utm_campaign . '&utm_source=support&utm_medium=filter-feed&utm_content=video-filtering-guide',
 					],
 					[
 						'text' => __('Can I Display Multiple Feeds on One Page?', 'feeds-for-tiktok'),
-						'link' => 'https://smashballoon.com/doc/can-i-display-multiple-tiktok-feeds-on-one-page/?tiktok&utm_campaign=' . $utm_source . '&utm_source=support&utm_medium=multiple-feeds&utm_content=MultipleFeeds',
+						'link' => 'https://smashballoon.com/doc/can-i-display-multiple-tiktok-feeds-on-one-page/?tiktok&utm_campaign=' . $utm_campaign . '&utm_source=support&utm_medium=multiple-feeds&utm_content=multiple-feeds',
 					],
 					[
 						'text' => __('How Do I Embed a Feed Directly In a Template?', 'feeds-for-tiktok'),
-						'link' => 'https://smashballoon.com/doc/how-do-i-embed-a-tiktok-feed-directly-in-the-theme-template/?tiktok&utm_campaign=' . $utm_source . '&utm_source=support&utm_medium=embed-template&utm_content=EmbedTemplate',
+						'link' => 'https://smashballoon.com/doc/how-do-i-embed-a-tiktok-feed-directly-in-the-theme-template/?tiktok&utm_campaign=' . $utm_campaign . '&utm_source=support&utm_medium=embed-template&utm_content=embed-template',
 					],
 				],
 				'button'      => [
 					'text' => __('View Blog', 'feeds-for-tiktok'),
-					'link' => 'https://smashballoon.com/blog/?tiktok&utm_campaign=' . $utm_source . '&utm_source=support&utm_medium=docs&utm_content=View Blog',
+					'link' => 'https://smashballoon.com/blog/?tiktok&utm_campaign=' . $utm_campaign . '&utm_source=support&utm_medium=docs&utm_content=view-blog',
 				],
 			],
 		];

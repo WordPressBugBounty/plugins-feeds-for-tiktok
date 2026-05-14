@@ -46,7 +46,7 @@ class PluginUpgraderService extends ServiceProvider
 
 	protected const REDIRECT = 'sbtt-settings';
 
-	protected const INSTALL_INSTRUCTIONS = 'https://smashballoon.com/doc/installing-the-tiktok-feeds-pro-wordpress-plugin/?tiktok&utm_campaign=tiktok-free&utm_source=settings&utm_medium=freetopro&utm_content=Upgrade Manually';
+	protected const INSTALL_INSTRUCTIONS = 'https://smashballoon.com/doc/installing-the-tiktok-feeds-pro-wordpress-plugin/?tiktok&utm_campaign=tiktok-pro&utm_source=settings&utm_medium=freetopro&utm_content=upgrade-manually';
 
 	/**
 	 * Registers the PluginUpgraderService.

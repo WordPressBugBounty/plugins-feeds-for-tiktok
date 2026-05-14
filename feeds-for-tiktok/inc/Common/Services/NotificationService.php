@@ -523,7 +523,8 @@ class NotificationService extends ServiceProvider
 	protected function getConsentStep($notification)
 	{
 		$image_html = $this->getImageHtml($notification);
-		$sbtt_open_feedback_url = 'https://smashballoon.com/feedback/?plugin=feeds-for-tiktok';
+		$sbtt_utm_campaign = defined('SBTT_PRO') ? 'tiktok-pro' : 'tiktok-free';
+		$sbtt_open_feedback_url = 'https://smashballoon.com/feedback/?plugin=feeds-for-tiktok&utm_campaign=' . $sbtt_utm_campaign . '&utm_source=notifications&utm_medium=feedback';
 
 		$consent_step = sprintf(
 			'<div class="message current sbtt_review_step1_notice" data-message-id="review">

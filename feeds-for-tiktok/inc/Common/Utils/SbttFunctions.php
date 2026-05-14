@@ -505,7 +505,7 @@ function sbtt_get_error_message_and_directions($message)
 function get_upgrade_pro_plugin_link($license_key = null)
 {
 	return empty($license_key)
-		? 'https://smashballoon.com/pricing/tiktok-feed/'
+		? 'https://smashballoon.com/tiktok-feeds/tiktok-lite-upgrade/?utm_campaign=tiktok-free&utm_source=settings&utm_medium=upgrade'
 		:  sprintf(
 			'https://smashballoon.com/pricing/tiktok-feed/?license_key=%s&upgrade=true&utm_campaign=tiktok-pro&utm_source=settings&utm_medium=license&utm_content=upgrade',
 			$license_key

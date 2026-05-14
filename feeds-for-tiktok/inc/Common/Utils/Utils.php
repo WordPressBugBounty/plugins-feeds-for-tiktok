@@ -697,9 +697,9 @@ class Utils
 	{
 		$base_url = 'https://smashballoon.com/';
 		$utm_params = [
-			'lite' => '?utm_campaign=tiktok-free&utm_source=all-feeds&utm_medium=%s&utm_content=LiteUsers50OFF',
-			'upgrade' => '?utm_campaign=tiktok-free&utm_source=customizer&utm_medium=%s&utm_content=Upgrade',
-			'learnMore' => '?utm_campaign=tiktok-free&utm_source=customizer&utm_medium=%s&utm_content=LearnMore'
+			'lite'      => 'tiktok-feeds/tiktok-lite-upgrade/?utm_campaign=tiktok-free&utm_source=all-feeds&utm_medium=%s&utm_content=lite-users-50-off',
+			'upgrade'   => 'tiktok-feeds/tiktok-lite-upgrade/?utm_campaign=tiktok-free&utm_source=customizer&utm_medium=%s&utm_content=upgrade',
+			'learnMore' => 'tiktok-feeds/?utm_campaign=tiktok-free&utm_source=customizer&utm_medium=%s&utm_content=learn-more'
 		];
 
 		$modals = [
@@ -793,11 +793,12 @@ class Utils
 		$upsell_modal_content = [];
 
 		foreach ($modals as $key => $modal) {
+			$kebab_key = strtolower( preg_replace( '/([A-Z])/', '-$1', lcfirst( $key ) ) );
 			$upsell_modal_content[$key] = array_merge($modal, [
 				'buttons' => [
-					'lite' => $base_url . 'pricing/tiktok-feed/' . sprintf($utm_params['lite'], $key),
-					'upgrade' => $base_url . 'pricing/tiktok-feed/' . sprintf($utm_params['upgrade'], $key),
-					'learnMore' => $base_url . 'tiktok-feeds/' . sprintf($utm_params['learnMore'], $key)
+					'lite'      => $base_url . sprintf($utm_params['lite'], $kebab_key),
+					'upgrade'   => $base_url . sprintf($utm_params['upgrade'], $kebab_key),
+					'learnMore' => $base_url . sprintf($utm_params['learnMore'], $kebab_key)
 				],
 				'includeContent' => true
 			]);
