@@ -66,10 +66,12 @@ if (class_exists('\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Feedback\F
 	$sbtt_plugin_slug    = defined('SBTT_PRO') ? 'sb-tiktok-feeds-pro' : 'sb-tiktok-feeds';
 	$sbtt_utm_campaign   = defined('SBTT_PRO') ? 'tiktok-pro' : 'tiktok-free';
 	\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Feedback\FeedbackManager::init([
-		'plugin_slug'    => $sbtt_plugin_slug,
-		'plugin_name'    => 'Smash Balloon TikTok Feeds',
-		'plugin_version' => SBTTVER,
-		'plugin_file'    => SBTT_PLUGIN_FILE,
-		'support_url'    => 'https://smashballoon.com/support/?utm_campaign=' . $sbtt_utm_campaign . '&utm_source=deactivation&utm_medium=support',
+		'plugin_slug'        => $sbtt_plugin_slug,
+		'plugin_name'        => 'Smash Balloon TikTok Feeds',
+		'plugin_version'     => SBTTVER,
+		'plugin_file'        => SBTT_PLUGIN_FILE,
+		'support_url'        => 'https://smashballoon.com/support/?utm_campaign=' . $sbtt_utm_campaign . '&utm_source=deactivation&utm_medium=support',
+		'enable_help_widget' => true,
+		'help_url'           => 'https://smashballoon.com/docs/tiktok/',
 	]);
 }

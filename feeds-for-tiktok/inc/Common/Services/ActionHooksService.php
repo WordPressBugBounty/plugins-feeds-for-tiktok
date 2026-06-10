@@ -112,9 +112,27 @@ class ActionHooksService extends ServiceProvider
 
 		wp_localize_script('sbtt-tiktok-feed', 'sbtt_gdpr_options', $gdpr_data);
 
+		// Hydrates feed divs that arrive via the Gutenberg block's ServerSideRender.
+		// See assets/js/block-editor-mount.js for rationale. Admin-only since the
+		// frontend has feed divs in the initial HTML and tikTokFeed.js mounts them
+		// directly on script load — the MutationObserver shim is only useful for
+		// the iframed editor where SSR injects DOM after script load.
+		if (is_admin()) {
+			wp_register_script(
+				'sbtt-block-editor-mount',
+				SBTT_PLUGIN_URL . 'assets/js/block-editor-mount.js',
+				array( 'sbtt-tiktok-feed' ),
+				SBTTVER,
+				true
+			);
+		}
+
 		if ($enqueue) {
 			wp_enqueue_script('sbtt-tiktok-feed');
 			wp_enqueue_style('sbtt-tiktok-feed');
+			if (is_admin()) {
+				wp_enqueue_script('sbtt-block-editor-mount');
+			}
 		}
 	}
 

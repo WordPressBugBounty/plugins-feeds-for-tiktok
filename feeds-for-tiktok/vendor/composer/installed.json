@@ -225,12 +225,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:awesomemotive\/sb-customizer.git",
-                "reference": "a04c2aeb6963265b2327abffcd21871cd27c6200"
+                "reference": "ad760448ccd5f9dc742b9b3595e57fc4115b2e2b"
             },
             "require": {
                 "smashballoon\/stubs": "dev-master"
             },
-            "time": "2026-03-25T16:40:59+00:00",
+            "time": "2026-06-01T17:47:18+00:00",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -253,12 +253,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:awesomemotive\/sb-common.git",
-                "reference": "fcf3511827434c056c90f80a7ff9935f4fbe99df"
+                "reference": "7d98a252e7a338c8cd506aad5a3d862eaa4f50f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https:\/\/api.github.com\/repos\/awesomemotive\/sb-common\/zipball\/fcf3511827434c056c90f80a7ff9935f4fbe99df",
-                "reference": "fcf3511827434c056c90f80a7ff9935f4fbe99df",
+                "url": "https:\/\/api.github.com\/repos\/awesomemotive\/sb-common\/zipball\/7d98a252e7a338c8cd506aad5a3d862eaa4f50f3",
+                "reference": "7d98a252e7a338c8cd506aad5a3d862eaa4f50f3",
                 "shasum": ""
             },
             "require": {
@@ -275,10 +275,10 @@
                 "phpcompatibility\/php-compatibility": "^9.3",
                 "squizlabs\/php_codesniffer": "^3.7"
             },
-            "time": "2026-02-20T20:49:19+00:00",
+            "time": "2026-06-04T14:48:21+00:00",
             "default-branch": true,
             "type": "library",
-            "installation-source": "source",
+            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "TikTokFeeds\\Vendor\\Smashballoon\\Framework\\": "",

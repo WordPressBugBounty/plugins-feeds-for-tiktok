@@ -240,6 +240,33 @@ class Utils
 	}
 
 	/**
+	 * Compact `[{id, feed_name}]` list for block/widget editor dropdowns.
+	 *
+	 * Skips the per-feed JSON decode and sources lookup that get_feeds_list()
+	 * does for the settings page — editor pickers only need id + name.
+	 *
+	 * @return array<int, array{id:int, feed_name:string}>
+	 */
+	public static function get_feeds_compact()
+	{
+		$rows = (new FeedsTable())->get_feeds();
+
+		if (empty($rows) || ! is_array($rows)) {
+			return array();
+		}
+
+		$feeds = array();
+		foreach ($rows as $row) {
+			$feeds[] = array(
+				'id'        => isset($row['id']) ? (int) $row['id'] : 0,
+				'feed_name' => isset($row['feed_name']) ? (string) $row['feed_name'] : '',
+			);
+		}
+
+		return $feeds;
+	}
+
+	/**
 	 * Get Feeds Count from the database.
 	 *
 	 * @return int

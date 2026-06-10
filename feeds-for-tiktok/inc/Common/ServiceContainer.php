@@ -7,7 +7,9 @@ use Smashballoon\Stubs\Services\ServiceProvider;
 use SmashBalloon\TikTokFeeds\Common\Admin\MenuService;
 use SmashBalloon\TikTokFeeds\Common\Admin\AboutBuilder;
 use SmashBalloon\TikTokFeeds\Common\Admin\Blocks;
+use SmashBalloon\TikTokFeeds\Common\Admin\Blocks\SBTT_Modern_Feed_Block;
 use SmashBalloon\TikTokFeeds\Common\Admin\SupportBuilder;
+use SmashBalloon\TikTokFeeds\Common\Integrations\Elementor\SBTT_Elementor_Base;
 use SmashBalloon\TikTokFeeds\Common\Customizer\FeedBuilder;
 use SmashBalloon\TikTokFeeds\Common\Integrations\FeedAnalytics;
 use SmashBalloon\TikTokFeeds\Common\Services\ActivationService;
@@ -57,6 +59,8 @@ class ServiceContainer extends ServiceProvider
 		NewUserService::class,
 		FeedAnalytics::class,
 		Blocks::class,
+		SBTT_Modern_Feed_Block::class,
+		SBTT_Elementor_Base::class,
 	];
 
 	/**

@@ -4,8 +4,8 @@ Contributors: smashballoon, craig-at-smash-balloon, am, smub
 Tags: TikTok, TikTok feed, TikTok videos, TikTok account, TikTok widget
 Support Website: https://smashballoon.com/tiktok-feeds/?utm_campaign=tiktok-free&utm_source=readme&utm_medium=product-page
 Requires at least: 5.2
-Tested up to: 6.9
-Stable tag: 1.5.2
+Tested up to: 7.0
+Stable tag: 1.6.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -121,6 +121,15 @@ Your TikTok feed will update at least once per day. This occurs in the backgroun
 TikTok Feeds has built in caching so your feed will not go down in the event the TikTok API is unavailable or if your connected TikTok account needs to be reconnected. A backup video feed will display until the issues are resolved.
 
 == Changelog ==
+= 1.6.0 =
+* New: TikTok feeds can now be embedded directly from the WordPress block editor and Elementor using a dedicated feed block and widget.
+* New: Added a Help widget for in-app access to documentation and support.
+* New: Deeper GDPR consent integration, including a WPConsent setup banner in the GDPR settings.
+* Tweak: Compatibility with WP 7.
+* Tweak: Corrected typos and grammar in plugin UI strings.
+* Fix: HEIC images now convert and display correctly inside the block editor and Elementor.
+* Fix: Feed click handling and image height now render correctly on themes with custom styling.
+
 = 1.5.2 =
 * Fix: Additional plugin hardening.
 
