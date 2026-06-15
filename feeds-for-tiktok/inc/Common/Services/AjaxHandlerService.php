@@ -475,6 +475,11 @@ class AjaxHandlerService extends ServiceProvider
 		$source = Utils::retrieve_user_info($oauth_data);
 
 		if ($source && ! isset($source['error'])) {
+			// Reconnecting can refresh tokens for an existing source, so clear the
+			// cached feed data (incl. the stale errors entry that blocks refetch)
+			// so the next view pulls fresh posts.
+			(new FeedCacheTable())->clear_feed_cache();
+
 			// Store source data in transient for retrieval after page reload.
 			// This enables the feed creation flow to continue after OAuth redirect.
 			// TTL of 5 minutes allows for slow connections and speed bump confirmation.

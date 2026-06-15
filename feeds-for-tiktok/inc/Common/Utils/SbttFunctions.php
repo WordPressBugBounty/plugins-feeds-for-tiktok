@@ -2,6 +2,7 @@
 
 use SmashBalloon\TikTokFeeds\Common\Utils;
 use SmashBalloon\TikTokFeeds\Common\AuthorizationStatusCheck;
+use SmashBalloon\TikTokFeeds\Common\SourceErrors;
 
 if (! defined('ABSPATH')) {
 	exit;
@@ -468,33 +469,24 @@ function sbtt_get_sources_settings_info()
 }
 
 /**
- * Get known error messages and directions to resolve for the given error message.
+ * Get the error message and directions to show for a relay error.
  *
  * @param string $message Error message.
  * @return array
  */
 function sbtt_get_error_message_and_directions($message)
 {
-	$error_messages = [
-		'The payload is invalid.' => [
-			'message' => __('Invalid Access Token. Please reconnect the source.', 'feeds-for-tiktok'),
-			/* translators: 1: Opening anchor tag, 2: Closing anchor tag */
-			'directions' => wp_sprintf(__('Please go to %1$sTikTok Feeds%2$s settings page to reconnect the source.', 'feeds-for-tiktok'), '<a href="' . esc_url(admin_url('admin.php?page=sbtt-settings')) . '" target="_blank" rel="noopener noreferrer">', '</a>'),
-		],
-		'access_token_invalid' => [
-			'message' => __('Invalid Access Token. Please reconnect the source.', 'feeds-for-tiktok'),
-			/* translators: 1: Opening anchor tag, 2: Closing anchor tag */
-			'directions' => wp_sprintf(__('Please go to %1$sTikTok Feeds%2$s settings page to reconnect the source.', 'feeds-for-tiktok'), '<a href="' . esc_url(admin_url('admin.php?page=sbtt-settings')) . '" target="_blank" rel="noopener noreferrer">', '</a>'),
-		]
-	];
-
-	if (isset($error_messages[$message])) {
-		return $error_messages[$message];
+	if (SourceErrors::is_reconnect_error($message)) {
+		return SourceErrors::notice();
 	}
 
-	return $message;
+	// Surface the original message rather than discarding it, so an
+	// unrecognised error never renders as a blank notice.
+	return [
+		'message'    => $message,
+		'directions' => '',
+	];
 }
-
 
 /**
  * Get Upgrade Plugin link

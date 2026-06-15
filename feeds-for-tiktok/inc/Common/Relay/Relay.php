@@ -6,6 +6,7 @@ use SmashBalloon\TikTokFeeds\Common\Container;
 use SmashBalloon\TikTokFeeds\Common\Services\SettingsManagerService;
 use SmashBalloon\TikTokFeeds\Common\Relay\RemoteRequest;
 use SmashBalloon\TikTokFeeds\Common\Database\SourcesTable;
+use SmashBalloon\TikTokFeeds\Common\SourceErrors;
 
 class Relay
 {
@@ -110,19 +111,33 @@ class Relay
 			}
 		}
 
-		// TODO:: Add error notices and invalid source errors.
+		$open_id = isset($args['open_id']) ? $args['open_id'] : '';
+
 		if (isset($response['data']['error']) && isset($response['data']['message'])) {
+			// Check both the error code and message: some reconnect errors (e.g.
+			// access_token_invalid) arrive as the code, others as the message.
+			if (
+				$open_id !== ''
+				&& (SourceErrors::is_reconnect_error($response['data']['error'])
+					|| SourceErrors::is_reconnect_error($response['data']['message']))
+			) {
+				SourceErrors::flag($open_id, $response['data']['message']);
+			}
+
 			$error_message = sbtt_get_error_message_and_directions($response['data']['message']);
 
-			$error = [
+			return [
 				'success' => false,
 				'data' => [
-					'error'   => isset($error_message['message']) ? $error_message['message'] : '',
+					'error'      => isset($error_message['message']) ? $error_message['message'] : '',
 					'directions' => isset($error_message['directions']) ? $error_message['directions'] : '',
 				]
 			];
+		}
 
-			return $error;
+		// Successful call — the source's token works, so drop any reconnect flag.
+		if ($open_id !== '') {
+			SourceErrors::clear($open_id);
 		}
 
 		return $response;
