@@ -296,7 +296,7 @@ class NotificationService extends ServiceProvider
 		$notifications_content = sprintf('<div class="messages">%s</div>', implode('', $notifications_html));
 
 		return sprintf(
-			'<div class="sbtt-notifications-wrap%s" id="sbtt-notifications">%s%s%s</div>',
+			'<div class="sbtt-notifications-wrap%s" id="sbtt-notifications" role="status" aria-live="polite" aria-atomic="true">%s%s%s</div>',
 			esc_attr($wrapper_class),
 			wp_kses_post($dismiss_button),
 			wp_kses_post($navigation_buttons),
@@ -654,7 +654,7 @@ class NotificationService extends ServiceProvider
 		if (empty($notification['image'])) {
 			return [
 				'src'  => SBTT_PLUGIN_URL . 'assets/images/sbtt-bell.svg',
-				'alt'  => 'notice',
+				'alt'  => '',
 				'wrap' => '<div class="bell"><img src="{src}" alt="{alt}"></div>',
 			];
 		}
@@ -662,7 +662,7 @@ class NotificationService extends ServiceProvider
 		if ($notification['image'] === 'balloon') {
 			return [
 				'src'  => SBTT_PLUGIN_URL . 'assets/images/balloon.svg',
-				'alt'  => 'notice',
+				'alt'  => '',
 				'wrap' => '<div class="bell"><img src="{src}" alt="{alt}"></div>',
 			];
 		}
@@ -670,7 +670,7 @@ class NotificationService extends ServiceProvider
 		$image_filename = sanitize_text_field(str_replace('sbi', 'sbtt', $notification['image']));
 		$image = [
 			'src'  => SBTT_PLUGIN_URL . 'assets/images/' . $image_filename,
-			'alt'  => 'notice',
+			'alt'  => '',
 		];
 
 		if (in_array($notification['id'], ['review', 'discount'], true)) {
@@ -784,7 +784,12 @@ class NotificationService extends ServiceProvider
 			return '';
 		}
 
-		$button_template = '<a class="%s disabled" title="%s"><img src="%s" alt="%s"></a>';
+		// Real <button> elements so the carousel controls are keyboard-operable.
+		// The `disabled` class is retained for CSS; admin-notifications.js keeps the
+		// native disabled state in sync as the user navigates. Native `disabled`
+		// conveys the state to assistive tech, so no aria-disabled is needed.
+		$button_template = '<button type="button" class="%s disabled" aria-label="%s" disabled>'
+			. '<img src="%s" alt="" aria-hidden="true"></button>';
 		$buttons = [
 			'prev' => [
 				'title' => __('Previous message', 'feeds-for-tiktok'),
@@ -800,10 +805,9 @@ class NotificationService extends ServiceProvider
 		foreach ($buttons as $class => $data) {
 			$html .= sprintf(
 				$button_template,
-				$class,
+				esc_attr($class),
 				esc_attr($data['title']),
-				esc_url(SBTT_PLUGIN_URL . 'assets/images/' . $data['image']),
-				esc_attr($data['title'])
+				esc_url(SBTT_PLUGIN_URL . 'assets/images/' . $data['image'])
 			);
 		}
 		$html .= '</div>';
@@ -820,7 +824,6 @@ class NotificationService extends ServiceProvider
 	protected function getDismissButtonHtml($type)
 	{
 		$dismiss_text = __('Dismiss this message', 'feeds-for-tiktok');
-		$dismiss_alt = __('Dismiss', 'feeds-for-tiktok');
 		$icon_url = SBTT_PLUGIN_URL . 'assets/images/sbtt-dismiss-icon.svg';
 
 		$dismiss_url = '';
@@ -828,16 +831,27 @@ class NotificationService extends ServiceProvider
 			$dismiss_url = wp_nonce_url(add_query_arg(array('sbtt_dismiss' => $type)), 'sbtt-' . $type, 'sbtt_nonce');
 		}
 
-		$href_attr = $dismiss_url ? sprintf(' href="%s"', esc_url($dismiss_url)) : '';
+		// review/discount dismiss navigates to a nonced URL — a real <a> is already
+		// keyboard-operable, so keep it as a link (just label it and hide the icon).
+		if ($dismiss_url) {
+			return sprintf(
+				'<a class="dismiss" href="%s" aria-label="%s">
+					<img src="%s" alt="" aria-hidden="true">
+				</a>',
+				esc_url($dismiss_url),
+				esc_attr($dismiss_text),
+				esc_url($icon_url)
+			);
+		}
 
+		// All other notices dismiss via AJAX (no href). A bare <a> with no href is
+		// not keyboard-focusable, so render a real <button> for keyboard users.
 		return sprintf(
-			'<a class="dismiss" title="%s"%s>
-				<img src="%s" alt="%s">
-			</a>',
+			'<button type="button" class="dismiss" aria-label="%s">
+				<img src="%s" alt="" aria-hidden="true">
+			</button>',
 			esc_attr($dismiss_text),
-			$href_attr,
-			esc_url($icon_url),
-			esc_attr($dismiss_alt)
+			esc_url($icon_url)
 		);
 	}
 }

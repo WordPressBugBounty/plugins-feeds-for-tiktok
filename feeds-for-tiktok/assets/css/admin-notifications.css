@@ -180,6 +180,13 @@ body .sbtt_review_step1_notice .sbtt-btn-link:not(:last-child) {
   line-height: 16px;
   display: flex;
   justify-content: center;
+  /* Reset native <button> chrome (control was converted from <a> for keyboard a11y). */
+  -webkit-appearance: none;
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
 }
 #sbtt-notifications .dismiss svg {
   width: 15px;
@@ -196,7 +203,8 @@ body .sbtt_review_step1_notice .sbtt-btn-link:not(:last-child) {
   height: 30px;
 }
 
-#sbtt-notifications .navigation a {
+#sbtt-notifications .navigation a,
+#sbtt-notifications .navigation button {
   width: 32px;
   height: 32px;
   border: 1px solid #DCDDE1;
@@ -212,6 +220,12 @@ body .sbtt_review_step1_notice .sbtt-btn-link:not(:last-child) {
   align-items: center;
   justify-content: center;
   transition: all 0.15s ease-in-out;
+  /* Reset native <button> chrome (controls converted from <a> for keyboard a11y). */
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
 }
 
 #sbtt-notifications .navigation svg {
@@ -219,11 +233,14 @@ body .sbtt_review_step1_notice .sbtt-btn-link:not(:last-child) {
   height: 9px;
 }
 
-#sbtt-notifications .navigation a:not(.disabled):hover {
+#sbtt-notifications .navigation a:not(.disabled):hover,
+#sbtt-notifications .navigation button:not(.disabled):hover {
   background-color: #fff;
 }
 #sbtt-notifications .navigation a:not(.disabled):focus,
-#sbtt-notifications .navigation a:not(.disabled):active {
+#sbtt-notifications .navigation a:not(.disabled):active,
+#sbtt-notifications .navigation button:not(.disabled):focus,
+#sbtt-notifications .navigation button:not(.disabled):active {
   background: #E8E8EB;
   color: #141B38;
 }

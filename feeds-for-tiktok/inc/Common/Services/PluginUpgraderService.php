@@ -275,7 +275,7 @@ class PluginUpgraderService extends ServiceProvider
 			wp_send_json_error($error);
 		}
 
-		if (hash_hmac('sha512', $oth, wp_salt()) !== $post_oth) {
+		if (! hash_equals(hash_hmac('sha512', $oth, wp_salt()), $post_oth)) {
 			wp_send_json_error($error);
 		}
 

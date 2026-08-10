@@ -75,7 +75,7 @@ class NewUserService extends NotificationService
 		$notifications_content = sprintf('<div class="messages">%s</div>', implode('', $notifications_html));
 
 		printf(
-			'<div class="sbtt-notifications-wrap%s" id="sbtt-notifications">%s%s%s</div>',
+			'<div class="sbtt-notifications-wrap%s" id="sbtt-notifications" role="status" aria-live="polite" aria-atomic="true">%s%s%s</div>',
 			esc_attr($wrapper_class),
 			wp_kses_post($dismiss_button),
 			wp_kses_post($navigation_buttons),

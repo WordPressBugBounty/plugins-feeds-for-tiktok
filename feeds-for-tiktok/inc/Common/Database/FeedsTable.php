@@ -290,10 +290,13 @@ class FeedsTable extends Table
 		global $wpdb;
 		$table_name = $wpdb->prefix . self::TABLE_NAME;
 
-		$feed_ids = implode(',', $feed_ids);
-
-		$sql    = "DELETE FROM $table_name WHERE id IN ($feed_ids)";
-		$result = $wpdb->query($sql);
+		$feed_ids = array_map('absint', $feed_ids);
+		if (empty($feed_ids)) {
+			return false;
+		}
+		$placeholders = implode(',', array_fill(0, count($feed_ids), '%d'));
+		$sql = $wpdb->prepare("DELETE FROM $table_name WHERE id IN ($placeholders)", $feed_ids);
+		$result = $wpdb->query($sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		if (! $result) {
 			return false;

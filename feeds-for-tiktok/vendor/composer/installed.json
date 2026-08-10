@@ -225,12 +225,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:awesomemotive\/sb-customizer.git",
-                "reference": "1dbe2af3b82a8ece792da2c7619261e626fa33ed"
+                "reference": "889e7e71ea9c84cd6901597ccbdfbb1c767efd32"
             },
             "require": {
                 "smashballoon\/stubs": "dev-master"
             },
-            "time": "2026-06-12T12:38:41+00:00",
+            "time": "2026-08-07T11:16:42+00:00",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -253,12 +253,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:awesomemotive\/sb-common.git",
-                "reference": "7d98a252e7a338c8cd506aad5a3d862eaa4f50f3"
+                "reference": "3c53a9a74cc5bbdb4df2cfec13007f4793404e0f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https:\/\/api.github.com\/repos\/awesomemotive\/sb-common\/zipball\/7d98a252e7a338c8cd506aad5a3d862eaa4f50f3",
-                "reference": "7d98a252e7a338c8cd506aad5a3d862eaa4f50f3",
+                "url": "https:\/\/api.github.com\/repos\/awesomemotive\/sb-common\/zipball\/3c53a9a74cc5bbdb4df2cfec13007f4793404e0f",
+                "reference": "3c53a9a74cc5bbdb4df2cfec13007f4793404e0f",
                 "shasum": ""
             },
             "require": {

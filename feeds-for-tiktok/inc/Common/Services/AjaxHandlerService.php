@@ -64,7 +64,16 @@ class AjaxHandlerService extends ServiceProvider
 		$feed_title    = isset($_POST['feed_title']) ? sanitize_text_field($_POST['feed_title']) : '';
 		$feed_type     = isset($_POST['feedType']) ? sanitize_text_field($_POST['feedType']) : 'own_timeline';
 		$feed_template = isset($_POST['feedTemplate']) ? sanitize_text_field($_POST['feedTemplate']) : 'default';
-		$sources       = isset($_POST['sources']) ? sbtt_sanitize_data($_POST['sources']) : [];
+		$sources       = isset($_POST['sources']) ? (array) sbtt_sanitize_data($_POST['sources']) : [];
+		// is_scalar rather than is_string: sbtt_sanitize_data() coerces numeric values
+		// to int, so an all-digit open_id arrives here as an int and is_string() would
+		// drop it silently, creating a feed with no sources and no error. Booleans are
+		// excluded because (string) true is '1', which would pass the pattern as a
+		// bogus source id. Survivors are cast back to string to match the varchar
+		// open_id column and how every other path stores a source.
+		$sources       = array_map('strval', array_values(array_filter($sources, static function ($id) {
+			return is_scalar($id) && ! is_bool($id) && (bool) preg_match('/^[A-Za-z0-9._-]{1,255}$/', (string) $id);
+		})));
 		$styles        = isset($_POST['feed_style']) ? sanitize_text_field(wp_unslash($_POST['feed_style'])) : '';
 		$settings      = isset($_POST['settings']) ? sbtt_sanitize_data($_POST['settings']) : [];
 

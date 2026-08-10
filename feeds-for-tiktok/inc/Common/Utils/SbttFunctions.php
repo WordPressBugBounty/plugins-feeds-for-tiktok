@@ -414,7 +414,18 @@ function sbtt_get_global_settings_info()
 		$output .= '</br>';
 		$output .= 'License status: ';
 		if (isset($global_settings['license_status'])) {
-			$output .= $global_settings['license_status'];
+			// sanitize_key() on READ, not just on write. This blob is shipped through
+			// wp_localize_script(), which html_entity_decode()s every top-level scalar,
+			// and rendered with dangerouslySetInnerHTML -- so esc_html() alone is inert
+			// (an entity-encoded payload is reassembled in transit). Hardening only at
+			// the write boundary would leave two holes: a value poisoned before that
+			// hardening shipped, and the five callers that write sbtt_global_settings
+			// with a direct update_option(). sanitize_key() removes '&', '<' and '>'
+			// outright, which is the invariant this sink needs, and it is lossless for
+			// the real EDD status tokens (valid, expired, site_inactive, ...).
+			// esc_html() is kept so the escaping is still correct if this page ever
+			// stops going through the localize/innerHTML transport.
+			$output .= esc_html(sanitize_key($global_settings['license_status']));
 		} else {
 			$output .= ' Inactive';
 		}
@@ -428,7 +439,10 @@ function sbtt_get_global_settings_info()
 
 	$output .= '</br>';
 	$output .= 'GDPR: ';
-	$output .= isset($global_settings['gdpr']) ? $global_settings['gdpr'] : ' Not setup';
+	// Same read-side hardening as license_status above. This line previously had no
+	// escaping at all, so gdpr had zero defence at the sink; sanitize_key() is
+	// lossless for its only real values ('auto', 'yes', 'no').
+	$output .= isset($global_settings['gdpr']) ? esc_html(sanitize_key($global_settings['gdpr'])) : ' Not setup';
 	$output .= '</br>';
 	$output .= 'Optimize Images: ';
 	$output .= isset($global_settings['optimize_images']) && $global_settings['optimize_images'] === true ? 'Enabled' : 'Disabled';

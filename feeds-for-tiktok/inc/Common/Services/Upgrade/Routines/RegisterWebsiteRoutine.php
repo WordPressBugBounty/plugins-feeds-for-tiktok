@@ -21,7 +21,7 @@ class RegisterWebsiteRoutine extends ServiceProvider
 	 */
 	public function register()
 	{
-		if ($this->will_run() || $this->force_run()) {
+		if ($this->will_run()) {
 			$this->run();
 		}
 	}
@@ -40,21 +40,6 @@ class RegisterWebsiteRoutine extends ServiceProvider
 		}
 
 		return ! isset($global_settings['api_site_access_token']) || $global_settings['api_site_access_token'] === '';
-	}
-
-	/**
-	 * Checks if the routine should be forced to run.
-	 *
-	 * @return bool
-	 */
-	protected function force_run()
-	{
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if (isset($_GET['sbtt_force_register']) && $_GET['sbtt_force_register'] === 'true') {
-			return true;
-		}
-
-		return false;
 	}
 
 	/**

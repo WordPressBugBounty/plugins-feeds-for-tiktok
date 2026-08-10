@@ -11,7 +11,6 @@ namespace SmashBalloon\TikTokFeeds\Common\Database;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
 // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 // phpcs:disable PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 use SmashBalloon\TikTokFeeds\Common\Database\Migrations\SourcesScopeFieldUpdate;
@@ -144,9 +143,12 @@ class SourcesTable extends Table
 
 		if (! empty($args['open_id'])) {
 			if (is_array($args['open_id'])) {
-				$open_id = array_map('sanitize_text_field', $args['open_id']);
-				$open_id = implode("','", $open_id);
-				$sql     = "SELECT * FROM $table_name WHERE open_id IN ('$open_id')";
+				$open_ids = array_values(array_filter(array_map('sanitize_text_field', $args['open_id']), 'strlen'));
+				if (empty($open_ids)) {
+					return false;
+				}
+				$placeholders = implode(',', array_fill(0, count($open_ids), '%s'));
+				$sql = $wpdb->prepare("SELECT * FROM $table_name WHERE open_id IN ($placeholders)", $open_ids);
 			} else {
 				$open_id = sanitize_text_field($args['open_id']);
 				$sql     = $wpdb->prepare(
@@ -158,7 +160,10 @@ class SourcesTable extends Table
 			$sql = "SELECT * FROM $table_name";
 		}
 
-		$results = $wpdb->get_results($sql, ARRAY_A);
+		// $sql is either already run through $wpdb->prepare() above, or the
+		// no-argument "SELECT * FROM $table_name" whose only interpolation is the
+		// prefixed table name. phpcs cannot follow either through the variable.
+		$results = $wpdb->get_results($sql, ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		if (! $results) {
 			return false;
@@ -191,7 +196,9 @@ class SourcesTable extends Table
 			$open_id
 		);
 
-		$results = $wpdb->get_results($sql, ARRAY_A);
+		// $sql comes straight from $wpdb->prepare() above; phpcs cannot follow it
+		// through the variable.
+		$results = $wpdb->get_results($sql, ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		if (! $results) {
 			return false;

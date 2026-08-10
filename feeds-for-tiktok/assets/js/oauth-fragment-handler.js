@@ -12,6 +12,31 @@
 (function (window) {
 	'use strict';
 
+	// Security (F7): The OAuth token fragment (sbtt_access_token / sbtt_refresh_token)
+	// is removed from the address bar as early as possible. Capture the raw fragment
+	// into a local variable and strip it from the URL synchronously, as the module's
+	// very first action -- before the toast setup, checkForSuccessState, any DOM work,
+	// or the backend fetch. Only the hash is dropped here (path + query are preserved);
+	// the OAuth query params are still cleaned by the existing block below.
+	//
+	// This minimizes the window, it does not close it. Scripts printed earlier in
+	// <head> and browser extension content scripts running at document_start still get
+	// a turn first, and the pre-navigation URL is retained in the navigation timing
+	// entry (performance.getEntriesByType('navigation')[0].name), which replaceState
+	// does not rewrite and no API clears. The durable fix is a server-side
+	// authorization-code exchange so the tokens never reach the browser; tracked
+	// separately. What this does buy: the tokens leave the visible address bar, the
+	// session history entry, session restore, and any URL the user copies or
+	// screenshots.
+	//
+	// The guard matches either token, not just the access token: the refresh token is
+	// the longer-lived credential, and a fragment carrying it alone must still be
+	// cleared even though the current connect flow always sends all three params.
+	var oauthFragmentRaw = (window.location.hash || '').replace(/^#/, '');
+	if (/sbtt_(access|refresh)_token=/.test(oauthFragmentRaw) && window.history && window.history.replaceState) {
+		window.history.replaceState(null, '', window.location.pathname + window.location.search);
+	}
+
 	/**
 	 * SVG Icons matching the customizer icon set
 	 */
@@ -52,6 +77,59 @@
 			return this.container;
 		},
 
+		announcer: null,
+
+		/**
+		 * Get (or lazily create) the visually-hidden live regions used for
+		 * screen-reader announcements. The regions are inserted EMPTY and only
+		 * ever receive text later, as a mutation — a live region that arrives
+		 * in the DOM with its content already set is typically not announced.
+		 *
+		 * @return {{polite: HTMLElement, assertive: HTMLElement}}
+		 */
+		getAnnouncer: function () {
+			if (this.announcer) {
+				return this.announcer;
+			}
+
+			var srOnly = 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap;';
+			var polite = document.createElement('div');
+			polite.setAttribute('role', 'status');
+			polite.setAttribute('aria-live', 'polite');
+			polite.setAttribute('aria-atomic', 'true');
+			polite.style.cssText = srOnly;
+			var assertive = document.createElement('div');
+			assertive.setAttribute('role', 'alert');
+			assertive.setAttribute('aria-live', 'assertive');
+			assertive.setAttribute('aria-atomic', 'true');
+			assertive.style.cssText = srOnly;
+			var parent = document.body || document.documentElement;
+			parent.appendChild(polite);
+			parent.appendChild(assertive);
+
+			this.announcer = { polite: polite, assertive: assertive };
+			return this.announcer;
+		},
+
+		/**
+		 * Announce a message to screen readers. Errors interrupt assertively;
+		 * success/info announce politely. The delayed write makes the text a
+		 * mutation of an already-inserted empty region — reliable across
+		 * screen-reader/browser pairs, where flipping politeness and injecting
+		 * content in the same tick is not.
+		 *
+		 * @param {string}  message - Text to announce
+		 * @param {boolean} isError - Use the assertive (alert) region
+		 */
+		announce: function (message, isError) {
+			var regions = this.getAnnouncer();
+			regions.polite.textContent = '';
+			regions.assertive.textContent = '';
+			setTimeout(function () {
+				(isError ? regions.assertive : regions.polite).textContent = message;
+			}, 100);
+		},
+
 		/**
 		 * Show a toast notification
 		 *
@@ -69,15 +147,25 @@
 				this.timeout = null;
 			}
 
-			// Build notification HTML matching the React component structure
+			// The visible toast is deliberately NOT the live region —
+			// announcements go through the dedicated hidden regions (see
+			// announce()), so politeness is never flipped on a populated,
+			// already-inserted container.
+			var isError = type === 'error';
+
+			// Build notification HTML matching the React component structure. The
+			// icon is decorative — the adjacent text carries the meaning.
 			var iconSvg = icons[type] || icons.message;
 			container.innerHTML =
-				'<span class="sb-notification-icon">' + iconSvg + '</span>' +
+				'<span class="sb-notification-icon" aria-hidden="true">' + iconSvg + '</span>' +
 				'<span class="sb-notification-text">' + this.escapeHtml(message) + '</span>';
 
 			// Set type and show
 			container.setAttribute('data-type', type);
 			container.setAttribute('data-active', 'shown');
+
+			// Screen-reader announcement (decoupled from the visible toast).
+			this.announce(message, isError);
 
 			// Auto-hide after duration
 			var self = this;
@@ -176,11 +264,27 @@
 		var overlay = document.createElement('div');
 		overlay.id = 'sbtt-oauth-loading';
 		overlay.className = 'sbtt-oauth-loading';
-		overlay.innerHTML = '<div class="sbtt-oauth-loading-spinner"></div>';
+		// Announce the processing state — the spinner alone is invisible to SR
+		// users. The region is inserted with an EMPTY text node and the text is
+		// written on a later tick: live regions announce mutations, so content
+		// that arrives with the region (or an aria-label on the region itself)
+		// is typically never announced.
+		overlay.setAttribute('role', 'status');
+		overlay.setAttribute('aria-live', 'polite');
+		var loadingLabel = (typeof sbtt_oauth !== 'undefined' && sbtt_oauth.strings && sbtt_oauth.strings.connecting)
+			? sbtt_oauth.strings.connecting
+			: 'Connecting your TikTok account…';
+		var srText = document.createElement('span');
+		srText.style.cssText = 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap;';
+		overlay.innerHTML = '<div class="sbtt-oauth-loading-spinner" aria-hidden="true"></div>';
+		overlay.appendChild(srText);
 
 		// Use documentElement if body isn't ready yet (script runs in head)
 		var parent = document.body || document.documentElement;
 		parent.appendChild(overlay);
+		setTimeout(function () {
+			srText.textContent = loadingLabel;
+		}, 100);
 	}
 
 	/**
@@ -246,13 +350,15 @@
 		checkForSuccessState();
 	}
 
-	// Only continue with OAuth processing if we have a fragment with OAuth tokens.
-	if (!window.location.hash || !window.location.hash.includes('sbtt_access_token')) {
+	// Only continue with OAuth processing if we captured a fragment with OAuth tokens.
+	// Note: window.location.hash has already been cleared above for security, so the
+	// check and the parse below both use the captured raw fragment string.
+	if (oauthFragmentRaw.indexOf('sbtt_access_token') === -1) {
 		return;
 	}
 
-	// Parse fragment parameters.
-	var fragment = new URLSearchParams(window.location.hash.substring(1));
+	// Parse fragment parameters from the captured raw fragment.
+	var fragment = new URLSearchParams(oauthFragmentRaw);
 
 	// Check required params exist.
 	var accessToken = fragment.get('sbtt_access_token');

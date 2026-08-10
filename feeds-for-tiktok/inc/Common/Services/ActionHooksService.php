@@ -206,6 +206,7 @@ class ActionHooksService extends ServiceProvider
 				'success'       => __('TikTok account connected successfully!', 'feeds-for-tiktok'),
 				'error_prefix'  => __('Failed to connect TikTok account: ', 'feeds-for-tiktok'),
 				'error_generic' => __('Failed to connect TikTok account. Please try again.', 'feeds-for-tiktok'),
+				'connecting'    => __('Connecting your TikTok account…', 'feeds-for-tiktok'),
 			),
 		));
 	}
