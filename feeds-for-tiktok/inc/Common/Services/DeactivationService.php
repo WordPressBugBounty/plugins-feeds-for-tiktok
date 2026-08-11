@@ -9,6 +9,7 @@
 namespace SmashBalloon\TikTokFeeds\Common\Services;
 
 use SmashBalloon\TikTokFeeds\Common\Container;
+use SmashBalloon\TikTokFeeds\Common\UsageTracking\Config as UsageTrackingConfig;
 
 /**
  * Plugin Deactivation Service class.
@@ -35,5 +36,6 @@ class DeactivationService
 		wp_clear_scheduled_hook('sbtt_refresh_token_routine');
 		wp_clear_scheduled_hook('sbtt_feed_update_routine');
 		wp_clear_scheduled_hook('sbtt_usage_tracking_cron');
+		wp_clear_scheduled_hook(UsageTrackingConfig::CRON_HOOK);
 	}
 }

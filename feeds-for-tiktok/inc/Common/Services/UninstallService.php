@@ -100,6 +100,13 @@ class UninstallService
 			'sbtt_statuses',
 			'sbtt_db_version',
 			'sbtt_usage_tracking_config',
+			'sbtt_smash_usage_tracking',
+			'sbtt_smash_usage_tracking_site_token',
+			'sbtt_smash_usage_tracking_schedule',
+			'sbtt_smash_usage_events',
+			'sbtt_smash_usage_active_dates',
+			'sbtt_smash_usage_session_durations',
+			'sbtt_source_errors',
 			'sbtt_newuser_notifications',
 			'sbtt_notifications',
 			'sbtt_resize_images_data'
@@ -121,6 +128,7 @@ class UninstallService
 			'sbtt_refresh_token_routine',
 			'sbtt_feed_update_routine',
 			'sbtt_usage_tracking_cron',
+			'sbtt_smash_usage_tracking_cron',
 		];
 
 		foreach ($cron_jobs as $cron_job) {

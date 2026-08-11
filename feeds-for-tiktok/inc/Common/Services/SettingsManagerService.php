@@ -73,6 +73,15 @@ class SettingsManagerService extends ServiceProvider
 		$updated_settings = wp_parse_args($settings, $current_settings);
 
 		update_option($this->settings_options, $updated_settings);
+
+		if ( array_key_exists( 'usagetracking', $updated_settings ) ) {
+			$scheduler = new \SmashBalloon\TikTokFeeds\Common\UsageTracking\Core\Scheduler();
+			if ( ! empty( $updated_settings['usagetracking'] ) ) {
+				$scheduler->schedule();
+			} else {
+				$scheduler->unschedule();
+			}
+		}
 	}
 
 	/**

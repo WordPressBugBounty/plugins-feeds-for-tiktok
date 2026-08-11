@@ -24,7 +24,7 @@ use SmashBalloon\TikTokFeeds\Common\Services\ActionHooksService;
 use SmashBalloon\TikTokFeeds\Common\Services\NotificationService;
 use SmashBalloon\TikTokFeeds\Common\Services\ShortcodeService;
 use SmashBalloon\TikTokFeeds\Common\Services\UninstallService;
-use SmashBalloon\TikTokFeeds\Common\Services\UsageTrackingService;
+use SmashBalloon\TikTokFeeds\Common\UsageTracking\SmashUsageTrackingService;
 use SmashBalloon\TikTokFeeds\Common\Services\NewUserService;
 use SmashBalloon\TikTokFeeds\Common\Settings\SettingsBuilder;
 
@@ -54,7 +54,7 @@ class ServiceContainer extends ServiceProvider
 		DBManagerService::class,
 		ShortcodeService::class,
 		AjaxHandlerService::class,
-		UsageTrackingService::class,
+		SmashUsageTrackingService::class,
 		NotificationService::class,
 		NewUserService::class,
 		FeedAnalytics::class,
