@@ -4,7 +4,7 @@
  * Plugin Name: Smash Balloon TikTok Feed
  * Plugin URI: https://smashballoon.com/tiktok-feeds/
  * Description: Add TikTok feeds to your website.
- * Version: 1.7.1
+ * Version: 1.7.2
  * Author: Smash Balloon
  * Author URI: https://smashballoon.com/
  * License: GPLv2 or later
@@ -33,7 +33,7 @@ if (! defined('SBTT_PLUGIN_NAME')) {
 }
 
 if (! defined('SBTTVER')) {
-	define('SBTTVER', '1.7.1');
+	define('SBTTVER', '1.7.2');
 }
 
 if (! defined('SBTT_PLUGIN_FILE')) {
