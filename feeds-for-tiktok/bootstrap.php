@@ -61,6 +61,20 @@ class SmashBalloon_TikTokFeeds
 
 new SmashBalloon_TikTokFeeds();
 
+// Initialize the WordPress-compliance consent manager.
+if (class_exists('\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Consent\ConsentManager')) {
+	$sbtt_is_pro = (class_exists('\SmashBalloon\TikTokFeeds\Common\Utils') && \SmashBalloon\TikTokFeeds\Common\Utils::sbtt_is_pro());
+	\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Consent\ConsentManager::init([
+		'plugin_slug'         => 'tiktok-feeds',
+		'plugin_name'         => $sbtt_is_pro ? 'Feeds for TikTok Pro' : 'Feeds for TikTok',
+		'utm_slug'            => 'tiktok',
+		'legacy_class'        => 'SBTT_Consent',
+		'is_pro'              => $sbtt_is_pro,
+		'show_reprompt_modal' => ! $sbtt_is_pro,
+		'pro_init_option'     => $sbtt_is_pro ? 'sbtt_pro_consent_initialized' : null,
+	]);
+}
+
 // Initialize the deactivation feedback survey.
 if (class_exists('\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Feedback\FeedbackManager')) {
 	$sbtt_plugin_slug    = defined('SBTT_PRO') ? 'sb-tiktok-feeds-pro' : 'sb-tiktok-feeds';
@@ -73,5 +87,19 @@ if (class_exists('\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Feedback\F
 		'support_url'        => 'https://smashballoon.com/support/?utm_campaign=' . $sbtt_utm_campaign . '&utm_source=deactivation&utm_medium=support',
 		'enable_help_widget' => true,
 		'help_url'           => 'https://smashballoon.com/docs/tiktok/',
+	]);
+}
+
+// Initialize the shared About Us page in place of the legacy AboutBuilder.
+if (class_exists('\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\AboutUs\AboutUsManager')) {
+	\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\AboutUs\AboutUsManager::init([
+		'plugin_slug'    => defined('SBTT_PRO') ? 'sb-tiktok-feeds-pro' : 'sb-tiktok-feeds',
+		'plugin_name'    => 'Smash Balloon TikTok Feeds',
+		'plugin_version' => SBTTVER,
+		'plugin_file'    => SBTT_PLUGIN_FILE,
+		'menu_parent'    => SBTT_MENU_SLUG,
+		'page_slug'      => 'sbtt-about',
+		'menu_position'  => 4,
+		'is_pro'         => defined('SBTT_PRO'),
 	]);
 }

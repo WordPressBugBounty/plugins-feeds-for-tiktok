@@ -82,11 +82,15 @@ class ActionHooksService extends ServiceProvider
 		if (! Utils::isProduction()) {
 			$feed_js_file = "http://localhost:3000/static/js/tikTokFeed.js";
 		} else {
+			// SBTTVER, not false: passing false makes WordPress substitute its OWN
+			// version, so the cache key only changes when WordPress is upgraded — any
+			// CSS shipped in a plugin update is served stale from CDNs until then. The
+			// sibling wp_register_script() below already passes SBTTVER.
 			wp_register_style(
 				'sbtt-tiktok-feed',
 				SBTT_CUSTOMIZER_ASSETS . '/build/static/css/tikTokFeed.css',
-				false,
-				false
+				array(),
+				SBTTVER
 			);
 		}
 
@@ -97,7 +101,7 @@ class ActionHooksService extends ServiceProvider
 		$data = array(
 			'ajaxHandler' => admin_url('admin-ajax.php'),
 			'nonce'       => wp_create_nonce('sbtt-frontend'),
-			'isPro'		  => Utils::sbtt_is_pro()
+			'isPro'		  => Utils::sbtt_is_pro(),
 		);
 
 		wp_localize_script('sbtt-tiktok-feed', 'sbtt_feed_options', $data);

@@ -29,6 +29,11 @@ if (!function_exists('humbug_phpscoper_expose_class')) {
         }
     }
 }
-humbug_phpscoper_expose_class('ComposerAutoloaderInit197d09a687b60803f921b448e0f1c3ee', 'TikTokFeeds\Vendor\ComposerAutoloaderInit197d09a687b60803f921b448e0f1c3ee');
+humbug_phpscoper_expose_class('ComposerAutoloaderInitc1f7d33e9cee18fd2f39d903a972043c', 'TikTokFeeds\Vendor\ComposerAutoloaderInitc1f7d33e9cee18fd2f39d903a972043c');
+
+// Function aliases. For more information see:
+// https://github.com/humbug/php-scoper/blob/master/docs/further-reading.md#function-aliases
+if (!function_exists('sbc_about_us_icon')) { function sbc_about_us_icon() { return \TikTokFeeds\Vendor\sbc_about_us_icon(...func_get_args()); } }
+if (!function_exists('sbc_about_us_kses')) { function sbc_about_us_kses() { return \TikTokFeeds\Vendor\sbc_about_us_kses(...func_get_args()); } }
 
 return $loader;

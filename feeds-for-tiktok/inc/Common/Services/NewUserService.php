@@ -94,9 +94,24 @@ class NewUserService extends NotificationService
 			return [];
 		}
 
+		// New-user notices (review prompts, discount offers) are remote-sourced
+		// marketing fetched from newuser.json and cached. Honour the same consent
+		// switch as the parent NotificationService: only serve them when consent
+		// resolves to 'remote'. 'local' and 'none' suppress them so opting out
+		// can't replay previously-cached marketing. This also gates the remote
+		// fetch and the independent admin_notices output through one entry point.
+		$source = class_exists('\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Consent\ConsentManager')
+			? \TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Consent\ConsentManager::notification_source()
+			: 'remote';
+
+		if ('remote' !== $source) {
+			return [];
+		}
+
 		$option = $this->getOptionValue();
 		if (empty($option['update'])) {
 			$this->updateNotifications();
+			$option = $this->getOptionValue(false);
 		}
 
 		$events = !empty($option['events']) ? $this->verifyActiveNotifications($option['events']) : [];

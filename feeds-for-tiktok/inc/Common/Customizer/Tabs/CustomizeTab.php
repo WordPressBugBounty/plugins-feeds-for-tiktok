@@ -1156,6 +1156,23 @@ class CustomizeTab extends SB_Sidebar_Tab
 						'label' => __('Inline', 'feeds-for-tiktok'),
 						'upsellModal' => 'playerExperienceModal'
 					],
+					// SMASH-1853: Swipe View, re-shaped as a third answer to "what
+					// happens when a visitor clicks a post" rather than a standalone
+					// global/per-feed boolean (see the two prior attempts this commit
+					// unwinds). Pro-gated with the same `upsellModal` mechanism the
+					// `inline` option above already uses -- NOT `hidePro` (inert on
+					// this page; SettingSectionOutput.js never calls
+					// checkControlCondition()) and NOT section-level `isProSetting`
+					// (that gates a whole section, not one option in a toggleset).
+					// Reuses `playerExperienceModal` rather than a new modal id: its
+					// copy ("...to get inline playback") is inline-specific and
+					// should get swipe-specific wording once a dedicated asset
+					// exists -- see PR report.
+					[
+						'value' => 'swipe',
+						'label' => __('Swipe', 'feeds-for-tiktok'),
+						'upsellModal' => 'playerExperienceModal'
+					],
 				],
 			],
 		];

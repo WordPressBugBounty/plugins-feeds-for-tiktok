@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit197d09a687b60803f921b448e0f1c3ee
+class ComposerStaticInitc1f7d33e9cee18fd2f39d903a972043c
 {
     public static $files = array (
         'sb_ttf_b1eb330aa001ae4915f07005b4e993c2' => __DIR__ . '/..' . '/smashballoon/framework/Utilities/functions.php',
@@ -75,9 +75,9 @@ class ComposerStaticInit197d09a687b60803f921b448e0f1c3ee
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit197d09a687b60803f921b448e0f1c3ee::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit197d09a687b60803f921b448e0f1c3ee::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit197d09a687b60803f921b448e0f1c3ee::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitc1f7d33e9cee18fd2f39d903a972043c::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitc1f7d33e9cee18fd2f39d903a972043c::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitc1f7d33e9cee18fd2f39d903a972043c::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -5,7 +5,6 @@ namespace SmashBalloon\TikTokFeeds\Common;
 use SmashBalloon\TikTokFeeds\Common\Container;
 use Smashballoon\Stubs\Services\ServiceProvider;
 use SmashBalloon\TikTokFeeds\Common\Admin\MenuService;
-use SmashBalloon\TikTokFeeds\Common\Admin\AboutBuilder;
 use SmashBalloon\TikTokFeeds\Common\Admin\Blocks;
 use SmashBalloon\TikTokFeeds\Common\Admin\Blocks\SBTT_Modern_Feed_Block;
 use SmashBalloon\TikTokFeeds\Common\Admin\SupportBuilder;
@@ -49,7 +48,6 @@ class ServiceContainer extends ServiceProvider
 		MenuService::class,
 		FeedBuilder::class,
 		SettingsBuilder::class,
-		AboutBuilder::class,
 		SupportBuilder::class,
 		DBManagerService::class,
 		ShortcodeService::class,
@@ -73,7 +71,7 @@ class ServiceContainer extends ServiceProvider
 		$container = Container::get_instance();
 		foreach ($this->services as $service) {
 			// Some services need a Proxy instance to be passed to them.
-			if ($service === AboutBuilder::class || $service === SupportBuilder::class) {
+			if ($service === SupportBuilder::class) {
 				$container->set($service, new $service($container->get('Proxy')));
 				continue;
 			}

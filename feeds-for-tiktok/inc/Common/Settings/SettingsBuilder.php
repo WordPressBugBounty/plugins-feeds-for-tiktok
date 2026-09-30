@@ -78,11 +78,41 @@ class SettingsBuilder extends Settings_Builder
 		];
 		$this->settingspage_tabs_path      = SBTT_SETTINGSPAGE_TABS_PATH;
 		$this->settingspage_tabs_namespace = SBTT_SETTINGSPAGE_TABS_NAMESPACE;
-		$this->tabs_order                  = [ 'sb-general-tab', 'sb-feeds-tab', 'sb-advanced-tab', 'sb-code-snippets-tab' ];
+		$this->tabs_order                  = [ 'sb-general-tab', 'sb-feeds-tab', 'sb-data-controls-tab', 'sb-advanced-tab', 'sb-code-snippets-tab' ];
 
 		$this->add_to_menu     = !Utils::sbtt_is_pro() ? true : Utils::is_license_valid();
 		$this->plugin_status   = new AuthorizationStatusCheck();
 		$this->global_settings = Container::get_instance()->get(SettingsManagerService::class);
+	}
+
+	/**
+	 * Build the settings-page tab data, then drop the Data Sharing tab when any
+	 * Smash Balloon Pro plugin is active. Pro forces data-sharing consent +
+	 * in-plugin notifications on and governs them centrally, so the tab is hidden.
+	 *
+	 * The parent builder auto-instantiates every tab class found on disk and keys
+	 * each by its tabs_order position, so we filter the assembled result here
+	 * rather than via tabs_order (where a missing id would make array_search()
+	 * return false and collapse onto index 0). The React app reads this list with
+	 * Object.values(), which returns values in ascending key order and tolerates a
+	 * key gap, so removing the entry preserves the remaining tab order.
+	 *
+	 * @return array
+	 */
+	public function settingspage_builder_data()
+	{
+		$data = parent::settingspage_builder_data();
+
+		if ( class_exists( '\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Consent\ConsentManager' )
+			&& \TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Consent\ConsentManager::is_locked_by_pro() ) {
+			foreach ( $data as $key => $tab ) {
+				if ( is_array( $tab ) && isset( $tab['id'] ) && 'sb-data-controls-tab' === $tab['id'] ) {
+					unset( $data[ $key ] );
+				}
+			}
+		}
+
+		return $data;
 	}
 
 	/**

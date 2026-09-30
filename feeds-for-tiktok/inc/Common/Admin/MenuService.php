@@ -23,7 +23,11 @@ class MenuService extends ServiceProvider
 	public function register()
 	{
 		add_action('admin_menu', [ $this, 'register_menus' ]);
+		// Priority 40: must run after the customizer feed builder registers its
+		// parent-slug "All Feeds" item. See register_upgrade_menu() for why.
+		add_action('admin_menu', [ $this, 'register_upgrade_menu' ], 40);
 		add_action('in_admin_header', [ $this, 'remove_admin_notices' ]);
+		add_action('admin_head', [ $this, 'print_upgrade_menu_styles' ]);
 
 		add_filter('plugin_action_links_' . SBTT_PLUGIN_BASENAME, [ $this, 'add_plugin_action_links' ]);
 	}
@@ -51,6 +55,104 @@ class MenuService extends ServiceProvider
 			'',
 			'data:image/svg+xml;base64,' . $svg
 		);
+	}
+
+	/**
+	 * Registers the free-version "Upgrade to Pro" submenu item.
+	 *
+	 * Deliberately hooked at admin_menu priority 40 rather than registered inside
+	 * register_menus() (priority 10). TikTok's customizer feed builder registers
+	 * "All Feeds" with menu_slug === parent_menu_slug (both SBTT_MENU_SLUG, see
+	 * Common\Config\Proxy), which is core's "linking back to the parent manually"
+	 * case. add_submenu_page() only honours that intent when the submenu already
+	 * exists: if $submenu['sbtt'] is still empty and the new slug differs from the
+	 * parent slug -- which is the case for an external upgrade URL -- core inserts
+	 * its OWN parent link first. Registering at priority 10 runs before FeedBuilder
+	 * (ServiceContainer lists MenuService first), so core's auto-link lands and
+	 * FeedBuilder then adds its own, producing a duplicate "TikTok Feeds" row that
+	 * carries the notification-count bubble from the top-level menu title, plus an
+	 * About Us / Support reorder.
+	 *
+	 * Running at 40 lets both builders register first, so the manual link-back is
+	 * present, core's guard holds, and this item simply appends last. This matches
+	 * Reviews Feed, which registers its equivalent upsell at priority 40. The
+	 * sibling plugins do not hit this because their builders use a distinct slug
+	 * (e.g. Instagram: parent sb-instagram-feed, child sbi-feed-builder).
+	 *
+	 * Priority alone is not sufficient, so the $submenu emptiness check below is the
+	 * actual guarantee -- it closes two ways the ordering assumption can fail:
+	 *
+	 * 1. Capability. The four customizer builders hardcode 'manage_options', while
+	 *    this item and the parent menu use sbtt_get_cap() (filterable, and satisfied
+	 *    by the custom manage_tiktok_feed_options cap). A user holding only the custom
+	 *    cap fails every builder's own check inside add_submenu_page(), so they all
+	 *    bail and $submenu['sbtt'] is still unset when this runs at 40.
+	 * 2. Dependency drift. composer.json requires smashballoon/customizer "v3.x-dev",
+	 *    a branch constraint rather than a commit pin, so a composer update can move
+	 *    the builders' hook priority without anything here changing.
+	 *
+	 * In both cases core would auto-insert its own parent row (bubble and all), which
+	 * is the exact regression priority 40 exists to prevent. Returning early instead
+	 * costs only the upsell link, and only on a screen that already has no submenu.
+	 */
+	public function register_upgrade_menu()
+	{
+		global $submenu;
+
+		if (Utils::sbtt_is_pro()) {
+			return;
+		}
+
+		// No submenu to attach to: adding one now would make core inject a duplicate
+		// parent row. See the ordering note above.
+		if (empty($submenu[ SBTT_MENU_SLUG ])) {
+			return;
+		}
+
+		$upgrade_url = 'https://smashballoon.com/tiktok-feeds/tiktok-lite-upgrade/?utm_campaign=tiktok-free&utm_source=menu-link&utm_medium=upgrade-link&utm_content=UpgradeToPro';
+		add_submenu_page(
+			SBTT_MENU_SLUG,
+			__('Upgrade to Pro', 'feeds-for-tiktok'),
+			'<div class="sbtt-pro-upgradelink-bg"></div><strong class="sbtt-pro-upgradelink">' . esc_html__('Upgrade to Pro', 'feeds-for-tiktok') . '</strong>',
+			sbtt_get_cap(),
+			$upgrade_url,
+			''
+		);
+	}
+
+	/**
+	 * Prints the highlight styles for the "Upgrade to Pro" menu item.
+	 *
+	 * TikTok Feeds has no global admin stylesheet loaded on every screen, so the
+	 * menu-item styling is inlined here. Matches the green highlight used by the
+	 * other Smash Balloon free plugins (e.g. Twitter Feeds' .ctf_get_pro_highlight).
+	 */
+	public function print_upgrade_menu_styles()
+	{
+		if (Utils::sbtt_is_pro()) {
+			return;
+		}
+		?>
+		<style>
+			#adminmenu .toplevel_page_sbtt [href*="UpgradeToPro"] {
+				position: relative;
+			}
+			.sbtt-pro-upgradelink {
+				position: relative;
+				color: #fff;
+			}
+			.sbtt-pro-upgradelink-bg {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				width: 100%;
+				height: calc(100% + 3px);
+				background: green;
+			}
+		</style>
+		<?php
 	}
 
 	/**

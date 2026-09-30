@@ -158,13 +158,37 @@ class NotificationService extends ServiceProvider
 			return [];
 		}
 
-		$option = $this->getOptionValue();
-		if (empty($option['update']) || time() > $option['update'] + DAY_IN_SECONDS) {
-			$this->updateNotifications();
+		// Honour the consent source switch so local <-> remote is an exclusive
+		// swap rather than additive. 'none' hides everything; 'local' serves the
+		// Consent package's bundled fallback; 'remote' uses the fetched feed.
+		$source = class_exists('\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Consent\ConsentManager')
+			? \TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Consent\ConsentManager::notification_source()
+			: 'remote';
+
+		if ('none' === $source) {
+			return [];
 		}
 
-		$events = !empty($option['events']) ? $this->verifyActiveNotifications($option['events']) : [];
-		$feed = !empty($option['feed']) ? $this->verifyActiveNotifications($option['feed']) : [];
+		$option = $this->getOptionValue();
+
+		if ('local' === $source) {
+			$feed = class_exists('\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Consent\ConsentNotifications')
+				? \TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Consent\ConsentNotifications::load_local_fallback(self::PLUGIN, Utils::sbtt_is_pro())
+				: [];
+			// Cached remote events ($option['events']) must not leak into 'local'
+			// mode — the swap is exclusive, so local serves only the fallback feed.
+			$events = [];
+		} else {
+			if (empty($option['update']) || time() > $option['update'] + DAY_IN_SECONDS) {
+				$this->updateNotifications();
+				// updateNotifications() writes fresh data to the DB but leaves the
+				// cached $option stale; re-read (bypassing cache) so the freshly
+				// fetched feed renders on the first load rather than the next one.
+				$option = $this->getOptionValue(false);
+			}
+			$feed = !empty($option['feed']) ? $this->verifyActiveNotifications($option['feed']) : [];
+			$events = !empty($option['events']) ? $this->verifyActiveNotifications($option['events']) : [];
+		}
 
 		$new_user = new NewUserService();
 		$new_user_notifications = $new_user->getNotifications();
@@ -219,6 +243,17 @@ class NotificationService extends ServiceProvider
 	 */
 	public function updateNotifications()
 	{
+		// The Consent package owns the source-switch + local-fallback path. Only
+		// fire the remote fetch when consent resolves to 'remote'; 'local' and
+		// 'none' are no-ops here.
+		$source = class_exists('\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Consent\ConsentManager')
+			? \TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Consent\ConsentManager::notification_source()
+			: 'remote';
+
+		if ('remote' !== $source) {
+			return;
+		}
+
 		$notifications = $this->fetchNotifications();
 		$option = $this->getOptionValue();
 
@@ -284,6 +319,11 @@ class NotificationService extends ServiceProvider
 		$notifications = $this->getNotifications();
 		if (empty($notifications)) {
 			return null;
+		}
+
+		// Keep the consent marketing store reconciled with what is rendered.
+		if (class_exists('\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Consent\ConsentNotifications')) {
+			\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Consent\ConsentNotifications::reconcile_from_notifications('tiktok-feeds', $notifications);
 		}
 
 		$wrapper_class = $this->getWrapperClass($notifications[0]['id']);
