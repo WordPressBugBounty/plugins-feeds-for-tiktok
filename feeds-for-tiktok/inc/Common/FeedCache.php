@@ -16,9 +16,9 @@ class FeedCache
 	protected const CACHE_KEY = 'sbtt_feed_cache_';
 
 	/**
-	 * Feed ID.
+	 * Feed ID, including any "_CUSTOMIZER" suffix.
 	 *
-	 * @var int
+	 * @var string
 	 */
 	protected $feed_id;
 
@@ -102,8 +102,8 @@ class FeedCache
 	/**
 	 * Constructor.
 	 *
-	 * @param int $feed_id Feed ID.
-	 * @param int $cache_time Cache time.
+	 * @param int|string $feed_id    Feed ID, optionally already suffixed with "_CUSTOMIZER".
+	 * @param int        $cache_time Cache time.
 	 *
 	 * @return void
 	 */
@@ -465,9 +465,9 @@ class FeedCache
 	}
 
 	/**
-	 * Get the feed ID.
+	 * Get the feed ID, including any "_CUSTOMIZER" suffix.
 	 *
-	 * @return int
+	 * @return string
 	 */
 	public function get_feed_id()
 	{

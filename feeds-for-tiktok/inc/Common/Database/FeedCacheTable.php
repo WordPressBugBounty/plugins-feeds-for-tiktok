@@ -202,6 +202,37 @@ class FeedCacheTable extends Table
 	}
 
 	/**
+	 * Whether the feed has a front-end cache row, i.e. it has been rendered
+	 * outside the builder at least once.
+	 *
+	 * Matches the bare numeric feed_id exactly, so "_CUSTOMIZER" and
+	 * "_CUSTOMIZER_MODMODE" builder rows never count. Selects a constant with
+	 * LIMIT 1 so no cache_value is read: this runs on every unauthenticated
+	 * load-more request.
+	 *
+	 * @param int $feed_id Feed ID.
+	 *
+	 * @return bool
+	 */
+	public function feed_cache_row_exists($feed_id)
+	{
+		global $wpdb;
+		$table_name = $wpdb->prefix . self::TABLE_NAME;
+
+		$feed_id = absint($feed_id);
+		if (! $feed_id) {
+			return false;
+		}
+
+		$sql = $wpdb->prepare(
+			"SELECT 1 FROM $table_name WHERE feed_id = %s LIMIT 1",
+			(string) $feed_id
+		);
+
+		return null !== $wpdb->get_var($sql);
+	}
+
+	/**
 	 * Update or insert data into the table.
 	 *
 	 * @param array $data Data to update or insert.

@@ -733,6 +733,41 @@ class Utils
 	}
 
 	/**
+	 * Per-license-tier feed count ceiling the Feed Builder's own UI enforces
+	 * (SbUtils.feedsCountPerTier in the vendored customizer bundle). The
+	 * plugin's own AJAX "new insert" path never mirrors this in PHP — an
+	 * agent going through the Abilities API's create-feed ability could
+	 * otherwise create far more feeds than the license tier is meant to
+	 * allow (Rex PR #120 finding #3 / AgDR-9005). `free` covers an unlicensed
+	 * Pro build the same conservative way `get_tiered_features_list()` does.
+	 *
+	 * @return array<string, int>
+	 */
+	public static function get_feeds_limit_per_tier()
+	{
+		return array(
+			'free'  => 10,
+			'basic' => 10,
+			'plus'  => 20,
+			'pro'   => 50,
+		);
+	}
+
+	/**
+	 * The feed-count ceiling for the current site's license tier.
+	 *
+	 * @return int
+	 */
+	public static function feeds_limit()
+	{
+		$plugin_status = new AuthorizationStatusCheck();
+		$tier          = $plugin_status->get_license_tier();
+		$limits        = self::get_feeds_limit_per_tier();
+
+		return isset($limits[$tier]) ? $limits[$tier] : $limits['free'];
+	}
+
+	/**
 	 * Get list of Upsell Modal Content
 	 *
 	 * @return array

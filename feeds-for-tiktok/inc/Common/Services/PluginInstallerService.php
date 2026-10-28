@@ -14,6 +14,11 @@ use SmashBalloon\TikTokFeeds\Common\Util;
 class PluginInstallerService extends ServiceProvider
 {
 	/**
+	 * Only packages hosted on the WordPress.org plugin repository may be installed.
+	 */
+	const ALLOWED_DOWNLOAD_PREFIX = 'https://downloads.wordpress.org/plugin/';
+
+	/**
 	 * Registers the PluginInstallerService.
 	 *
 	 * This method initializes the PluginInstallerService.
@@ -50,12 +55,27 @@ class PluginInstallerService extends ServiceProvider
 		check_ajax_referer('sbtt-admin', 'nonce');
 
 		if (! sbtt_current_user_can()) {
-			wp_send_json_error();
+			wp_send_json_error(__('You are not allowed to install plugins.', 'feeds-for-tiktok'));
+		}
+
+		// Installing writes code to the shared plugins directory: require the real
+		// capability (multisite sub-site admins lack it) and that file edits are allowed.
+		if (! current_user_can('install_plugins')) {
+			wp_send_json_error(__('You are not allowed to install plugins.', 'feeds-for-tiktok'));
+		}
+
+		if (! wp_is_file_mod_allowed('sbtt_install_plugin')) {
+			wp_send_json_error(__('Plugin installation is disabled on this site.', 'feeds-for-tiktok'));
 		}
 
 		$error = esc_html__('Could not install addon. Please download from smashballoon.com and install manually.', 'feeds-for-tiktok');
 
 		if (empty($_POST['plugin'])) {
+			wp_send_json_error($error);
+		}
+
+		// Only install plugins from the WordPress.org repository.
+		if (! is_string($_POST['plugin']) || 0 !== strpos(wp_unslash($_POST['plugin']), self::ALLOWED_DOWNLOAD_PREFIX)) {
 			wp_send_json_error($error);
 		}
 
@@ -105,8 +125,11 @@ class PluginInstallerService extends ServiceProvider
 		$plugin_basename = $installer->plugin_info();
 
 		if ($plugin_basename) {
-			// Activate the plugin silently.
-			$activated = activate_plugin($plugin_basename);
+			// Activate the plugin silently, but only for a user who may activate plugins;
+			// install_plugins alone does not grant that. Otherwise report "Installed" only.
+			$activated = current_user_can('activate_plugins')
+				? activate_plugin($plugin_basename)
+				: new \WP_Error('sbtt_activate_not_allowed', 'activate_plugins capability required');
 
 			// TODO:: fill in plugins and recommendedPlugins.
 			wp_send_json_success(
@@ -130,8 +153,8 @@ class PluginInstallerService extends ServiceProvider
 	{
 		check_ajax_referer('sbtt-admin', 'nonce');
 
-		if (! sbtt_current_user_can()) {
-			wp_send_json_error();
+		if (! sbtt_current_user_can() || ! current_user_can('activate_plugins')) {
+			wp_send_json_error(__('You are not allowed to activate plugins.', 'feeds-for-tiktok'));
 		}
 
 		if (isset($_POST['plugin'])) {
@@ -161,8 +184,8 @@ class PluginInstallerService extends ServiceProvider
 	{
 		check_ajax_referer('sbtt-admin', 'nonce');
 
-		if (! sbtt_current_user_can()) {
-			wp_send_json_error();
+		if (! sbtt_current_user_can() || ! current_user_can('deactivate_plugins')) {
+			wp_send_json_error(__('You are not allowed to deactivate plugins.', 'feeds-for-tiktok'));
 		}
 
 		if (isset($_POST['plugin'])) {

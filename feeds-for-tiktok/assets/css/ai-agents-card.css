@@ -1,0 +1,128 @@
+/**
+ * "AI Agents" card styles (SBR-501).
+ *
+ * Scoped under .sb-ai-agents-card so it can't collide with the vendored
+ * customizer's own styles -- this markup is injected into the customizer's
+ * generic `info` slot (see GeneralTab::render_ai_agents_card()), not a
+ * native section type, so it isn't covered by the vendor's own CSS.
+ */
+
+.sb-ai-agents-card .sb-ai-agents-apps {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	margin-bottom: 14px;
+}
+
+.sb-ai-agents-card .sb-ai-agents-app {
+	display: flex;
+	flex: none;
+	color: #1D2327;
+}
+
+.sb-ai-agents-card .sb-ai-agents-app svg {
+	width: 28px;
+	height: 28px;
+}
+
+.sb-ai-agents-card .sb-ai-agents-app-claude {
+	color: #D97757;
+}
+
+.sb-ai-agents-card .sb-ai-agents-heading {
+	display: block;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 22px;
+	color: #141B38;
+	margin-bottom: 4px;
+}
+
+.sb-ai-agents-card .help-text {
+	display: block;
+	margin-bottom: 16px;
+}
+
+.sb-ai-agents-card .sb-ai-agents-action {
+	display: flex;
+}
+
+/*
+ * The button itself is styled by the vendored customizer's shared
+ * `sb-btn` / `sb-btn-primary` / `sb-btn-secondary` / `sb-btn-medium`
+ * classes (sb-common.css) -- the same classes every sibling plugin's
+ * AI Agents card uses (see sb-reviews SBR_General_Tab::ai_agents_info_html())
+ * -- so only the JS-hook behaviour (disabled/loading) needs a local rule.
+ * `.sbtt-ai-agents-btn` is kept purely as the click-delegation selector
+ * in assets/js/ai-agents-card.js; it carries no visual styling of its
+ * own.
+ */
+.sb-ai-agents-card .sbtt-ai-agents-btn:disabled {
+	cursor: not-allowed;
+	opacity: 0.6;
+}
+
+.sb-ai-agents-card.sb-ai-agents-loading .sbtt-ai-agents-btn {
+	position: relative;
+}
+
+.sb-ai-agents-card .sb-ai-agents-error {
+	font-size: 12px;
+	line-height: 20px;
+	color: #D72C2C;
+	margin: 10px 0 0;
+}
+
+.sb-ai-agents-card .sb-ai-agents-error a {
+	color: inherit;
+	font-weight: 500;
+}
+
+.sb-ai-agents-card .sb-ai-agents-error[hidden] {
+	display: none;
+}
+
+/*
+ * "Do more with AI on Pro" strip (free edition only, AgDR-9006). Rendered by
+ * GeneralTab::render_ai_pro_upsell() into the section under MCP Write Access.
+ * The button reuses the customizer's `sb-btn sb-btn-primary sb-btn-small`.
+ */
+.sb-ai-pro-upsell {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.sb-ai-pro-upsell .sb-ai-pro-upsell-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	font-size: 13px;
+	line-height: 20px;
+	color: #434960;
+}
+
+.sb-ai-pro-upsell .sb-ai-pro-upsell-text strong {
+	font-size: 14px;
+	color: #141B38;
+}
+
+/* It is a real <a>: undo the link underline. */
+.sb-ai-pro-upsell .sb-ai-pro-upsell-btn {
+	flex: none;
+	text-decoration: none;
+}
+
+/* Visually hidden, still read by screen readers ("(opens in a new tab)"). */
+.sb-ai-pro-upsell .sb-ai-pro-upsell-sr {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}

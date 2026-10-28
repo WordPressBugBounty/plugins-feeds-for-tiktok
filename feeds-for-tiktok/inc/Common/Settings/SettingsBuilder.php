@@ -123,6 +123,10 @@ class SettingsBuilder extends Settings_Builder
 	public function customSettingsData()
 	{
 		$plugin_settings = $this->global_settings->get_global_settings();
+		// What this page load saw for MCP Write Access; posted back with the rest of
+		// pluginSettings so a stale tab cannot turn it back on (see
+		// SettingsManagerService::reconcile_ai_write_toggle()).
+		$plugin_settings[SettingsManagerService::AI_WRITE_LOADED_KEY] = ! empty($plugin_settings[SettingsManagerService::AI_WRITE_KEY]);
 		$active_gdpr_plugin = GDPRIntegrations::gdpr_plugins_active();
 
 		$settings_data = [

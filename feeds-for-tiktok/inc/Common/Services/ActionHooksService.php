@@ -11,6 +11,7 @@ use SmashBalloon\TikTokFeeds\Common\Utils;
 use SmashBalloon\TikTokFeeds\Common\Container;
 use SmashBalloon\TikTokFeeds\Common\Services\SettingsManagerService;
 use SmashBalloon\TikTokFeeds\Common\Integrations\GDPR\GDPRIntegrations;
+use SmashBalloon\TikTokFeeds\Common\Abilities\SBTT_Abilities;
 
 class ActionHooksService extends ServiceProvider
 {
@@ -27,6 +28,68 @@ class ActionHooksService extends ServiceProvider
 		add_action('wp_enqueue_scripts', array( $this, 'set_script_translations' ), 11);
 
 		add_action('wpcode_loaded', array($this, 'register_username'));
+
+		// AI Agents card (SBR-501 / SBR-579) -- Settings screen only, both editions
+		// (rendered by GeneralTab::tab_sections() under the same is_available() gate).
+		add_action('admin_enqueue_scripts', array($this, 'enqueue_ai_agents_card_assets'));
+	}
+
+	/**
+	 * Enqueue the "AI Agents" card's CSS + companion vanilla-JS AJAX handler.
+	 *
+	 * The card's markup is server-rendered into the customizer's generic
+	 * `info` slot (see GeneralTab::render_ai_agents_card() for the full
+	 * reasoning) rather than a real customizer section component, so it
+	 * needs its own small script instead of anything shipped inside the
+	 * vendored `sb-customizer` bundle. The script depends on
+	 * 'sb-customizer-app' purely for load ordering (it reads
+	 * window.sb_customizer.ajaxHandler as a fallback to window.ajaxurl) --
+	 * not because the vendor bundle exposes any hook for it.
+	 *
+	 * @return void
+	 */
+	public function enqueue_ai_agents_card_assets()
+	{
+		// Both editions: only where the Abilities API can actually register.
+		if (! SBTT_Abilities::is_available()) {
+			return;
+		}
+
+		$screen = get_current_screen();
+		if (! $screen || ! isset($screen->id)) {
+			return;
+		}
+
+		// The Settings screen's hook suffix is `{parent}_page_{menu_slug}` --
+		// i.e. `sbtt_page_sbtt-settings` -- because GeneralTab's card is
+		// rendered on SettingsBuilder's page, whose menu_slug
+		// ('sbtt-settings') differs from its parent_menu_slug ('sbtt'). The
+		// list this used to check against ('toplevel_page_sbtt', 'sbtt',
+		// 'sbtt-settings', copy-pasted from is_feed_builder_page() below) only
+		// matches the Feed Builder/Customizer page, where parent_menu_slug
+		// === menu_slug -- it never matches the real Settings screen, so
+		// this callback returned early on every load there and the card's
+		// CSS/JS silently never enqueued (SBR-501). Match on substring
+		// instead of an exact id/base list so this doesn't re-drift if the
+		// hook suffix format changes.
+		if (false === strpos($screen->id, 'sbtt-settings') && false === strpos((string) $screen->base, 'sbtt-settings')) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'sbtt-ai-agents-card',
+			SBTT_PLUGIN_URL . 'assets/css/ai-agents-card.css',
+			array(),
+			SBTTVER
+		);
+
+		wp_enqueue_script(
+			'sbtt-ai-agents-card',
+			SBTT_PLUGIN_URL . 'assets/js/ai-agents-card.js',
+			array('sb-customizer-app'),
+			SBTTVER,
+			true
+		);
 	}
 
 	/**

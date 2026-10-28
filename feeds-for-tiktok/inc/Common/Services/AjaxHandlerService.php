@@ -105,8 +105,20 @@ class AjaxHandlerService extends ServiceProvider
 		if ($feed_id) {
 			$return = [	'feed_id' => $feed_id ];
 
-			if (isset($_POST['get_posts']) && $_POST['get_posts'] == true) {
-				$feed = new Feed($settings, $feed_id, new FeedCache($feed_id));
+			// get_posts arrives as the string 'true' or 'false', and a loose `== true`
+			// treats any non-empty string as true, so every builder Save ran a full
+			// render. Parse it as a real boolean.
+			$get_posts = isset($_POST['get_posts'])
+				&& filter_var(wp_unslash($_POST['get_posts']), FILTER_VALIDATE_BOOLEAN);
+
+			if ($get_posts) {
+				// Suffix explicitly rather than relying on FeedCache's is_admin()
+				// heuristic: this is admin-ajax without previewSettings, so the
+				// heuristic adds nothing and the render would write the unsuffixed
+				// front-end row. Pro's unauthenticated load-more handler treats that
+				// row as proof the feed has been embedded, so a builder save must
+				// never create it.
+				$feed = new Feed($settings, $feed_id, new FeedCache($feed_id . '_CUSTOMIZER'));
 				$feed->init();
 				$feed->get_set_cache();
 				$posts           = $feed->get_post_set_page();
@@ -194,8 +206,11 @@ class AjaxHandlerService extends ServiceProvider
 		$feed_name        = isset($_POST['feedName']) ? sanitize_text_field(wp_unslash($_POST['feedName'])) : '';
 		$preview_settings = isset($_POST['previewSettings']) ? sbtt_sanitize_data($_POST['previewSettings']) : [];
 
-		// Get updated feed info based on settings.
-		$feed_cache = new FeedCache($feed_id, 12 * HOUR_IN_SECONDS);
+		// Get updated feed info based on settings. Suffix explicitly, like
+		// builder_update(): a request with feedID but no previewSettings gets
+		// nothing from FeedCache's heuristic, and would write the unsuffixed row
+		// that Pro's load-more gate treats as proof of an embed.
+		$feed_cache = new FeedCache($feed_id . '_CUSTOMIZER', 12 * HOUR_IN_SECONDS);
 		$feed_cache->clear('posts');
 
 		$feed = new Feed($preview_settings, $feed_id, $feed_cache);

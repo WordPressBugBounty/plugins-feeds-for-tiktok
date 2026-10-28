@@ -6,6 +6,7 @@ use SmashBalloon\TikTokFeeds\Common\SourceErrors;
 use SmashBalloon\TikTokFeeds\Common\UsageTracking\Config;
 use SmashBalloon\TikTokFeeds\Common\UsageTracking\EventRecorder;
 use SmashBalloon\TikTokFeeds\Common\UsageTracking\ReporterInterface;
+use SmashBalloon\TikTokFeeds\Common\Utils;
 
 if (! defined('ABSPATH')) {
 	exit;
@@ -381,10 +382,37 @@ class TikTokFreeReporter implements ReporterInterface
 
 		return array_merge(
 			$feed_flags,
+			$this->get_swipe_view_flag($all_feed_data),
 			array(
 				'preserve_settings' => (bool) ($global_settings['preserve_settings'] ?? false),
 			)
 		);
+	}
+
+	/**
+	 * Swipe View flag, Pro only. The feed JS honours a feed's videoPlayer
+	 * only when isPro (Utils::sbtt_is_pro()) and otherwise falls back to the
+	 * lightbox, so the key is omitted entirely on Free. True means at least
+	 * one feed is configured for Swipe View, not that visitors see it:
+	 * carousel and gallery feeds don't open the viewer.
+	 *
+	 * @param array[] $all_feed_data From get_all_feed_data().
+	 * @return array<string,bool> Empty on Free, else array('swipe_view' => bool).
+	 */
+	private function get_swipe_view_flag(array $all_feed_data): array
+	{
+		if (! Utils::sbtt_is_pro()) {
+			return array();
+		}
+
+		foreach ($all_feed_data as $row) {
+			$s = $row['settings'];
+			if (isset($s['videoPlayer']) && 'swipe' === $s['videoPlayer']) {
+				return array( 'swipe_view' => true );
+			}
+		}
+
+		return array( 'swipe_view' => false );
 	}
 
 	/**

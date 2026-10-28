@@ -27,6 +27,17 @@ class SettingsManagerService extends ServiceProvider
 	 */
 	private $settings_options = 'sbtt_global_settings';
 
+	/** Stored MCP Write Access toggle (SBTT_Write_Gate::OPTION_KEY, kept literal so this class does not depend on the Abilities layer). */
+	public const AI_WRITE_KEY = 'ai_write_enabled';
+
+	/**
+	 * Not a real setting: the value the Settings page was LOADED with for the
+	 * toggle above, round-tripped inside the posted settings so the server can
+	 * tell "the user flipped the switcher" from "a stale tab posted back what it
+	 * loaded". Always stripped before saving.
+	 */
+	public const AI_WRITE_LOADED_KEY = 'ai_write_enabled_loaded';
+
 	/**
 	 * Register the service.
 	 */
@@ -51,9 +62,69 @@ class SettingsManagerService extends ServiceProvider
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$settings = isset($_POST['settings']) ? sbtt_sanitize_data($_POST['settings']) : [];
 
+		if (is_array($settings)) {
+			$settings = $this->reconcile_ai_write_toggle($settings);
+		}
+
 		$this->update_global_settings($settings);
 
-		wp_send_json_success();
+		wp_send_json_success(array( 'settings' => $this->saved_toggle_state() ));
+	}
+
+	/**
+	 * The stored MCP Write Access value, in the shape the Settings page merges
+	 * back into its model after a save (sb-customizer SettingsPage, SMASH-2354).
+	 *
+	 * Refreshing the loaded marker with the stored value lets a same-tab
+	 * ON -> OFF -> save -> ON -> save sequence work without a page reload, and
+	 * keeps a stale tab's toggle in step with what is really stored.
+	 *
+	 * @return array{ai_write_enabled: bool, ai_write_enabled_loaded: bool}
+	 */
+	private function saved_toggle_state()
+	{
+		$option = get_option($this->settings_options, array());
+		$stored = is_array($option) && ! empty($option[ self::AI_WRITE_KEY ]);
+
+		return array(
+			self::AI_WRITE_KEY        => $stored,
+			self::AI_WRITE_LOADED_KEY => $stored,
+		);
+	}
+
+	/**
+	 * Only accept `ai_write_enabled` from the Settings page when the user
+	 * actually changed it in that tab.
+	 *
+	 * The page posts back the WHOLE pluginSettings it loaded, so a tab opened
+	 * while MCP Write Access was on would, on any later unrelated save, write
+	 * `true` back over a toggle an admin has since turned off, silently
+	 * re-enabling agent writes. The page carries the value it loaded the toggle
+	 * with (AI_WRITE_LOADED_KEY), and the save response returns the stored value for both keys so
+	 * the page refreshes that marker (a customizer without that merge needs a reload
+	 * to turn writes back on after turning them off). Turning writes OFF is always honoured. Turning
+	 * them ON is accepted only when this page loaded the toggle OFF. A post with
+	 * no loaded-value marker (a page rendered by an older version) can only turn
+	 * the toggle off; it fails closed.
+	 *
+	 * @param array $settings Decoded posted settings.
+	 * @return array
+	 */
+	private function reconcile_ai_write_toggle(array $settings)
+	{
+		$loaded = array_key_exists(self::AI_WRITE_LOADED_KEY, $settings)
+			? filter_var($settings[self::AI_WRITE_LOADED_KEY], FILTER_VALIDATE_BOOLEAN)
+			: null;
+		unset($settings[self::AI_WRITE_LOADED_KEY]);
+
+		if (array_key_exists(self::AI_WRITE_KEY, $settings)) {
+			$posted = filter_var($settings[self::AI_WRITE_KEY], FILTER_VALIDATE_BOOLEAN);
+			if ($posted && false !== $loaded) {
+				unset($settings[self::AI_WRITE_KEY]);
+			}
+		}
+
+		return $settings;
 	}
 
 	/**

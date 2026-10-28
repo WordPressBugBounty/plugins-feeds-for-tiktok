@@ -3,6 +3,7 @@
 namespace SmashBalloon\TikTokFeeds\Common;
 
 use SmashBalloon\TikTokFeeds\Common\Container;
+use SmashBalloon\TikTokFeeds\Common\Abilities\SBTT_Abilities;
 use Smashballoon\Stubs\Services\ServiceProvider;
 use SmashBalloon\TikTokFeeds\Common\Admin\MenuService;
 use SmashBalloon\TikTokFeeds\Common\Admin\Blocks;
@@ -59,6 +60,10 @@ class ServiceContainer extends ServiceProvider
 		Blocks::class,
 		SBTT_Modern_Feed_Block::class,
 		SBTT_Elementor_Base::class,
+		// SBR-501 / SBR-579 -- WordPress Abilities API integration (AgDR-0503,
+		// AgDR-9005). One module for both editions; the schema is
+		// edition-filtered (SBTT_Edition).
+		SBTT_Abilities::class,
 	];
 
 	/**

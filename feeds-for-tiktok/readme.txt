@@ -5,7 +5,7 @@ Tags: TikTok, TikTok feed, TikTok videos, TikTok account, TikTok widget
 Support Website: https://smashballoon.com/tiktok-feeds/?utm_campaign=tiktok-free&utm_source=readme&utm_medium=product-page
 Requires at least: 5.2
 Tested up to: 7.1
-Stable tag: 1.8.0
+Stable tag: 1.9.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -121,6 +121,9 @@ Your TikTok feed will update at least once per day. This occurs in the backgroun
 TikTok Feeds has built in caching so your feed will not go down in the event the TikTok API is unavailable or if your connected TikTok account needs to be reconnected. A backup video feed will display until the issues are resolved.
 
 == Changelog ==
+= 1.9.0 =
+* New: Ask AI assistants to check and update your TikTok feed settings through the WordPress Abilities API (WordPress 6.9 or later). Changes stay off until you turn on MCP Write Access under Settings > General, and it covers the free plugin's settings. [See what TikTok Feeds Pro adds](https://smashballoon.com/tiktok-feeds/tiktok-lite-upgrade/?utm_source=changelog&utm_medium=aiagents&utm_campaign=tiktok-free-readme)
+
 = 1.8.0 =
 * New: Added a Debug settings tab with Privacy & Data Sharing controls for in-plugin notifications and usage tracking.
 * Tweak: Refreshed the About Us page to match the other Smash Balloon plugins.

@@ -34,7 +34,7 @@ class AdvancedTab extends SB_SettingsPage_Tab
 	 */
 	protected function tab_sections()
 	{
-		return [
+		$sections = [
 			'optimizeimages_section' => [
 				'id'         => 'optimize_images',
 				'type'       => 'switcher',
@@ -75,5 +75,11 @@ class AdvancedTab extends SB_SettingsPage_Tab
 			],
 
 		];
+
+		// The "Allow AI Assistants to Change Settings" toggle (SBR-501) moved
+		// to the General tab, directly under Manage Sources — see
+		// inc/Common/Settings/Tabs/GeneralTab.php (SBR-501).
+
+		return $sections;
 	}
 }
