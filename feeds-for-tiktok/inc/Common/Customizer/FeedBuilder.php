@@ -2,6 +2,7 @@
 
 namespace SmashBalloon\TikTokFeeds\Common\Customizer;
 
+use Smashballoon\Customizer\V3\EmbedTargets;
 use Smashballoon\Customizer\V3\Feed_Builder;
 use SmashBalloon\TikTokFeeds\Common\Container;
 use SmashBalloon\TikTokFeeds\Common\FeedSettings;
@@ -9,6 +10,7 @@ use SmashBalloon\TikTokFeeds\Common\Feed;
 use SmashBalloon\TikTokFeeds\Common\FeedCache;
 use SmashBalloon\TikTokFeeds\Common\Services\SettingsManagerService;
 use SmashBalloon\TikTokFeeds\Common\Utils;
+use SmashBalloon\TikTokFeeds\Common\Abilities\SBTT_Edition;
 use SmashBalloon\TikTokFeeds\Common\AuthorizationStatusCheck;
 
 /**
@@ -85,6 +87,25 @@ class FeedBuilder extends Feed_Builder
 	}
 
 	/**
+	 * sb-customizer enqueues the builder bundle with no version (so ?ver= is the
+	 * WordPress version). Version it by file so an upgrade never pairs new PHP
+	 * with a cached older bundle.
+	 *
+	 * @return void
+	 */
+	public function builder_enqueue_admin_scripts()
+	{
+		parent::builder_enqueue_admin_scripts();
+
+		$dir = SBTT_COMMON_ASSETS_DIR . 'sb-customizer/build/static/';
+		foreach ([[wp_scripts(), 'sb-customizer-app', 'js/main.js'], [wp_styles(), 'sb-customizer-style', 'css/main.css']] as [$deps, $handle, $file]) {
+			if (isset($deps->registered[$handle]) && is_file($dir . $file)) {
+				$deps->registered[$handle]->ver = SBTTVER . '.' . filemtime($dir . $file);
+			}
+		}
+	}
+
+	/**
 	 * Get localization data for the builder
 	 *
 	 * @return array
@@ -107,6 +128,12 @@ class FeedBuilder extends Feed_Builder
 			'isSocialWallActive' => Utils::is_sb_plugin_active('social-wall'),
 			'socialWallLinks'    => Utils::get_social_wall_links(),
 			'themeSupportsWidgets' => current_theme_supports('widgets'),
+			'embedTargets'   => EmbedTargets::get(sbtt_get_cap()),
+			'embedContract'  => [
+				'feedShortcode' => str_replace('=0]', '=%s]', SBTT_Edition::shortcode(0)),
+				'feedWizardArg' => 'sbtt_wizard',
+				'blockTitle'    => __('TikTok Feed', 'feeds-for-tiktok'),
+			],
 			'aboutPageUrl' => admin_url('admin.php?page=sbtt-about'),
 			'tieredFeatures' => Utils::get_tiered_features_list(),
 			'upsellContent' => Utils::get_upsell_modal_content(),

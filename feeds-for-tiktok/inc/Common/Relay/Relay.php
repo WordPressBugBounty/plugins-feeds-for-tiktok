@@ -7,6 +7,7 @@ use SmashBalloon\TikTokFeeds\Common\Services\SettingsManagerService;
 use SmashBalloon\TikTokFeeds\Common\Relay\RemoteRequest;
 use SmashBalloon\TikTokFeeds\Common\Database\SourcesTable;
 use SmashBalloon\TikTokFeeds\Common\SourceErrors;
+use SmashBalloon\TikTokFeeds\Common\Services\Upgrade\Routines\RegisterWebsiteRoutine;
 
 class Relay
 {
@@ -215,7 +216,7 @@ class Relay
 
 		$args = [
 			'open_id'       => $open_id,
-			'website'       => get_home_url(),
+			'website'       => RegisterWebsiteRoutine::site_url(),
 			'refresh_token' => $source['refresh_token'],
 		];
 
@@ -269,7 +270,7 @@ class Relay
 		$global_settings       = get_option('sbtt_global_settings', []);
 
 		$args = [
-			'url'         => get_home_url(),
+			'url'         => RegisterWebsiteRoutine::site_url(),
 			'license_key' => isset($global_settings['license_key']) && ! empty($global_settings['license_key']) ? trim($global_settings['license_key']) : '',
 		];
 
@@ -280,26 +281,12 @@ class Relay
 			return false;
 		}
 
-		$response = json_decode($response, true);
-
-		if (isset($response['data']['error']) && $response['data']['error']) {
-			$global_settings['api_site_access_token'] = '';
-			$global_settings['api_site_error']        = $response['data']['error'];
-
-			update_option('sbtt_global_settings', $global_settings);
+		$token = RegisterWebsiteRoutine::save_response(json_decode($response, true));
+		if ($token === '') {
 			return false;
 		}
 
-		if (isset($response['data']) && $response['data'] && isset($response['data']['token'])) {
-			$global_settings['api_site_access_token'] = $response['data']['token'];
-			$global_settings['api_site_error']        = '';
-
-			update_option('sbtt_global_settings', $global_settings);
-
-			$this->api_auth_token = $response['data']['token'];
-			return true;
-		}
-
-		return false;
+		$this->api_auth_token = $token;
+		return true;
 	}
 }

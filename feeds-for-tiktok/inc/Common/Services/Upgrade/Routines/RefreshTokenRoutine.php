@@ -76,7 +76,7 @@ class RefreshTokenRoutine extends ServiceProvider
 		$args = [
 			'open_id'       => isset($source['open_id']) ? $source['open_id'] : '',
 			'refresh_token' => isset($source['refresh_token']) ? $source['refresh_token'] : '',
-			'website'       => get_home_url(),
+			'website'       => RegisterWebsiteRoutine::site_url(),
 		];
 
 		$relay    = new Relay();

@@ -72,6 +72,13 @@ if (class_exists('\TikTokFeeds\Vendor\Smashballoon\Framework\Packages\Consent\Co
 		'is_pro'              => $sbtt_is_pro,
 		'show_reprompt_modal' => ! $sbtt_is_pro,
 		'pro_init_option'     => $sbtt_is_pro ? 'sbtt_pro_consent_initialized' : null,
+		// SMASH-2630: sites that had opted in to usage tracking keep sharing after
+		// the consent update (run once by the package). Reads the raw toggle,
+		// because Config::is_enabled() already includes the consent gate.
+		'legacy_optin'        => static function () {
+			$settings = get_option('sbtt_global_settings', []);
+			return is_array($settings) && ! empty($settings['usagetracking']);
+		},
 	]);
 }
 

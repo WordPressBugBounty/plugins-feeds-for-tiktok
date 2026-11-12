@@ -25,6 +25,7 @@ use SmashBalloon\TikTokFeeds\Common\Database\FeedCacheTable;
 use SmashBalloon\TikTokFeeds\Common\Database\PostsTable;
 use SmashBalloon\TikTokFeeds\Common\Utils;
 use SmashBalloon\TikTokFeeds\Common\Relay\Relay;
+use SmashBalloon\TikTokFeeds\Common\Services\Upgrade\Routines\RegisterWebsiteRoutine;
 
 /**
  * Class AjaxHandlerService
@@ -411,6 +412,10 @@ class AjaxHandlerService extends ServiceProvider
 		$global_settings['api_site_error']        = '';
 		update_option('sbtt_global_settings', $global_settings);
 		delete_option('sbtt_resize_images_data');
+
+		// Register now, so a Connect clicked right after this works on a moved site.
+		delete_transient('sbtt_register_website_retry');
+		( new RegisterWebsiteRoutine() )->run();
 
 		wp_send_json_success();
 

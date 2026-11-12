@@ -165,11 +165,13 @@ class SettingsManagerService extends ServiceProvider
 	 * recheck/activate paths, and the upgrader.
 	 *
 	 * This is NOT a complete choke point on the option, and must not be relied on as
-	 * one. Five call sites write sbtt_global_settings with a direct update_option()
-	 * and bypass this hardening entirely: Relay.php:289 and :297,
-	 * RegisterWebsiteRoutine.php:81 and :89, and AjaxHandlerService.php:388. None is
-	 * a live bypass today -- every one of them writes only api_site_access_token and
-	 * api_site_error, and neither key is printed into the Support page blob. But if a
+	 * one. Two call sites write sbtt_global_settings with a direct update_option()
+	 * and bypass this hardening entirely: RegisterWebsiteRoutine::save_response()
+	 * (also used by Relay) and AjaxHandlerService::clear_all_caches(). None is a live
+	 * bypass today -- they write only api_site_access_token, api_site_error,
+	 * api_site_url (scheme://host of the home option) and api_site_registered_at
+	 * (time()), and none of those keys
+	 * is printed into the Support page blob. But if a
 	 * key below is ever written from one of those paths, or a new sink-bound key is
 	 * added to the list without checking them, the hardening is silently skipped
 	 * there. Either route new writes through update_global_settings(), or harden at

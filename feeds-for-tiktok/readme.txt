@@ -5,7 +5,7 @@ Tags: TikTok, TikTok feed, TikTok videos, TikTok account, TikTok widget
 Support Website: https://smashballoon.com/tiktok-feeds/?utm_campaign=tiktok-free&utm_source=readme&utm_medium=product-page
 Requires at least: 5.2
 Tested up to: 7.1
-Stable tag: 1.9.1
+Stable tag: 1.10.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -121,6 +121,12 @@ Your TikTok feed will update at least once per day. This occurs in the backgroun
 TikTok Feeds has built in caching so your feed will not go down in the event the TikTok API is unavailable or if your connected TikTok account needs to be reconnected. A backup video feed will display until the issues are resolved.
 
 == Changelog ==
+= 1.10.0 =
+* New: The Embed button in the feed builder now opens a new Embed Feed window. Search your pages and posts, or create a new page, and "Add and Go to Page" opens the editor with your TikTok Feed block already in place. You can also add the feed to the Site Editor or a widget, or copy its shortcode.
+* Tweak: If you had turned on usage tracking before, your choice now carries over to the Data Sharing setting. If you turned Data Sharing off or skipped it, it stays off.
+* Fix: Connecting a TikTok account no longer fails with "Unauthorized" on a site that was cloned, moved to a new URL, or serves wp-admin over https with an http site address.
+* Fix: Plugin security hardening.
+
 = 1.9.1 =
 * Fix: The data-sharing popup no longer locks you out of your WordPress admin when your choice can't be saved. You can always close it and keep working.
 
