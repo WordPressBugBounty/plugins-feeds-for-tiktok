@@ -538,11 +538,13 @@ function sbtt_get_sources_settings_info()
  * Get the error message and directions to show for a relay error.
  *
  * @param string $message Error message.
+ * @param string $code    Optional error code. A reconnect code gets the reconnect notice
+ *                        even when the message is the provider's own text.
  * @return array
  */
-function sbtt_get_error_message_and_directions($message)
+function sbtt_get_error_message_and_directions($message, $code = '')
 {
-	if (SourceErrors::is_reconnect_error($message)) {
+	if (SourceErrors::is_reconnect_error($message) || SourceErrors::is_reconnect_error($code)) {
 		return SourceErrors::notice();
 	}
 

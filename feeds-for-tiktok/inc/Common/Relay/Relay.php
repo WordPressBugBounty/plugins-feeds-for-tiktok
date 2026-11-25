@@ -58,6 +58,24 @@ class Relay
 	private $timeout = 10;
 
 	/**
+	 * The error code the relay returned on the last failed token refresh.
+	 *
+	 * Lets call() tell "another request is refreshing right now" apart from
+	 * "the token is dead".
+	 *
+	 * @var string
+	 */
+	private $last_refresh_error = '';
+
+	/**
+	 * Stored in last_refresh_error when a refresh got no usable answer from the
+	 * relay: a timeout, a body that is not JSON, or JSON with no error code.
+	 *
+	 * @var string
+	 */
+	private const REFRESH_NO_ANSWER = 'refresh_no_answer';
+
+	/**
 	 * Constructor.
 	 *
 	 * @return void
@@ -107,8 +125,21 @@ class Relay
 				$args['access_token'] = $refreshed_token;
 
 				$remote_request = new RemoteRequest($endpoint, $args, $this->api_auth_token);
-				$response       = $remote_request->$method($endpoint, $args);
+				$response       = $remote_request->$method($endpoint, $args, $this->timeout);
 				$response = json_decode($response, true);
+			} elseif ($this->refresh_may_work_later()) {
+				// The token is not known to be dead, so leave the source's reconnect
+				// flag as it is.
+				return [
+					'success' => false,
+					'data' => [
+						'error'      => __(
+							'The TikTok token could not be refreshed just now. Try again shortly.',
+							'feeds-for-tiktok'
+						),
+						'directions' => '',
+					]
+				];
 			}
 		}
 
@@ -125,7 +156,10 @@ class Relay
 				SourceErrors::flag($open_id, $response['data']['message']);
 			}
 
-			$error_message = sbtt_get_error_message_and_directions($response['data']['message']);
+			$error_message = sbtt_get_error_message_and_directions(
+				$response['data']['message'],
+				$response['data']['error']
+			);
 
 			return [
 				'success' => false,
@@ -137,7 +171,7 @@ class Relay
 		}
 
 		// Successful call — the source's token works, so drop any reconnect flag.
-		if ($open_id !== '') {
+		if ($open_id !== '' && $this->proves_token_works($endpoint, $response)) {
 			SourceErrors::clear($open_id);
 		}
 
@@ -201,6 +235,8 @@ class Relay
 	 */
 	private function refresh_token($source_args)
 	{
+		$this->last_refresh_error = '';
+
 		$open_id = isset($source_args['open_id']) ? $source_args['open_id'] : '';
 
 		if (! $open_id || ! $this->api_auth_token) {
@@ -224,6 +260,7 @@ class Relay
 		$response       = $remote_request->post('refresh/token', $args);
 
 		if (is_wp_error($response)) {
+			$this->last_refresh_error = self::REFRESH_NO_ANSWER;
 			return false;
 		}
 
@@ -232,10 +269,58 @@ class Relay
 		if (isset($response['data']) && $response['data'] && isset($response['data']['access_token'])) {
 			$this->update_source($source, $response['data']);
 
+			// New tokens prove the grant works, even if the retry that follows times out.
+			SourceErrors::clear($open_id);
+
 			return $response['data']['access_token'];
 		}
 
+		// RemoteRequest turns a timeout into its error text, which is not JSON.
+		$this->last_refresh_error = isset($response['data']['error']) && is_string($response['data']['error'])
+			? $response['data']['error']
+			: self::REFRESH_NO_ANSWER;
+
 		return false;
+	}
+
+	/**
+	 * Whether the last failed refresh may still work on a later try: another
+	 * request holds the relay's refresh lock, the relay gave no usable answer, or
+	 * TikTok's answer had neither a token nor an error (the relay's `unknown`).
+	 * None of these proves the token is dead.
+	 *
+	 * @return bool
+	 */
+	private function refresh_may_work_later()
+	{
+		return in_array(
+			$this->last_refresh_error,
+			[ 'refresh_in_progress', 'unknown', self::REFRESH_NO_ANSWER ],
+			true
+		);
+	}
+
+	/**
+	 * Whether a response with no error proves the source's token works. A timeout
+	 * or a body that is not JSON proves nothing, and a refresh proves it only by
+	 * returning a new access token.
+	 *
+	 * @param string     $endpoint The endpoint.
+	 * @param array|null $response The decoded response.
+	 *
+	 * @return bool
+	 */
+	private function proves_token_works($endpoint, $response)
+	{
+		if (! is_array($response)) {
+			return false;
+		}
+
+		if ($endpoint === 'refresh/token') {
+			return ! empty($response['data']['access_token']);
+		}
+
+		return true;
 	}
 
 	/**

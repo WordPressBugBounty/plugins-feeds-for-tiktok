@@ -155,6 +155,10 @@ class Utils
 		$source_table = new SourcesTable();
 		$source_table->update_or_insert( $sources );
 
+		// The connect saved new tokens, so an old reconnect flag no longer applies,
+		// even when the user/info answer above was lost to a timeout.
+		SourceErrors::clear( $sources['open_id'] );
+
 		if ( ! empty( $sources['info'] ) ) {
 			$sources['info'] = sbtt_json_encode( $sources['info'] );
 		}

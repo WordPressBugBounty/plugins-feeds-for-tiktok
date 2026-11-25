@@ -25,6 +25,10 @@ class SourceErrors
 		return [
 			'access_token_invalid',
 			'token_decrypt_failed',
+			// TikTok: the refresh token is revoked, expired or already rotated.
+			// Other TikTok OAuth errors (invalid_client, invalid_request) mean our
+			// app credentials or request are wrong, not this user's token.
+			'invalid_grant',
 			'The payload is invalid.',
 			'The MAC is invalid.',
 			'Could not decrypt the data.',
